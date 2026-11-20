@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Augenblick – Schrifttest</title>
+<link rel="stylesheet" href="https://use.typekit.net/png5wew.css">
+<style>
+  body { margin: 0; padding: 6vw; background: #fff; color: #000; }
+  .sans { font-family: "bree", sans-serif; }
+  .serif { font-family: "bree-serif", serif; }
+  h1 { font-family: "bree", sans-serif; font-weight: 700; font-size: clamp(40px, 9vw, 120px); margin: 0 0 .1em; line-height: 1; }
+  .sub { font-family: "bree", sans-serif; font-weight: 300; font-size: clamp(20px, 3.5vw, 40px); margin: 0 0 2em; }
+  h2 { font-family: "bree-serif", serif; font-weight: 600; font-size: 15px; letter-spacing: .02em; margin: 3em 0 1em; }
+  .row { display: flex; align-items: baseline; gap: 1.5em; border-top: 1px solid #ddd; padding: .6em 0; }
+  .lab { font: 13px/1.4 system-ui, sans-serif; color: #777; width: 10em; flex-shrink: 0; }
+  .s { font-size: clamp(22px, 3vw, 34px); }
+  p.lauf { font-family: "bree-serif", serif; font-weight: 400; font-size: 18px; line-height: 1.5; max-width: 34em; }
+  #status { font: 13px/1.4 system-ui, sans-serif; padding: .6em .8em; background: #f2f2f2; display: inline-block; }
+</style>
+</head>
+<body>
+  <h1>Augenblick</h1>
+  <p class="sub">im Sehen verweilen</p>
+  <div id="status">Prüfe Schriften …</div>
+
+  <h2>Bree</h2>
+  <div class="row"><span class="lab">Thin 200</span><span class="sans s" style="font-weight:200">Wie du schaust, so beginnt dein Kongress.</span></div>
+  <div class="row"><span class="lab">Light 300</span><span class="sans s" style="font-weight:300">Wie du schaust, so beginnt dein Kongress.</span></div>
+  <div class="row"><span class="lab">Regular 400</span><span class="sans s" style="font-weight:400">Wie du schaust, so beginnt dein Kongress.</span></div>
+  <div class="row"><span class="lab">Semibold 600</span><span class="sans s" style="font-weight:600">Wie du schaust, so beginnt dein Kongress.</span></div>
+  <div class="row"><span class="lab">Bold 700</span><span class="sans s" style="font-weight:700">Wie du schaust, so beginnt dein Kongress.</span></div>
+  <div class="row"><span class="lab">Extrabold 800</span><span class="sans s" style="font-weight:800">Wie du schaust, so beginnt dein Kongress.</span></div>
+
+  <h2>Bree Serif</h2>
+  <div class="row"><span class="lab">Light 300</span><span class="serif s" style="font-weight:300">Gib deinem Blick Zeit.</span></div>
+  <div class="row"><span class="lab">Regular 400</span><span class="serif s" style="font-weight:400">Gib deinem Blick Zeit.</span></div>
+  <div class="row"><span class="lab">SemiBold 600</span><span class="serif s" style="font-weight:600">Gib deinem Blick Zeit.</span></div>
+  <div class="row"><span class="lab">Bold 700</span><span class="serif s" style="font-weight:700">Gib deinem Blick Zeit.</span></div>
+
+  <h2>Lauftext (bricht je nach Breite um)</h2>
+  <p class="lauf">Noch nie gab es so viele Bilder – und so wenig Zeit, sie wirklich zu sehen. Drei Tage lang nehmen wir uns diese Zeit: vor ausgewählten Gemälden, im Gespräch und mit eigener Farbe. Zieh das Fenster schmaler und breiter – der Text sollte neu umbrechen.</p>
+
+<script>
+  // Zeigt an, ob die Adobe-Schriften geladen wurden
+  const checks = [["bree",200],["bree",300],["bree",400],["bree",600],["bree",700],["bree",800],["bree-serif",300],["bree-serif",400],["bree-serif",600],["bree-serif",700]];
+  document.fonts.ready.then(() => {
+    setTimeout(() => {
+      const ok = checks.filter(([f,w]) => document.fonts.check(`${w} 20px "${f}"`)).length;
+      const s = document.getElementById("status");
+      s.textContent = ok === checks.length
+        ? `Alle ${ok} Schnitte geladen ✓`
+        : `${ok} von ${checks.length} Schnitten geladen – Adresse im Adobe-Web-Projekt prüfen`;
+    }, 1500);
+  });
+</script>
+</body>
+</html>
