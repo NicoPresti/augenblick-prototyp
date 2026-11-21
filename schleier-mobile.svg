@@ -1,0 +1,13 @@
+<svg width="393" height="850" viewBox="0 0 393 850" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg">
+<!-- Schleier · Ankunft Mobile (Figma «05 Gestaltung», 484:43): oben organisch, unten Auslauf ins Weiss.
+     Die schwarze 1-px-Kontur aus Figma ist hier weggelassen. -->
+<g filter="url(#f)">
+<path d="M-171 -46.2874H542V37.4085H458.608C446.377 41.8725 408.851 60.7667 384.945 64.4003C361.04 68.0338 338.663 52.6692 315.452 59.2095C292.241 65.7498 269.17 96.5827 245.959 103.85C222.748 111.117 199.677 95.2331 176.466 102.812C153.255 110.39 130.183 142.988 106.973 149.528C83.762 156.068 60.6902 135.306 37.4795 142.261C14.2688 149.217 -11.1657 180.88 -32.0137 191.054C-52.8616 201.228 -78.2961 201.435 -87.6082 203.512H-171V-46.2874Z" fill="white"/>
+<path d="M-171 712.202H542V930.213H-171V712.202Z" fill="white"/>
+</g>
+<defs>
+<filter id="f" x="-215.5" y="-90.7874" width="802" height="1065.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+<feGaussianBlur stdDeviation="22"/>
+</filter>
+</defs>
+</svg>
