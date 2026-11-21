@@ -57,17 +57,57 @@ html.lock,html.lock body{overflow:hidden}
 #homeChrome.aus{opacity:0;visibility:hidden;transition:opacity .6s ease,visibility 0s .6s}
 #homeChrome.aus a{pointer-events:none!important}
 #homeChrome a{pointer-events:auto;color:var(--ink);text-decoration:none}
+/* Weisser Schleier oben und unten: Navigation und Service stehen auf Weiss, nicht in der Malfläche (21.11.) */
+#homeChrome::before,#homeChrome::after{content:"";position:absolute;left:0;right:0;height:96px;pointer-events:none}
+#homeChrome::before{top:0;background:linear-gradient(to bottom,#fff 0%,#fff 40%,rgba(255,255,255,.7) 65%,rgba(255,255,255,0) 100%)}
+#homeChrome::after{bottom:0;background:linear-gradient(to top,#fff 0%,#fff 40%,rgba(255,255,255,.7) 65%,rgba(255,255,255,0) 100%)}
 #homeChrome a:hover,#homeChrome a:focus-visible{text-decoration:underline;text-underline-offset:5px}
-.h-nav,.h-fuss{position:absolute;display:flex;gap:32px;text-shadow:0 0 6px #fff,0 0 2px #fff}
-.h-nav{top:48px;right:max(32px,calc((100% - 1248px)/2));font-size:18px;line-height:24px}
-.h-fuss{left:max(32px,calc((100% - 1248px)/2));right:max(32px,calc((100% - 1248px)/2));bottom:40px;justify-content:space-between;font-size:16px;line-height:24px}
+.h-nav,.h-fuss{position:absolute;z-index:1;display:flex;gap:32px;font-weight:300}
+.h-nav{top:24px;right:max(32px,calc((100% - 1248px)/2));font-size:14px;line-height:20px}
+.h-fuss{left:max(32px,calc((100% - 1248px)/2));right:max(32px,calc((100% - 1248px)/2));bottom:24px;justify-content:space-between;font-size:14px;line-height:20px}
 .h-fuss nav{display:flex;gap:32px}
 .h-fuss p{margin:0}
 @media (max-width:767px){
-  .h-nav{top:max(24px,env(safe-area-inset-top,0px));right:32px;gap:20px;font-size:16px}
+  #homeChrome::before,#homeChrome::after{height:80px}
+  .h-nav{top:max(24px,env(safe-area-inset-top,0px));right:32px;gap:20px;font-size:16px;line-height:24px}
   .h-fuss{left:32px;right:32px;bottom:max(24px,env(safe-area-inset-bottom,0px));font-size:14px;line-height:20px;gap:16px;flex-wrap:wrap}
   .h-fuss nav{gap:24px}
 }
+/* Kreis «[Farbe] ist dein Zugang» (21.11.): volle Farbe, Schrift Weiss (Gelb: Ink). Dreht sich wie die Karten;
+   Rückseite weiss «Bild ansehen». Desktop: steht rechts auf Höhe des Titels und bleibt 32 px unter dem oberen Rand stehen.
+   Mobile: erscheint unten rechts, sobald die Unterkante des Titels sichtbar ist. */
+.kreis-spur{position:absolute;right:max(32px,calc((100% - 1248px)/2));bottom:0;width:120px;pointer-events:none;z-index:5}
+.kreis{position:sticky;top:32px;display:block;width:120px;height:120px;padding:0;border:0;background:none;cursor:pointer;
+  perspective:600px;pointer-events:auto;font:14px/18px var(--text);color:var(--ink);-webkit-tap-highlight-color:transparent}
+.kreis:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:50%}
+.k-dreh{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.45,0,.15,1)}
+.k-vorn,.k-rueck{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;text-align:center;
+  backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.k-vorn{background:var(--kc,var(--gelb));color:var(--kt,var(--ink))}
+.k-rueck{background:#fff;border:1px solid var(--linie);color:var(--ink);transform:rotateY(180deg)}
+@media (hover:hover){.kreis:hover .k-dreh{transform:rotateY(180deg)}}
+.kreis:focus-visible .k-dreh,.kreis.offen .k-dreh{transform:rotateY(180deg)}
+.kreis.einmal .k-dreh{animation:kreisEinmal 2.2s cubic-bezier(.45,0,.15,1) both}
+@keyframes kreisEinmal{0%{transform:rotateY(0)}25%,70%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+@media (max-width:767px){
+  .kreis-spur{position:static;width:auto}
+  .kreis{position:fixed;top:auto;right:24px;bottom:max(24px,env(safe-area-inset-bottom,0px));width:104px;height:104px;z-index:30;
+    opacity:0;pointer-events:none;transition:opacity .4s ease}
+  .kreis.zeigen{opacity:1;pointer-events:auto}
+}
+@media(prefers-reduced-motion:reduce){.k-dreh{transition:none}.kreis.einmal .k-dreh{animation:none}
+  .k-rueck{transform:none;opacity:0;transition:opacity .2s}.kreis.offen .k-rueck,.kreis:focus-visible .k-rueck{opacity:1}}
+@media (hover:hover) and (prefers-reduced-motion:reduce){.kreis:hover .k-rueck{opacity:1}}
+/* Fenster mit dem ganzen Bild */
+#bildFenster{border:0;padding:24px;background:#fff;max-width:min(94vw,1400px);max-height:94vh;box-shadow:0 2px 40px #0000001f}
+#bildFenster::backdrop{background:rgba(255,255,255,.92)}
+#bildFenster img{display:block;max-width:100%;max-height:calc(94vh - 120px);width:auto;height:auto;margin:0 auto}
+#bildFenster .bf-zeile{display:flex;justify-content:space-between;gap:24px;margin-top:16px;font:300 16px/24px var(--text)}
+#bildFenster a,#bildFenster button{font:inherit;color:var(--ink);background:none;border:0;padding:10px 0;cursor:pointer;text-decoration:none}
+#bildFenster a:hover,#bildFenster button:hover,#bildFenster a:focus-visible,#bildFenster button:focus-visible{text-decoration:underline;text-underline-offset:5px}
+@media (max-width:767px){#bildFenster{padding:16px;max-width:100vw;max-height:100vh;width:100vw;height:100dvh;margin:0}
+  #bildFenster[open]{display:flex;flex-direction:column;justify-content:center}
+  #bildFenster img{max-height:calc(100dvh - 120px)}}
 #load-error{position:fixed;left:16px;bottom:16px;z-index:70;background:var(--white);padding:16px;margin:0}
 
 /* ---------- Ankunft · erster Bildschirm (Figma 426:43 Desktop / 355:41 Mobile) ---------- */
@@ -76,14 +116,14 @@ html.lock,html.lock body{overflow:hidden}
 #ankunft:focus{outline:none}
 .kopf{position:relative;z-index:2;display:flex;flex-direction:column;gap:48px;
   padding:48px max(32px,calc((100% - 1248px)/2)) 0}
-.kopf nav{display:flex;justify-content:flex-end;gap:32px;font-size:18px;line-height:24px}  /* Stil «D Navigation» 18/24 */
+.kopf nav{display:flex;justify-content:flex-end;gap:32px;font-size:16px;line-height:24px;font-weight:300}  /* «D Navigation» Bree Serif Light 16/24 */
 .kopf nav a{color:var(--ink);text-decoration:none;white-space:nowrap}
 .kopf nav a:hover{text-decoration:underline;text-underline-offset:6px}
 .kopf nav .m-only{display:none}
 .hero{display:flex;flex-direction:column;gap:24px}
 .wm{display:block;width:301px;padding:16px 0;line-height:0}
 .wm img{display:block;width:301px;height:auto}
-.benennung{font-size:22px;line-height:32px;text-wrap:pretty}
+.benennung{font-size:20px;line-height:28px;text-wrap:pretty}  /* Benennung Desktop 20/28 */
 .benennung p{margin:0}
 .benennung .light{font-weight:300}
 .band{position:relative;z-index:1;height:1036px;margin-top:48px}
@@ -97,7 +137,7 @@ html.lock,html.lock body{overflow:hidden}
 .m-br,.m-only-f{display:none}
 @media (max-width:767px){
   .kopf{gap:24px;padding:24px 32px 0}
-  .kopf nav{font-size:16px;line-height:24px}
+  .kopf nav{font-size:16px;line-height:24px}  /* «M Navigation» Light 16/24 */
   .kopf nav .d-only{display:none}
   .kopf nav .m-only{display:inline}
   .wm,.wm img{width:200px}
@@ -117,23 +157,25 @@ html.lock,html.lock body{overflow:hidden}
   /* Verlauf in die Farbe des eigenen Augenblicks: beginnt kurz nach dem Bild-Band, unten 70 % der vollen Farbe.
      Stufen 6 / 18 / 35 / 70 % (Figma «05 Gestaltung»). Gelb ist Standard, .farbe-blau / .farbe-gruen setzen die Werte. */
   --v06:#FEFBF0;--v18:#FDF2D2;--v35:#FAE6A8;--v70:#F6CD51;
-  background:linear-gradient(to bottom,#fff 0,#fff 122px,var(--v06) calc(122px + (100% - 122px)*.251),var(--v18) calc(122px + (100% - 122px)*.529),
-    var(--v35) calc(122px + (100% - 122px)*.741),var(--v70) calc(122px + (100% - 122px)*.917),var(--v70) 100%)}
+  /* Oben durchsichtig: hier läuft der untere Schleier des Bildes herein (120 px) – so entsteht keine Kante.
+     Stufen wie Figma (21.11., Nicolas): ohne 6 %, 18 % früher, damit die Farbe schon beim Zitat zu sehen ist. */
+  background:linear-gradient(to bottom,rgba(255,255,255,0) 0,rgba(255,255,255,0) 120px,#fff 120px,var(--v18) calc(120px + (100% - 120px)*.346),
+    var(--v35) calc(120px + (100% - 120px)*.808),var(--v70) 100%)}
 .unten.farbe-blau{--v06:#F0F6FD;--v18:#D2E2F7;--v35:#A8C8F2;--v70:#5191E4}
 .unten.farbe-gruen{--v06:#F4F9F0;--v18:#E1F0D6;--v35:#BFE0A8;--v70:#7FC150}
-.zitat{padding:0 0 240px 124px}
+.zitat{padding:152px 0 240px 124px}  /* beginnt 32 px nach dem Ende des Bildes (Schleier läuft 120 px in diesen Abschnitt) */
 .zitat-block{width:528px;max-width:100%;display:flex;flex-direction:column;gap:24px}
 .zitat-block.breit{width:760px}  /* längere Sätze (Blau, Grün) */
-.d3s{margin:0;font-family:"bree",var(--text);font-weight:300;font-size:50px;line-height:56px;color:var(--ink);text-wrap:balance}  /* D3 Subtle, Desktop 50/56 */
+.d3s{margin:0;font-family:"bree",var(--text);font-weight:300;font-size:45px;line-height:52px;color:var(--ink);text-wrap:balance}  /* D3 Subtle, Desktop 45/52 */
 .zitat figure{margin:0}
 .zitat blockquote{margin:0}
-.zitat figcaption{margin-top:8px;text-align:right;font-size:20px;line-height:32px;color:var(--muted)}
+.zitat figcaption{margin-top:8px;text-align:right;font-size:18px;line-height:28px;color:var(--muted)}
 .zugaenge{padding-top:58px;display:flex;flex-direction:column;gap:48px}
-.zugaenge h2{margin:0 0 24px;font-family:"bree",var(--text);font-weight:700;font-size:60px;line-height:68px;hyphens:auto}  /* D2, Desktop 60/68 */
-.zugaenge .leitsatz{margin:0;max-width:589px;font-size:20px;line-height:32px;text-wrap:pretty}
+.zugaenge h2{margin:0 0 24px;font-family:"bree",var(--text);font-weight:700;font-size:54px;line-height:60px;hyphens:auto}  /* D2, Desktop 54/60 */
+.zugaenge .leitsatz{margin:0;max-width:589px;font-size:18px;line-height:28px;text-wrap:pretty}
 .raeume{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
 .karte{display:flex;flex-direction:column;gap:16px;min-width:0}
-.rubrik{margin:0;font-size:16px;line-height:24px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.rubrik{margin:0;font-size:15px;line-height:24px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
 .flaeche{position:relative;aspect-ratio:395/557;container-type:inline-size;perspective:1600px;outline-offset:6px;cursor:pointer;-webkit-tap-highlight-color:transparent}
 .dreh{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.45,0,.15,1)}
 .vorn,.rueck{position:absolute;inset:0;border-radius:8px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
@@ -143,24 +185,25 @@ html.lock,html.lock body{overflow:hidden}
 @media (hover:hover){.karte:hover .dreh,.karte:focus-within .dreh{transform:rotateY(180deg)}}
 .karte:not(.offen) .rueck{pointer-events:none}
 @media (hover:hover){.karte:hover .rueck,.karte:focus-within .rueck{pointer-events:auto}}
-.rueck .frage{margin:0 0 16px;font-weight:300;font-size:28px;line-height:36px}  /* LT, Desktop 28/36 */
-.rueck .klar{margin:0;font-size:20px;line-height:32px;text-wrap:pretty}
-/* Desktop: alles in der offenen Karte wächst mit der Kartenbreite (Figma: 395 px = 100cqw), damit der Text nie herausläuft */
+.rueck .frage{margin:0 0 16px;font-weight:300;font-size:26px;line-height:32px}  /* LT, Desktop 26/32 */
+.rueck .klar{margin:0;font-size:18px;line-height:28px;text-wrap:pretty}
+/* Desktop: Text in der offenen Karte geht mit der Kartenbreite mit (Figma: 395 px = 100cqw), damit er nie herausläuft,
+   wird aber nie grösser als die Skala (Lauftext 18, Frage 26) – auch nicht bei breiten Fenstern */
 @media (min-width:1024px){
-  .rueck{padding:8.1cqw}
-  .rueck .frage{font-size:7.09cqw;line-height:9.11cqw;margin-bottom:4.05cqw}
-  .rueck .klar{font-size:5.06cqw;line-height:8.1cqw}
-  .rueck .pfeil-link{font-size:5.06cqw;line-height:8.1cqw;gap:2.03cqw}
+  .rueck{padding:min(8.1cqw,32px)}
+  .rueck .frage{font-size:min(6.58cqw,26px);line-height:min(8.1cqw,32px);margin-bottom:min(4.05cqw,16px)}
+  .rueck .klar{font-size:min(4.56cqw,18px);line-height:min(7.09cqw,28px)}
+  .rueck .pfeil-link{font-size:min(4.56cqw,18px);line-height:min(7.09cqw,28px);gap:8px}
 }
 /* Link mit Typo-Pfeil (21.11.): Pfeil aus der Schrift, gleicher Schnitt und gleiche Farbe wie der Linktext (Ink).
    Keine Farbe auf Schrift. Hover/Fokus = Unterstrich + Pfeil rückt 6 px weiter. */
-.pfeil-link{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:var(--ink);text-decoration:none;font-size:20px;line-height:32px}
+.pfeil-link{display:inline-flex;align-items:center;gap:8px;min-height:44px;color:var(--ink);text-decoration:none;font-size:18px;line-height:28px}
 .pfeil{display:inline-block;flex:none;font:inherit;color:inherit;transition:transform .2s ease}
 .pfeil-link:hover span:first-child,.pfeil-link:focus-visible span:first-child{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
 .pfeil-link:hover .pfeil,.pfeil-link:focus-visible .pfeil{transform:translateX(6px)}
 .cta{padding-top:80px}
-.cta .pfeil-link{font-weight:700;font-size:24px;line-height:32px;gap:10px}  /* T4, Desktop 24/32 */
-.fuss{display:flex;justify-content:space-between;padding:120px 0;font-size:16px;line-height:24px}
+.cta .pfeil-link{font-weight:700;font-size:22px;line-height:28px;gap:10px}  /* T4, Desktop 22/28 */
+.fuss{display:flex;justify-content:space-between;padding:120px 0;font-size:15px;line-height:24px}
 .fuss nav{display:flex;gap:32px}
 .fuss a{color:var(--ink);text-decoration:none}
 .fuss a:hover{text-decoration:underline;text-underline-offset:5px}
@@ -175,9 +218,9 @@ html.lock,html.lock body{overflow:hidden}
   .rueck .pfeil-link{font-size:16px;line-height:24px}
 }
 @media (max-width:767px){
-  .unten{padding:0 32px;background:linear-gradient(to bottom,#fff 0,#fff 80px,var(--v06) calc(80px + (100% - 80px)*.168),var(--v18) calc(80px + (100% - 80px)*.481),
+  .unten{padding:0 32px;background:linear-gradient(to bottom,rgba(255,255,255,0) 0,rgba(255,255,255,0) 80px,#fff 80px,var(--v18) calc(80px + (100% - 80px)*.29),
     var(--v35) calc(80px + (100% - 80px)*.707),var(--v70) 100%)}
-  .zitat{padding:64px 0 160px}
+  .zitat{padding:112px 0 160px}  /* 32 px nach dem Ende des Bildes (Schleier läuft 80 px herein) */
   .zitat-block{width:100%}
   .d3s{font-size:40px;line-height:48px}
   .zitat figcaption{font-size:16px;line-height:24px}
@@ -309,6 +352,11 @@ html.lock,html.lock body{overflow:hidden}
       </article>
       </div>
     </section>
+    <div class="kreis-spur" id="kreisSpur">
+      <button class="kreis" id="kreis" type="button" aria-haspopup="dialog" aria-label="Gelb ist dein Zugang. Bild ansehen">
+        <span class="k-dreh"><span class="k-vorn" id="kreisSatz">Gelb ist<br>dein Zugang</span><span class="k-rueck">Bild<br>ansehen</span></span>
+      </button>
+    </div>
     <div class="cta"><a class="pfeil-link" href="#" data-soon><span>Zum gemeinsamen Programm</span><span class="pfeil" aria-hidden="true">→</span></a></div>
     <footer class="fuss">
       <nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a><a class="m-only-f" href="#" data-soon>Instagram</a></nav>
@@ -317,6 +365,10 @@ html.lock,html.lock body{overflow:hidden}
   </div>
 </div>
 
+<dialog id="bildFenster" aria-label="Dein Augenblick, ganzes Bild">
+  <img id="bildGanz" alt="Dein Augenblick, das ganze Bild">
+  <div class="bf-zeile"><a id="bildSichern" href="#" download="augenblick.jpg">Bild sichern</a><button id="bildZu" type="button">Schliessen</button></div>
+</dialog>
 <div id="debug" hidden></div>
 <p id="load-error" role="alert" hidden>Die Motive konnten nicht geladen werden. Bitte die Seite neu laden.</p>
 <div hidden id="textures">
@@ -837,12 +889,12 @@ const later = (fn, s) => timers.push(setTimeout(fn, s*1000));
 /* ---------- Ankunft je Farbe (21.11.): Farbsatz, Zitat, Kartenreihenfolge, Verlauf ----------
    Eigener Raum zuerst, dann im Kreis Gelb → Blau → Grün. Schrift bleibt immer Ink. */
 const ANKUNFT = [
-  { cls:'', breit:false, satz:'Was sich sammelt,<br>beginnt zu leuchten.',
+  { cls:'', breit:false, name:'Gelb', kc:'var(--gelb)', kt:'var(--ink)', satz:'Was sich sammelt,<br>beginnt zu leuchten.',
     zitat:'<span class="d-br">‹In der Farbe und Form<br>liegt mehr als ich bin›</span><span class="m-br">‹In der Farbe<br>und Form liegt<br>mehr als ich bin›</span>',
     quelle:'Emanuela Assenza' },
-  { cls:'farbe-blau', breit:true, satz:'Blau weicht zurück und nimmt deinen Blick mit in die Ferne.',
+  { cls:'farbe-blau', breit:true, name:'Blau', kc:'var(--blau)', kt:'#fff', satz:'Blau weicht zurück und nimmt deinen Blick mit in die Ferne.',
     zitat:'‹Das Alltagsbewusstsein wird zugunsten eines Bildbewusstseins verlassen.›', quelle:'' },   // Quelle folgt
-  { cls:'farbe-gruen', breit:true, satz:'Grün ist ein Anfang, der sich Zeit lässt.',
+  { cls:'farbe-gruen', breit:true, name:'Grün', kc:'var(--gruen)', kt:'#fff', satz:'Grün ist ein Anfang, der sich Zeit lässt.',
     zitat:'‹Man kann ein Bild nicht wollen.›', quelle:'' }                                          // Quelle folgt
 ];
 function ankunftFarbe(c){
@@ -855,7 +907,55 @@ function ankunftFarbe(c){
   const karten = [...document.querySelectorAll('.raeume .karte')];
   karten.forEach((k, i) => { k.style.order = (i - c + 3) % 3; });
   const reihe = document.querySelector('.raeume'); if (reihe) reihe.scrollLeft = 0;
+  const k = $('kreis');
+  k.style.setProperty('--kc', a.kc); k.style.setProperty('--kt', a.kt);
+  $('kreisSatz').innerHTML = `${a.name} ist<br>dein Zugang`;
+  k.setAttribute('aria-label', `${a.name} ist dein Zugang. Bild ansehen`);
+  k.classList.remove('offen','zeigen','einmal'); kreisGedreht = false;
 }
+
+/* ---------- Kreis: Lage, Erscheinen, einmal drehen, Bild öffnen ---------- */
+let kreisGedreht = false;
+const kreis = $('kreis'), kreisSpur = $('kreisSpur'), zTitel = $('zTitel'), bildFenster = $('bildFenster');
+function kreisLage(){
+  // Desktop: die Spur beginnt auf Höhe des Titels «Drei Zugänge» und reicht bis ans Seitenende (sticky)
+  const u = $('unten');
+  kreisSpur.style.top = (zTitel.getBoundingClientRect().top - u.getBoundingClientRect().top) + 'px';
+}
+function kreisEinmal(){
+  if (kreisGedreht || reduced.matches) return;
+  kreisGedreht = true; kreis.classList.add('einmal');
+  kreis.addEventListener('animationend', () => kreis.classList.remove('einmal'), { once:true });
+}
+function kreisPruefen(){
+  if (phase !== 'ankunft') return;
+  const r = zTitel.getBoundingClientRect();
+  if (isMobile()){
+    const fuss = document.querySelector('.fuss').getBoundingClientRect();
+    const zeigen = r.bottom < innerHeight && fuss.top > innerHeight - 140;   // ab Unterkante des Titels, nicht über dem Footer
+    kreis.classList.toggle('zeigen', zeigen);
+    if (!zeigen) kreis.classList.remove('offen');
+    if (zeigen) later(kreisEinmal, 0.5);
+  } else if (r.top < innerHeight - 80){ later(kreisEinmal, 0.4); }
+}
+addEventListener('scroll', kreisPruefen, { passive:true });
+addEventListener('resize', () => { if (phase === 'ankunft'){ kreisLage(); kreisPruefen(); } });
+function bildOeffnen(){
+  if (!picture) return;
+  const url = picture.toDataURL('image/jpeg', 0.92);
+  $('bildGanz').src = url; $('bildSichern').href = url;
+  kreis.classList.remove('offen');
+  bildFenster.showModal();
+}
+let kreisStart = null;
+kreis.addEventListener('pointerdown', e => { kreisStart = e.pointerType; });
+kreis.addEventListener('click', e => {
+  const touch = kreisStart && kreisStart !== 'mouse'; kreisStart = null;
+  if (touch && !kreis.classList.contains('offen')){ kreis.classList.add('offen'); return; }   // 1. Tippen dreht
+  bildOeffnen();                                                                              // Klick / 2. Tippen öffnet
+});
+$('bildZu').addEventListener('click', () => bildFenster.close());
+bildFenster.addEventListener('click', e => { if (e.target === bildFenster) bildFenster.close(); });   // Klick daneben
 
 function commit(kind){
   if (!ready || frozen || phase !== 'paint') return;
@@ -937,7 +1037,7 @@ function startZoom(){
 /* Ankunft blendet über dem gezoomten Bild ein; das Bild-Band liegt genau an derselben Stelle */
 function reveal(){
   phase = 'ankunft';
-  drawBand();
+  drawBand(); kreisLage(); kreisPruefen();
   ankunft.classList.remove('pre');
   later(() => {
     home.hidden = true; fly.hidden = true; fly.classList.remove('on'); wordCv.hidden = true;
@@ -955,6 +1055,7 @@ function restart(){
   fly.hidden = true; fly.classList.remove('on'); fly.style.transform = 'none'; wordCv.hidden = true; veil.style.transition = 'none'; veil.style.opacity = 0;
   spot = null; liveSpot = null; seen = null; picture = null;
   document.querySelectorAll('.karte.offen').forEach(k => { k.classList.remove('offen'); k.querySelector('.flaeche').setAttribute('aria-expanded','false'); }); phase = 'paint'; drawFrame(null);
+  kreis.classList.remove('offen','zeigen','einmal'); kreisGedreht = false; if (bildFenster.open) bildFenster.close();
   home.hidden = false; home.removeAttribute('aria-hidden'); frozen = false; homeChrome.classList.remove('aus');
   document.documentElement.classList.remove('lock');
   lastUserMove = lastAuto = performance.now(); lastFrame = performance.now();
