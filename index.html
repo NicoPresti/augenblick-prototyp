@@ -53,8 +53,9 @@ html.lock,html.lock body{overflow:hidden}
 #load-error{position:fixed;left:16px;bottom:16px;z-index:70;background:var(--white);padding:16px;margin:0}
 
 /* ---------- Ankunft · erster Bildschirm (Figma 426:43 Desktop / 355:41 Mobile) ---------- */
-#ankunft{position:relative;z-index:20;background:var(--white);transition:opacity .9s ease;padding-bottom:120px}
+#ankunft{position:relative;z-index:20;background:var(--white);transition:opacity .9s ease}
 #ankunft.pre{opacity:0;pointer-events:none}
+#ankunft:focus{outline:none}
 .kopf{position:relative;z-index:2;display:flex;flex-direction:column;gap:48px;
   padding:48px max(32px,calc((100% - 1248px)/2)) 0}
 .kopf nav{display:flex;justify-content:flex-end;gap:32px;font-size:20px;line-height:32px}
@@ -71,8 +72,8 @@ html.lock,html.lock body{overflow:hidden}
 .cut{position:absolute;left:0;right:0;top:-80px;height:1236px;overflow:hidden}
 .cut canvas,.cut img{position:absolute;inset:0;width:100%;height:100%;display:block}
 .cut .s-m{display:none}
+.m-br,.m-only-f{display:none}
 @media (max-width:767px){
-  #ankunft{padding-bottom:80px}
   .kopf{gap:24px;padding:24px 32px 0}
   .kopf nav{font-size:16px;line-height:24px}
   .kopf nav .d-only{display:none}
@@ -84,6 +85,96 @@ html.lock,html.lock body{overflow:hidden}
   .cut{top:-64px;height:850px}
   .cut .s-d{display:none}
   .cut .s-m{display:block}
+  .m-br,.m-only-f{display:inline}
+  .d-br,.d-only-f{display:none}
+}
+
+/* ---------- Ankunft · weitere Abschnitte (Figma 426:43 / 355:41) ---------- */
+:root{--gelb:#F2B807;--blau:#0762D9;--gruen:#48A605;--muted:#62685e;--linie:#d9ddd2}
+.unten{position:relative;z-index:2;padding:0 max(32px,calc((100% - 1248px)/2));
+  /* Verlauf ins Gelb: beginnt kurz nach dem Bild-Band, unten 70 % #F6CD51 */
+  background:linear-gradient(to bottom,#fff 0,#fff 122px,#FEFBF0 calc(122px + (100% - 122px)*.251),#FDF2D2 calc(122px + (100% - 122px)*.529),
+    #FAE6A8 calc(122px + (100% - 122px)*.741),#F6CD51 calc(122px + (100% - 122px)*.917),#F6CD51 100%)}
+.zitat{padding:0 0 240px 124px}
+.zitat-block{width:528px;max-width:100%;display:flex;flex-direction:column;gap:24px}
+.d3s{margin:0;font-family:"bree",var(--text);font-weight:300;font-size:56px;line-height:64px;color:var(--ink)}
+.zitat figure{margin:0}
+.zitat blockquote{margin:0}
+.zitat figcaption{margin-top:8px;text-align:right;font-size:20px;line-height:32px;color:var(--muted)}
+.zugaenge{padding-top:58px;display:flex;flex-direction:column;gap:48px}
+.zugaenge h2{margin:0 0 24px;font-family:"bree",var(--text);font-weight:700;font-size:66px;line-height:76px;hyphens:auto}
+.zugaenge .leitsatz{margin:0;max-width:589px;font-size:20px;line-height:32px;text-wrap:pretty}
+.raeume{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
+.karte{display:flex;flex-direction:column;gap:16px;min-width:0}
+.rubrik{margin:0;font-size:16px;line-height:24px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
+.flaeche{position:relative;aspect-ratio:395/557;perspective:1600px;outline-offset:6px;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.dreh{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.45,0,.15,1)}
+.vorn,.rueck{position:absolute;inset:0;border-radius:8px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.vorn img{width:100%;height:100%;object-fit:cover;display:block}
+.rueck{transform:rotateY(180deg);background:#fff;border:1px solid var(--linie);padding:32px;display:flex;flex-direction:column;justify-content:space-between}
+.karte.offen .dreh{transform:rotateY(180deg)}
+@media (hover:hover){.karte:hover .dreh,.karte:focus-within .dreh{transform:rotateY(180deg)}}
+.karte:not(.offen) .rueck{pointer-events:none}
+@media (hover:hover){.karte:hover .rueck,.karte:focus-within .rueck{pointer-events:auto}}
+.rueck .frage{margin:0 0 16px;font-weight:300;font-size:30px;line-height:40px}
+.rueck .klar{margin:0;font-size:20px;line-height:32px;text-wrap:pretty}
+/* Link mit gemaltem Pfeil: Hover/Fokus = Unterstrich + Pfeil zeichnet sich neu (0,5 s) */
+.pfeil-link{display:inline-flex;align-items:center;gap:12px;min-height:44px;color:var(--ink);text-decoration:none;font-size:20px;line-height:32px}
+.pfeil{position:relative;display:block;flex:none;width:72px;height:38px}
+/* Zwei Pinselzüge von Nicolas (gleiche Leinwand 2735 × 1444, exakt übereinander) als Maske, Farbe = Ziel */
+.pfeil .schaft,.pfeil .kopf{position:absolute;inset:0;background:var(--c,var(--ink))}
+.pfeil .schaft{-webkit-mask:url(bild/pfeil-schaft.png) no-repeat 0 0/100% 100%;mask:url(bild/pfeil-schaft.png) no-repeat 0 0/100% 100%}
+.pfeil .kopf{-webkit-mask:url(bild/pfeil-kopf.png) no-repeat 0 0/100% 100%;mask:url(bild/pfeil-kopf.png) no-repeat 0 0/100% 100%}
+.pfeil-link:hover span:first-child,.pfeil-link:focus-visible span:first-child{text-decoration:underline;text-underline-offset:6px;text-decoration-thickness:1px}
+/* Zeichnen: zuerst der Schaft von links nach rechts (0,32 s), dann der Kopf von oben zur Spitze und nach unten (0,22 s) */
+.pfeil-link:hover .schaft,.pfeil-link:focus-visible .schaft{animation:schaft .32s cubic-bezier(.4,0,.6,1) both}
+.pfeil-link:hover .kopf,.pfeil-link:focus-visible .kopf{animation:kopf .22s cubic-bezier(.4,0,.6,1) .32s both}
+/* Mobile: nach dem Öffnen der Karte (Drehung 0,5 s) einmal zeichnen */
+.pfeil.zeichne .schaft{animation:schaft .32s cubic-bezier(.4,0,.6,1) .5s both}
+.pfeil.zeichne .kopf{animation:kopf .22s cubic-bezier(.4,0,.6,1) .82s both}
+@keyframes schaft{from{clip-path:inset(0 100% 0 0)}to{clip-path:inset(0 0 0 0)}}
+@keyframes kopf{from{clip-path:inset(0 0 100% 0)}to{clip-path:inset(0 0 0 0)}}
+@media (hover:none){.cta .pfeil-link .schaft,.cta .pfeil-link .kopf{animation:none}}
+.gelb{--c:var(--gelb)}.blau{--c:var(--blau)}.gruen{--c:var(--gruen)}
+.cta{padding-top:80px}
+.cta .pfeil-link{font-weight:700;font-size:26px;line-height:36px;gap:16px}
+.fuss{display:flex;justify-content:space-between;padding:120px 0;font-size:16px;line-height:24px}
+.fuss nav{display:flex;gap:32px}
+.fuss a{color:var(--ink);text-decoration:none}
+.fuss a:hover{text-decoration:underline;text-underline-offset:5px}
+@media (max-width:767px){
+  .unten{padding:0 32px;background:linear-gradient(to bottom,#fff 0,#fff 80px,#FEFBF0 calc(80px + (100% - 80px)*.168),#FDF2D2 calc(80px + (100% - 80px)*.481),
+    #FAE6A8 calc(80px + (100% - 80px)*.707),#F6CD51 100%)}
+  .zitat{padding:64px 0 160px}
+  .zitat-block{width:100%}
+  .d3s{font-size:40px;line-height:48px}
+  .zitat figcaption{font-size:16px;line-height:24px}
+  .zugaenge{padding-top:64px;gap:40px}
+  .zugaenge h2{font-size:48px;line-height:56px}
+  .zugaenge .leitsatz{font-size:16px;line-height:24px}
+  /* Wischreihe: horizontal, rastet ein, nächste Karte angeschnitten */
+  .raeume{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;
+    overscroll-behavior-x:contain}
+  .raeume::-webkit-scrollbar{display:none}
+  .karte{flex:0 0 280px;scroll-snap-align:start}
+  .rubrik{font-size:14px;line-height:20px}
+  .rueck{padding:24px}
+  .rueck .frage{font-size:23px;line-height:32px;margin-bottom:12px}
+  .rueck .klar{font-size:14px;line-height:20px}
+  .pfeil-link{font-size:16px;line-height:24px}
+  .pfeil{width:57px;height:30px}
+  .cta{padding-top:64px}
+  .cta .pfeil-link{font-size:19px;line-height:24px;gap:12px}
+  .fuss{padding:80px 0;font-size:14px;line-height:20px;justify-content:flex-start;gap:24px}
+  .fuss nav{gap:24px}
+}
+@media(prefers-reduced-motion:reduce){
+  .dreh{transition:none;transform:none!important}
+  .rueck{transform:none;opacity:0;transition:opacity .2s}
+  .karte.offen .rueck{opacity:1;pointer-events:auto}
+  @media (hover:hover){.karte:hover .rueck,.karte:focus-within .rueck{opacity:1}}
+  .karte.offen .vorn{opacity:0}
+  .pfeil .schaft,.pfeil .kopf{animation:none!important}
 }
 
 /* ---------- Debug (Taste D) ---------- */
@@ -108,7 +199,7 @@ html.lock,html.lock body{overflow:hidden}
 <img id="fly" src="svg/wortmarke.svg" alt="" width="301" height="96" aria-hidden="true" hidden>
 <canvas id="wordCv" aria-hidden="true" hidden></canvas>
 
-<div id="ankunft" hidden>
+<div id="ankunft" hidden tabindex="-1">
   <header class="kopf">
     <nav aria-label="Hauptnavigation">
       <a class="d-only" href="#" data-soon>Programm</a>
@@ -130,6 +221,66 @@ html.lock,html.lock body{overflow:hidden}
       <img class="s-d" src="svg/schleier-desktop.svg" alt="">
       <img class="s-m" src="svg/schleier-mobile.svg" alt="">
     </div>
+  </div>
+  <div class="unten">
+    <section class="zitat" aria-label="Farbsatz und Zitat">
+      <div class="zitat-block">
+        <p class="d3s">Was sich sammelt,<br>beginnt zu leuchten.</p>
+        <figure>
+          <blockquote class="d3s"><span class="d-br">‹In der Farbe und Form<br>liegt mehr als ich bin›</span><span class="m-br">‹In der Farbe<br>und Form liegt<br>mehr als ich bin›</span></blockquote>
+          <figcaption>Emanuela Assenza</figcaption>
+        </figure>
+      </div>
+    </section>
+    <section class="zugaenge" aria-labelledby="zTitel">
+      <div>
+        <h2 id="zTitel">Drei Zugänge. Ein Kongress.</h2>
+        <p class="leitsatz">Wie du schaust, so beginnt dein Kongress. Alle drei Zugänge stehen dir offen, auch ohne Vorwissen, und führen zu einem gemeinsamen Programm.</p>
+      </div>
+      <div class="raeume">
+      <article class="karte gelb">
+        <p class="rubrik">Schauraum · verweilen</p>
+        <div class="flaeche" tabindex="0" role="button" aria-expanded="false" aria-label="Schauraum: Karte umdrehen">
+          <div class="dreh">
+            <div class="vorn"><img src="bild/textur-gelb.jpg" alt="" width="395" height="557"></div>
+            <div class="rueck">
+              <div><p class="frage">Wie lange kannst du bei einer Farbe bleiben?</p><p class="klar">Ausgewählte Gemälde, ungestört und ohne Erklärtafeln. Geführte Runden im langsamen Schauen, mehrmals täglich.</p></div>
+              <a class="pfeil-link gelb" href="#" data-soon><span>Mehr zum Schauraum</span><span class="pfeil" aria-hidden="true"><span class="schaft"></span><span class="kopf"></span></span></a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="karte blau">
+        <p class="rubrik">Denkraum · ergründen</p>
+        <div class="flaeche" tabindex="0" role="button" aria-expanded="false" aria-label="Denkraum: Karte umdrehen">
+          <div class="dreh">
+            <div class="vorn"><img src="bild/textur-blau.jpg" alt="" width="395" height="557"></div>
+            <div class="rueck">
+              <div><p class="frage">Warum fällt es uns so schwer, nichts zu erkennen?</p><p class="klar">Vorträge und Gespräche aus Kunstgeschichte, Philosophie und Wahrnehmungsforschung. Verständlich, auch ohne Vorwissen.</p></div>
+              <a class="pfeil-link blau" href="#" data-soon><span>Mehr zum Denkraum</span><span class="pfeil" aria-hidden="true"><span class="schaft"></span><span class="kopf"></span></span></a>
+            </div>
+          </div>
+        </div>
+      </article>
+      <article class="karte gruen">
+        <p class="rubrik">Werkraum · gestalten</p>
+        <div class="flaeche" tabindex="0" role="button" aria-expanded="false" aria-label="Werkraum: Karte umdrehen">
+          <div class="dreh">
+            <div class="vorn"><img src="bild/textur-gruen.jpg" alt="" width="395" height="557"></div>
+            <div class="rueck">
+              <div><p class="frage">Was verändert sich, wenn du selbst Farbe aufträgst?</p><p class="klar">Workshops mit Künstler:innen: malen, schichten, zurücktreten. Material ist da, Erfahrung brauchst du keine.</p></div>
+              <a class="pfeil-link gruen" href="#" data-soon><span>Mehr zum Werkraum</span><span class="pfeil" aria-hidden="true"><span class="schaft"></span><span class="kopf"></span></span></a>
+            </div>
+          </div>
+        </div>
+      </article>
+      </div>
+    </section>
+    <div class="cta"><a class="pfeil-link" href="#" data-soon><span>Zum gemeinsamen Programm</span><span class="pfeil" aria-hidden="true"><span class="schaft"></span><span class="kopf"></span></span></a></div>
+    <footer class="fuss">
+      <nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a><a class="m-only-f" href="#" data-soon>Instagram</a></nav>
+      <a class="d-only-f" href="#" data-soon>Instagram</a>
+    </footer>
   </div>
 </div>
 
@@ -733,7 +884,7 @@ function reveal(){
   later(() => {
     home.hidden = true; fly.hidden = true; fly.classList.remove('on'); wordCv.hidden = true;
     document.documentElement.classList.remove('lock');
-    $('wm').focus({ preventScroll:true });
+    ankunft.focus({ preventScroll:true });
   }, reduced.matches ? 0.05 : CFG.revealDur + 0.05);
 }
 function restart(){
@@ -744,7 +895,8 @@ function restart(){
   ankunft.hidden = true; ankunft.classList.remove('pre');
   stage.style.transition = 'none'; stage.style.transform = ''; stage.style.transformOrigin = '';
   fly.hidden = true; fly.classList.remove('on'); fly.style.transform = 'none'; wordCv.hidden = true; veil.style.transition = 'none'; veil.style.opacity = 0;
-  spot = null; liveSpot = null; seen = null; picture = null; phase = 'paint'; drawFrame(null);
+  spot = null; liveSpot = null; seen = null; picture = null;
+  document.querySelectorAll('.karte.offen').forEach(k => { k.classList.remove('offen'); k.querySelector('.flaeche').setAttribute('aria-expanded','false'); }); phase = 'paint'; drawFrame(null);
   home.hidden = false; home.removeAttribute('aria-hidden'); frozen = false;
   document.documentElement.classList.remove('lock');
   lastUserMove = lastAuto = performance.now(); lastFrame = performance.now();
@@ -754,6 +906,28 @@ function restart(){
 $('wm').addEventListener('click', e => { e.preventDefault(); restart(); });
 document.querySelectorAll('#ankunft [data-soon]').forEach(el => el.addEventListener('click', e => e.preventDefault()));
 window.addEventListener('resize', () => { if (phase === 'ankunft') drawBand(); });
+
+/* ---------- Raumkarten: Desktop Hover (CSS), Touch: Tippen ohne Bewegung dreht die Karte ---------- */
+document.querySelectorAll('.karte').forEach(k => {
+  const f = k.querySelector('.flaeche');
+  let start = null;
+  const toggle = () => {
+    // nur eine Karte offen
+    document.querySelectorAll('.karte.offen').forEach(o => { if (o !== k){ o.classList.remove('offen'); o.querySelector('.flaeche').setAttribute('aria-expanded','false'); } });
+    const o = k.classList.toggle('offen'); f.setAttribute('aria-expanded', String(o));
+    // Mobile: der Pfeil zeichnet sich einmal, kurz nachdem sich die Karte geöffnet hat
+    const p = k.querySelector('.pfeil'); p.classList.remove('zeichne');
+    if (o){ void p.offsetWidth; p.classList.add('zeichne'); }
+  };
+  f.addEventListener('pointerdown', e => { start = { x:e.clientX, y:e.clientY, t:e.pointerType }; });
+  f.addEventListener('pointerup', e => {
+    if (!start || e.target.closest('a')) { start = null; return; }
+    const moved = Math.hypot(e.clientX-start.x, e.clientY-start.y);
+    if (start.t !== 'mouse' && moved < 12) toggle();      // Wischen öffnet nichts
+    start = null;
+  });
+  f.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === f){ e.preventDefault(); toggle(); } });
+});
 
 /* ---------- Einstieg: Leitsatz + Handlungszeile gehen mit der ersten Bewegung ---------- */
 const leadTop = $('leadTop'), leadAct = $('leadAct');
