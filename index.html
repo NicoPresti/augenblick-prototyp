@@ -73,38 +73,46 @@ html.lock,html.lock body{overflow:hidden}
   .h-fuss{left:32px;right:32px;bottom:max(24px,env(safe-area-inset-bottom,0px));font-size:14px;line-height:20px;gap:16px;flex-wrap:wrap}
   .h-fuss nav{gap:24px}
 }
-/* Kreise (22.11., Nicolas)
-   1 · Am Bild unten rechts, scrollt mit: vorn weiss «Dein Augenblick ist [Farbe].», Rückseite volle Farbe «Dein Bild ansehen»
-       (Weiss, bei Gelb Ink). Pulsiert leise, bis man ihn berührt; einmal gedreht bleibt er auf der Farbseite.
-   2 · Auf der Karte des eigenen Raums oben rechts: weiss «[Haltung] könnte dein Zugang sein».
-   3 · Im Footer unter «Instagram»: klein, weiss «Dein Bild», öffnet direkt das ganze Bild. */
-.kreis{position:absolute;z-index:3;right:max(32px,calc((100% - 1248px)/2));bottom:300px;width:96px;height:96px;padding:0;border:0;background:none;
-  cursor:pointer;perspective:600px;font:400 14px/18px var(--text);color:var(--ink);-webkit-tap-highlight-color:transparent}
+/* Kreise (22.11., Nicolas) – 84 px, Bree Serif Light 12/18, Schrift immer Ink
+   1 · Bild-Kreis: im Weiss unter dem Bild-Band rechts, erscheint erst beim Scrollen. Vorn weiss mit Linie «Dein Augenblick ist [Farbe].»,
+       Rückseite in der 70-%-Farbe des Verlaufs «Dein Bild ansehen». Pulsiert, bis man ihn berührt; einmal gedreht bleibt er gedreht.
+   2 · Karten-Kreis: ragt halb über die rechte obere Ecke der eigenen Karte, 10° gedreht, 70-%-Farbe, «Könnte dein Zugang sein».
+       Pulsiert; verschwindet, sobald die Karte geöffnet wird. */
+.kreis{position:absolute;z-index:3;top:-68px;right:calc(max(32px,calc((100% - 1248px)/2)) + 12px);width:84px;height:84px;padding:0;border:0;background:none;
+  cursor:pointer;perspective:600px;font:300 12px/18px var(--text);color:var(--ink);-webkit-tap-highlight-color:transparent;
+  opacity:0;pointer-events:none;transition:opacity .8s ease}
+.kreis.zeigen{opacity:1;pointer-events:auto}
 .kreis:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:50%}
 .k-dreh{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.45,0,.15,1)}
 .k-vorn,.k-rueck{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;text-align:center;
   backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.k-vorn{background:#fff;border:1px solid var(--linie);color:var(--ink)}
-.k-rueck{background:var(--kc,var(--gelb));color:var(--kt,var(--ink));transform:rotateY(180deg)}
+.k-vorn{background:#fff;border:1px solid var(--linie)}
+.k-rueck{background:var(--v70);transform:rotateY(180deg)}
 .kreis.offen .k-dreh{transform:rotateY(180deg)}
-.kreis:not(.offen){animation:puls 2.6s ease-in-out infinite}
+.kreis.zeigen:not(.offen){animation:puls 2.6s ease-in-out infinite}
 @keyframes puls{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
-.vielleicht{position:absolute;z-index:3;top:16px;right:16px;width:96px;height:96px;margin:0;border-radius:50%;background:#fff;
-  border:1px solid var(--linie);display:grid;place-items:center;text-align:center;font-size:14px;line-height:18px;pointer-events:none}
 .karte{position:relative}
-.kreis-klein{width:64px;height:64px;padding:0;border-radius:50%;background:#fff;border:1px solid var(--linie);color:var(--ink);
-  font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
-.kreis-klein:hover,.kreis-klein:focus-visible{text-decoration:underline;text-underline-offset:4px}
+.vielleicht{position:absolute;z-index:3;top:-35px;right:-26px;width:84px;height:84px;margin:0;border-radius:50%;background:var(--v70);
+  display:grid;place-items:center;text-align:center;font:300 12px/18px var(--text);color:var(--ink);pointer-events:none;
+  transform:rotate(10deg);animation:pulsDreh 2.6s ease-in-out infinite;transition:opacity .3s ease}
+@keyframes pulsDreh{0%,100%{transform:rotate(10deg) scale(1)}50%{transform:rotate(10deg) scale(1.06)}}
+.karte.offen .vielleicht{opacity:0}
+@media (hover:hover){.karte:hover .vielleicht,.karte:focus-within .vielleicht{opacity:0}}
 @media (max-width:767px){
-  .kreis{right:32px;bottom:120px;width:84px;height:84px}
-  .vielleicht{top:12px;right:12px}
+  .kreis{top:-34px;right:27px}
 }
-@media(prefers-reduced-motion:reduce){.k-dreh{transition:none}.kreis:not(.offen){animation:none}
+@media(prefers-reduced-motion:reduce){.k-dreh{transition:none}.kreis.zeigen:not(.offen){animation:none}.vielleicht{animation:none}
   .k-rueck{transform:none;opacity:0;transition:opacity .2s}.kreis.offen .k-rueck{opacity:1}}
 /* Fenster mit dem ganzen Bild */
 #bildFenster{border:0;padding:24px;background:#fff;max-width:min(94vw,1400px);max-height:94vh;box-shadow:0 2px 40px #0000001f}
 #bildFenster::backdrop{background:rgba(255,255,255,.92)}
 #bildFenster img{display:block;max-width:100%;max-height:calc(94vh - 120px);width:auto;height:auto;margin:0 auto}
+#bildFenster .bf-bild{margin:0}
+/* Bildunterschrift in drei Schritten: benennen · Zusammenhang · zurückführen (22.11.) */
+#bildFenster figcaption{max-width:620px;margin:20px 0 0;font:300 16px/24px var(--text);color:var(--ink);text-wrap:pretty}
+#bildFenster figcaption p{margin:0}
+#bildFenster figcaption p+p{margin-top:8px}
+#bildFenster img{max-height:calc(94vh - 230px)!important}
 #bildFenster .bf-zeile{display:flex;justify-content:space-between;gap:24px;margin-top:16px;font:300 16px/24px var(--text)}
 #bildFenster a,#bildFenster button{font:inherit;color:var(--ink);background:none;border:0;padding:10px 0;cursor:pointer;text-decoration:none}
 #bildFenster a:hover,#bildFenster button:hover,#bildFenster a:focus-visible,#bildFenster button:focus-visible{text-decoration:underline;text-underline-offset:5px}
@@ -128,9 +136,9 @@ html.lock,html.lock body{overflow:hidden}
 .m-knopf{display:none}
 .m-liste{display:flex;gap:32px}
 .m-sub{position:relative}
-.m-unter{display:none;position:absolute;left:-20px;top:calc(100% + 12px);z-index:30;flex-direction:column;gap:8px;padding:16px 20px;
+.menue .m-unter{display:none;position:absolute;left:-24px;top:calc(100% + 12px);z-index:30;flex-direction:column;gap:12px;padding:20px 24px;  /* Figma «Navigation / Untermenü» */
   background:#fff;border:1px solid var(--linie);border-radius:8px}
-.m-sub.offen>.m-unter{display:flex}
+.menue .m-sub.offen>.m-unter{display:flex}
 .hero{display:flex;flex-direction:column;gap:24px}
 .wm{display:block;width:301px;padding:16px 0;line-height:0}
 .wm img{display:block;width:301px;height:auto}
@@ -153,11 +161,11 @@ html.lock,html.lock body{overflow:hidden}
   .kopf nav{font-size:16px;line-height:24px}  /* «M Navigation» Light 16/24 */
   .m-knopf{display:block;margin-left:auto}
   .menue{position:relative;display:flex;flex-direction:column;align-items:flex-end}
-  .m-liste{display:none;position:absolute;top:100%;right:0;z-index:30;flex-direction:column;align-items:flex-end;gap:12px;
-    padding:16px 0 16px 32px;background:#fff;box-shadow:-16px 16px 24px -8px #fff}  /* liegt über der Seite, schiebt nichts */
+  .menue .m-liste{display:none;position:absolute;top:100%;right:0;z-index:30;flex-direction:column;align-items:flex-end;gap:16px;
+    padding:20px 0 24px 32px;  /* Figma «Navigation / Menü Mobile» */background:#fff;box-shadow:-16px 16px 24px -8px #fff}  /* liegt über der Seite, schiebt nichts */
   .menue.offen .m-liste{display:flex}
   .m-liste .d-only{display:none}
-  .m-unter{position:static;display:none;align-items:flex-end;padding:8px 0 0;border:0;background:none;gap:8px}
+  .menue .m-unter{position:static;display:none;align-items:flex-end;padding:16px 0 0;border:0;background:none;gap:12px}
   .m-sub{display:flex;flex-direction:column;align-items:flex-end}
   .wm,.wm img{width:200px}
   .wm{padding:0}
@@ -231,7 +239,8 @@ html.lock,html.lock body{overflow:hidden}
 .fuss a:hover{text-decoration:underline;text-underline-offset:5px}
 /* Schmale Fenster (Tablet, kleines Browserfenster): Karten als Wischreihe wie auf dem Handy, Text in Mobile-Grössen */
 @media (min-width:768px) and (max-width:1023px){
-  .raeume{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;overscroll-behavior-x:contain}
+  .raeume{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;overscroll-behavior-x:contain;
+    padding-top:40px;margin-top:-40px}
   .raeume::-webkit-scrollbar{display:none}
   .karte{flex:0 0 300px;scroll-snap-align:start}
   .rueck{padding:24px}
@@ -251,7 +260,7 @@ html.lock,html.lock body{overflow:hidden}
   .zugaenge .leitsatz{font-size:16px;line-height:24px}
   /* Wischreihe: horizontal, rastet ein, nächste Karte angeschnitten */
   .raeume{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;
-    overscroll-behavior-x:contain}
+    overscroll-behavior-x:contain;padding-top:40px;margin-top:-40px}  /* oben Platz für den halben Karten-Kreis */
   .raeume::-webkit-scrollbar{display:none}
   .karte{flex:0 0 280px;scroll-snap-align:start}
   .rubrik{font-size:14px;line-height:20px}
@@ -293,10 +302,7 @@ html.lock,html.lock body{overflow:hidden}
   </div>
 </main>
 <div id="homeChrome">
-  <nav class="h-nav menue" aria-label="Schnellzugang">
-    <button class="m-knopf" type="button" aria-expanded="false" aria-controls="mListeH">Menü</button>
-    <ul class="m-liste" id="mListeH"><li><a href="#" data-soon>Programm</a></li><li><a href="#" data-soon>Teilnahme</a></li><li><a href="#" data-soon>Tickets</a></li></ul>
-  </nav>
+  <nav class="h-nav" aria-label="Schnellzugang"><a href="#" data-soon>Programm</a><a href="#" data-soon>Über den Kongress</a></nav>
   <footer class="h-fuss"><nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav><p>5.–7. März 2027 · Basel</p></footer>
 </div>
 <div id="veil" aria-hidden="true"></div>
@@ -329,11 +335,11 @@ html.lock,html.lock body{overflow:hidden}
       <svg class="s-d" viewBox="0 0 1440 1236" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g clip-path="url(#sdClip)"><g filter="url(#sdBlur)"><path d="M-71 -35.5131H1669V50.5471C1648.82 53.9258 1592.51 69.1692 1548.17 70.8292C1503.82 72.4893 1487.83 129.723 1439.5 135.992C1391.16 142.261 1320.83 118.434 1272.5 124.147C1224.16 129.869 1163.55 90.1935 1113.17 94.8026C1062.78 99.4216 1013.32 133.658 961 135.992C908.68 138.326 849.39 102.615 799 108.943C748.61 115.28 682.89 149.946 632.5 158.12C582.11 166.293 545.25 150.435 496.92 158.12C448.58 165.805 398.28 179.476 352 184.202C305.72 188.939 268.39 227.677 218 233.028C167.61 238.379 90.83 221.837 42.5 233.028C-5.84 244.209 -48.89 253.222 -71 253.408V-35.5131Z" fill="white"/><path d="M-77.5 891.39C-77.5 891.39 71.2151 905.995 338 914.567C520.917 905.733 815.188 883.602 969.5 891.39C1236.58 904.87 1319.87 957.136 1376 957.136C1527.33 957.136 1662.5 891.39 1662.5 891.39V1336H-77.5V891.39Z" fill="white"/><path d="M-150 -140H1669V65.0678H-150V-140Z" fill="white"/></g></g><defs><filter id="sdBlur" x="-240" y="-230" width="1999" height="1656" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="45"/></filter><clipPath id="sdClip"><rect width="1440" height="1236" fill="white"/></clipPath></defs></svg>
       <svg class="s-m" viewBox="0 0 393 850" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g clip-path="url(#smClip)"><g filter="url(#smBlur)"><path d="M-171 -46.2874H542V37.4085H458.608C446.377 41.8725 408.851 60.7667 384.945 64.4003C361.04 68.0338 338.663 52.6692 315.452 59.2095C292.241 65.7498 269.17 96.5827 245.959 103.85C222.748 111.117 199.677 95.2331 176.466 102.812C153.255 110.39 130.183 142.988 106.973 149.528C83.762 156.068 60.6902 135.306 37.4795 142.261C14.2688 149.217 -11.1657 180.88 -32.0137 191.054C-52.8616 201.228 -78.2961 201.435 -87.6082 203.512H-171V-46.2874Z" fill="white"/><path d="M-171 712.202H542V930.213H-171V712.202Z" fill="white"/></g></g><defs><filter id="smBlur" x="-215.5" y="-90.7874" width="802" height="1065.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="22"/></filter><clipPath id="smClip"><rect width="393" height="850" fill="white"/></clipPath></defs></svg>
     </div>
+  </div>
+  <div class="unten" id="unten">
     <button class="kreis" id="kreis" type="button" aria-haspopup="dialog" aria-label="Dein Augenblick ist Gelb. Dein Bild ansehen">
       <span class="k-dreh"><span class="k-vorn" id="kreisSatz">Dein<br>Augenblick<br>ist Gelb.</span><span class="k-rueck">Dein Bild<br>ansehen</span></span>
     </button>
-  </div>
-  <div class="unten" id="unten">
     <section class="zitat" aria-label="Farbsatz und Zitat">
       <div class="zitat-block" id="zitatBlock">
         <p class="d3s" id="farbsatz">Was sich sammelt,<br>beginnt zu leuchten.</p>
@@ -359,7 +365,7 @@ html.lock,html.lock body{overflow:hidden}
             </div>
           </div>
         </div>
-        <p class="vielleicht" hidden>Verweilen<br>könnte dein<br>Zugang sein</p>
+        <p class="vielleicht" hidden>Könnte dein<br>Zugang sein</p>
         <p class="rubrik">Schauraum · verweilen</p>
       </article>
       <article class="karte blau">
@@ -372,7 +378,7 @@ html.lock,html.lock body{overflow:hidden}
             </div>
           </div>
         </div>
-        <p class="vielleicht" hidden>Ergründen<br>könnte dein<br>Zugang sein</p>
+        <p class="vielleicht" hidden>Könnte dein<br>Zugang sein</p>
         <p class="rubrik">Denkraum · ergründen</p>
       </article>
       <article class="karte gruen">
@@ -385,7 +391,7 @@ html.lock,html.lock body{overflow:hidden}
             </div>
           </div>
         </div>
-        <p class="vielleicht" hidden>Gestalten<br>könnte dein<br>Zugang sein</p>
+        <p class="vielleicht" hidden>Könnte dein<br>Zugang sein</p>
         <p class="rubrik">Werkraum · gestalten</p>
       </article>
       </div>
@@ -393,13 +399,14 @@ html.lock,html.lock body{overflow:hidden}
     <div class="cta"><a class="pfeil-link" href="#" data-soon><span>Zum gemeinsamen Programm</span><span class="pfeil" aria-hidden="true">→</span></a></div>
     <footer class="fuss">
       <nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav>
-      <div class="f-rechts"><a href="#" data-soon>Instagram</a><button class="kreis-klein" id="kreisKlein" type="button" aria-haspopup="dialog">Dein Bild</button></div>
+      <div class="f-rechts"><a href="#" data-soon>Instagram</a></div>
     </footer>
   </div>
 </div>
 
 <dialog id="bildFenster" aria-label="Dein Augenblick, ganzes Bild">
-  <img id="bildGanz" alt="Dein Augenblick, das ganze Bild">
+  <figure class="bf-bild"><img id="bildGanz" alt="Dein Augenblick, das ganze Bild">
+    <figcaption id="bildText"></figcaption></figure>
   <div class="bf-zeile"><a id="bildSichern" href="#" download="augenblick.jpg">Bild sichern</a><button id="bildZu" type="button">Schliessen</button></div>
 </dialog>
 <div id="debug" hidden></div>
@@ -933,12 +940,12 @@ const later = (fn, s) => timers.push(setTimeout(fn, s*1000));
 /* ---------- Ankunft je Farbe (21.11.): Farbsatz, Zitat, Kartenreihenfolge, Verlauf ----------
    Eigener Raum zuerst, dann im Kreis Gelb → Blau → Grün. Schrift bleibt immer Ink. */
 const ANKUNFT = [
-  { cls:'', breit:false, name:'Gelb', kc:'var(--gelb)', kt:'var(--ink)', satz:'Was sich sammelt,<br>beginnt zu leuchten.',
+  { cls:'', breit:false, name:'Gelb', raum:'den Schauraum', verb:'verweilen', kc:'var(--gelb)', kt:'var(--ink)', satz:'Was sich sammelt,<br>beginnt zu leuchten.',
     zitat:'<span class="d-br">‹In der Farbe und Form<br>liegt mehr als ich bin›</span><span class="m-br">‹In der Farbe<br>und Form liegt<br>mehr als ich bin›</span>',
     quelle:'Emanuela Assenza' },
-  { cls:'farbe-blau', breit:true, name:'Blau', kc:'var(--blau)', kt:'#fff', satz:'Blau weicht zurück und nimmt deinen Blick mit in die Ferne.',
+  { cls:'farbe-blau', breit:true, name:'Blau', raum:'den Denkraum', verb:'ergründen', kc:'var(--blau)', kt:'#fff', satz:'Blau weicht zurück und nimmt deinen Blick mit in die Ferne.',
     zitat:'‹Das Alltagsbewusstsein wird zugunsten eines Bildbewusstseins verlassen.›', quelle:'Emanuela Assenza' },
-  { cls:'farbe-gruen', breit:true, name:'Grün', kc:'var(--gruen)', kt:'#fff', satz:'Grün ist ein Anfang, der sich Zeit lässt.',
+  { cls:'farbe-gruen', breit:true, name:'Grün', raum:'den Werkraum', verb:'gestalten', kc:'var(--gruen)', kt:'#fff', satz:'Grün ist ein Anfang, der sich Zeit lässt.',
     zitat:'‹Man kann ein Bild nicht wollen.›', quelle:'Emanuela Assenza' }
 ];
 function ankunftFarbe(c){
@@ -955,7 +962,10 @@ function ankunftFarbe(c){
   k.style.setProperty('--kc', a.kc); k.style.setProperty('--kt', a.kt);
   $('kreisSatz').innerHTML = `Dein<br>Augenblick<br>ist ${a.name}.`;
   k.setAttribute('aria-label', `Dein Augenblick ist ${a.name}. Dein Bild ansehen`);
-  k.classList.remove('offen');
+  k.classList.remove('offen','zeigen');
+  $('bildText').innerHTML = `<p>Aus deinen Bewegungen ist dieses Bild entstanden.</p>`
+    + `<p>Senkrecht wurde Gelb, waagrecht Blau, kreisend Grün – am meisten erscheint darin ${a.name}.</p>`
+    + `<p>${a.name} öffnet ${a.raum}: ${a.verb}. Die anderen Räume stehen dir genauso offen.</p>`;
   karten.forEach((kk, i) => { kk.querySelector('.vielleicht').hidden = (i !== c); });   // Kreis 2 nur auf der eigenen Karte
 }
 
@@ -963,6 +973,7 @@ function ankunftFarbe(c){
 const kreis = $('kreis'), bildFenster = $('bildFenster');
 kreis.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') kreis.classList.add('offen'); });   // nur Maus, nicht beim Tippen
 kreis.addEventListener('focus', () => { if (kreis.matches(':focus-visible')) kreis.classList.add('offen'); });
+addEventListener('scroll', () => { if (phase === 'ankunft' && scrollY > 40) kreis.classList.add('zeigen'); }, { passive:true });
 function bildOeffnen(){
   if (!picture) return;
   const url = picture.toDataURL('image/jpeg', 0.92);
@@ -976,7 +987,6 @@ kreis.addEventListener('click', e => {
   if (touch && !kreis.classList.contains('offen')){ kreis.classList.add('offen'); return; }   // 1. Tippen dreht
   bildOeffnen();                                                                              // Klick / 2. Tippen öffnet
 });
-$('kreisKlein').addEventListener('click', bildOeffnen);
 $('bildZu').addEventListener('click', () => bildFenster.close());
 
 /* ---------- Menüs ---------- */
