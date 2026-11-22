@@ -55,8 +55,8 @@ html.lock,html.lock body{overflow:hidden}
    Liegt über der Malfläche (gleiche Ebene, später im Dokument), unter dem Weiss beim Festhalten. Schrift Ink, ohne Farbe. */
 #homeChrome{position:fixed;inset:0;z-index:10;pointer-events:none;transition:opacity .6s ease}
 #homeChrome.aus{opacity:0;visibility:hidden;transition:opacity .6s ease,visibility 0s .6s}
-#homeChrome.aus a{pointer-events:none!important}
-#homeChrome a{pointer-events:auto;color:var(--ink);text-decoration:none}
+#homeChrome.aus a,#homeChrome.aus button{pointer-events:none!important}
+#homeChrome a,#homeChrome button{pointer-events:auto;color:var(--ink);text-decoration:none}
 /* Weisser Schleier oben und unten: Navigation und Service stehen auf Weiss, nicht in der Malfläche (21.11.) */
 #homeChrome::before,#homeChrome::after{content:"";position:absolute;left:0;right:0;height:96px;pointer-events:none}
 #homeChrome::before{top:0;background:linear-gradient(to bottom,#fff 0%,#fff 40%,rgba(255,255,255,.7) 65%,rgba(255,255,255,0) 100%)}
@@ -73,31 +73,34 @@ html.lock,html.lock body{overflow:hidden}
   .h-fuss{left:32px;right:32px;bottom:max(24px,env(safe-area-inset-bottom,0px));font-size:14px;line-height:20px;gap:16px;flex-wrap:wrap}
   .h-fuss nav{gap:24px}
 }
-/* Kreis «[Farbe] ist dein Zugang» (21.11.): volle Farbe, Schrift Weiss (Gelb: Ink). Dreht sich wie die Karten;
-   Rückseite weiss «Bild ansehen». Desktop: steht rechts auf Höhe des Titels und bleibt 32 px unter dem oberen Rand stehen.
-   Mobile: erscheint unten rechts, sobald die Unterkante des Titels sichtbar ist. */
-.kreis-spur{position:absolute;right:max(32px,calc((100% - 1248px)/2));bottom:0;width:120px;pointer-events:none;z-index:5}
-.kreis{position:sticky;top:32px;display:block;width:120px;height:120px;padding:0;border:0;background:none;cursor:pointer;
-  perspective:600px;pointer-events:auto;font:14px/18px var(--text);color:var(--ink);-webkit-tap-highlight-color:transparent}
+/* Kreise (22.11., Nicolas)
+   1 · Am Bild unten rechts, scrollt mit: vorn weiss «Dein Augenblick ist [Farbe].», Rückseite volle Farbe «Dein Bild ansehen»
+       (Weiss, bei Gelb Ink). Pulsiert leise, bis man ihn berührt; einmal gedreht bleibt er auf der Farbseite.
+   2 · Auf der Karte des eigenen Raums oben rechts: weiss «[Haltung] könnte dein Zugang sein».
+   3 · Im Footer unter «Instagram»: klein, weiss «Dein Bild», öffnet direkt das ganze Bild. */
+.kreis{position:absolute;z-index:3;right:max(32px,calc((100% - 1248px)/2));bottom:300px;width:96px;height:96px;padding:0;border:0;background:none;
+  cursor:pointer;perspective:600px;font:400 14px/18px var(--text);color:var(--ink);-webkit-tap-highlight-color:transparent}
 .kreis:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:50%}
 .k-dreh{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.45,0,.15,1)}
 .k-vorn,.k-rueck{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;text-align:center;
   backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.k-vorn{background:var(--kc,var(--gelb));color:var(--kt,var(--ink))}
-.k-rueck{background:#fff;border:1px solid var(--linie);color:var(--ink);transform:rotateY(180deg)}
-@media (hover:hover){.kreis:hover .k-dreh{transform:rotateY(180deg)}}
-.kreis:focus-visible .k-dreh,.kreis.offen .k-dreh{transform:rotateY(180deg)}
-.kreis.einmal .k-dreh{animation:kreisEinmal 2.2s cubic-bezier(.45,0,.15,1) both}
-@keyframes kreisEinmal{0%{transform:rotateY(0)}25%,70%{transform:rotateY(180deg)}100%{transform:rotateY(360deg)}}
+.k-vorn{background:#fff;border:1px solid var(--linie);color:var(--ink)}
+.k-rueck{background:var(--kc,var(--gelb));color:var(--kt,var(--ink));transform:rotateY(180deg)}
+.kreis.offen .k-dreh{transform:rotateY(180deg)}
+.kreis:not(.offen){animation:puls 2.6s ease-in-out infinite}
+@keyframes puls{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.vielleicht{position:absolute;z-index:3;top:16px;right:16px;width:96px;height:96px;margin:0;border-radius:50%;background:#fff;
+  border:1px solid var(--linie);display:grid;place-items:center;text-align:center;font-size:14px;line-height:18px;pointer-events:none}
+.karte{position:relative}
+.kreis-klein{width:64px;height:64px;padding:0;border-radius:50%;background:#fff;border:1px solid var(--linie);color:var(--ink);
+  font:inherit;cursor:pointer;-webkit-tap-highlight-color:transparent}
+.kreis-klein:hover,.kreis-klein:focus-visible{text-decoration:underline;text-underline-offset:4px}
 @media (max-width:767px){
-  .kreis-spur{position:static;width:auto}
-  .kreis{position:fixed;top:auto;right:24px;bottom:max(24px,env(safe-area-inset-bottom,0px));width:104px;height:104px;z-index:30;
-    opacity:0;pointer-events:none;transition:opacity .4s ease}
-  .kreis.zeigen{opacity:1;pointer-events:auto}
+  .kreis{right:32px;bottom:120px;width:84px;height:84px}
+  .vielleicht{top:12px;right:12px}
 }
-@media(prefers-reduced-motion:reduce){.k-dreh{transition:none}.kreis.einmal .k-dreh{animation:none}
-  .k-rueck{transform:none;opacity:0;transition:opacity .2s}.kreis.offen .k-rueck,.kreis:focus-visible .k-rueck{opacity:1}}
-@media (hover:hover) and (prefers-reduced-motion:reduce){.kreis:hover .k-rueck{opacity:1}}
+@media(prefers-reduced-motion:reduce){.k-dreh{transition:none}.kreis:not(.offen){animation:none}
+  .k-rueck{transform:none;opacity:0;transition:opacity .2s}.kreis.offen .k-rueck{opacity:1}}
 /* Fenster mit dem ganzen Bild */
 #bildFenster{border:0;padding:24px;background:#fff;max-width:min(94vw,1400px);max-height:94vh;box-shadow:0 2px 40px #0000001f}
 #bildFenster::backdrop{background:rgba(255,255,255,.92)}
@@ -116,10 +119,18 @@ html.lock,html.lock body{overflow:hidden}
 #ankunft:focus{outline:none}
 .kopf{position:relative;z-index:2;display:flex;flex-direction:column;gap:48px;
   padding:48px max(32px,calc((100% - 1248px)/2)) 0}
-.kopf nav{display:flex;justify-content:flex-end;gap:32px;font-size:16px;line-height:24px;font-weight:300}  /* «D Navigation» Bree Serif Light 16/24 */
-.kopf nav a{color:var(--ink);text-decoration:none;white-space:nowrap}
-.kopf nav a:hover{text-decoration:underline;text-underline-offset:6px}
-.kopf nav .m-only{display:none}
+.kopf nav{display:flex;justify-content:flex-end;position:relative;z-index:30;gap:32px;font-size:16px;line-height:24px;font-weight:300}  /* «D Navigation» Bree Serif Light 16/24 */
+/* Menü (Ankunft + Home): Desktop eine Zeile; «Räume» öffnet beim Klick ein kleines Untermenü.
+   Mobile: nur «Menü»; beim Tippen erscheinen die Punkte darunter, «Menü» wird «Schliessen» (22.11.). */
+.menue ul{list-style:none;margin:0;padding:0}
+.menue a,.menue button{font:inherit;color:var(--ink);text-decoration:none;white-space:nowrap;background:none;border:0;padding:0;cursor:pointer}
+.menue a:hover,.menue a:focus-visible,.menue button:hover,.menue button:focus-visible,.m-sub.offen>.m-sub-knopf{text-decoration:underline;text-underline-offset:6px}
+.m-knopf{display:none}
+.m-liste{display:flex;gap:32px}
+.m-sub{position:relative}
+.m-unter{display:none;position:absolute;left:-20px;top:calc(100% + 12px);z-index:30;flex-direction:column;gap:8px;padding:16px 20px;
+  background:#fff;border:1px solid var(--linie);border-radius:8px}
+.m-sub.offen>.m-unter{display:flex}
 .hero{display:flex;flex-direction:column;gap:24px}
 .wm{display:block;width:301px;padding:16px 0;line-height:0}
 .wm img{display:block;width:301px;height:auto}
@@ -131,22 +142,32 @@ html.lock,html.lock body{overflow:hidden}
 .cut canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
 /* Schleier an der Bildkante (21.11.): oben 100 % Weiss → 0, unten 0 → 100 %. Wächst mit dem Bild mit,
    darum ist die Bildkante bei keiner Fensterbreite sichtbar. Ersetzt svg/schleier-*.svg */
-.cut::before,.cut::after{content:"";position:absolute;left:0;right:0;z-index:1;pointer-events:none}
-.cut::before{top:0;height:360px;background:linear-gradient(to bottom,#fff 0%,rgba(255,255,255,.92) 20%,rgba(255,255,255,.55) 50%,rgba(255,255,255,.15) 80%,rgba(255,255,255,0) 100%)}
-.cut::after{bottom:0;height:420px;background:linear-gradient(to top,#fff 0%,rgba(255,255,255,.92) 20%,rgba(255,255,255,.55) 50%,rgba(255,255,255,.15) 80%,rgba(255,255,255,0) 100%)}
+.cut::before,.cut::after{content:"";position:absolute;left:0;right:0;z-index:2;pointer-events:none}
+.cut svg{position:absolute;inset:0;width:100%;height:100%;display:block;z-index:1;pointer-events:none}
+.cut .s-m{display:none}
+.cut::before{top:0;height:120px;background:linear-gradient(to bottom,#fff 0%,rgba(255,255,255,.92) 20%,rgba(255,255,255,.55) 50%,rgba(255,255,255,.15) 80%,rgba(255,255,255,0) 100%)}
+.cut::after{bottom:0;height:160px;background:linear-gradient(to top,#fff 0%,rgba(255,255,255,.92) 20%,rgba(255,255,255,.55) 50%,rgba(255,255,255,.15) 80%,rgba(255,255,255,0) 100%)}
 .m-br,.m-only-f{display:none}
 @media (max-width:767px){
   .kopf{gap:24px;padding:24px 32px 0}
   .kopf nav{font-size:16px;line-height:24px}  /* «M Navigation» Light 16/24 */
-  .kopf nav .d-only{display:none}
-  .kopf nav .m-only{display:inline}
+  .m-knopf{display:block;margin-left:auto}
+  .menue{position:relative;display:flex;flex-direction:column;align-items:flex-end}
+  .m-liste{display:none;position:absolute;top:100%;right:0;z-index:30;flex-direction:column;align-items:flex-end;gap:12px;
+    padding:16px 0 16px 32px;background:#fff;box-shadow:-16px 16px 24px -8px #fff}  /* liegt über der Seite, schiebt nichts */
+  .menue.offen .m-liste{display:flex}
+  .m-liste .d-only{display:none}
+  .m-unter{position:static;display:none;align-items:flex-end;padding:8px 0 0;border:0;background:none;gap:8px}
+  .m-sub{display:flex;flex-direction:column;align-items:flex-end}
   .wm,.wm img{width:200px}
   .wm{padding:0}
   .benennung{font-size:19px;line-height:24px}
   .band{height:706px;margin-top:24px}
   .cut{top:-64px;height:850px}
-  .cut::before{height:220px}
-  .cut::after{height:260px}
+  .cut::before{height:80px}
+  .cut::after{height:100px}
+  .cut .s-d{display:none}
+  .cut .s-m{display:block}
   .m-br,.m-only-f{display:inline}
   .d-br,.d-only-f{display:none}
 }
@@ -205,6 +226,7 @@ html.lock,html.lock body{overflow:hidden}
 .cta .pfeil-link{font-weight:700;font-size:22px;line-height:28px;gap:10px}  /* T4, Desktop 22/28 */
 .fuss{display:flex;justify-content:space-between;padding:120px 0;font-size:15px;line-height:24px}
 .fuss nav{display:flex;gap:32px}
+.f-rechts{display:flex;flex-direction:column;align-items:flex-end;gap:16px}
 .fuss a{color:var(--ink);text-decoration:none}
 .fuss a:hover{text-decoration:underline;text-underline-offset:5px}
 /* Schmale Fenster (Tablet, kleines Browserfenster): Karten als Wischreihe wie auf dem Handy, Text in Mobile-Grössen */
@@ -241,6 +263,7 @@ html.lock,html.lock body{overflow:hidden}
   .cta .pfeil-link{font-size:19px;line-height:24px;gap:8px}
   .fuss{padding:80px 0;font-size:14px;line-height:20px;justify-content:flex-start;gap:24px}
   .fuss nav{gap:24px}
+  .f-rechts{align-items:flex-start}
 }
 @media(prefers-reduced-motion:reduce){
   .dreh{transition:none;transform:none!important}
@@ -270,7 +293,10 @@ html.lock,html.lock body{overflow:hidden}
   </div>
 </main>
 <div id="homeChrome">
-  <nav class="h-nav" aria-label="Schnellzugang"><a href="#" data-soon>Programm</a><a href="#" data-soon>Teilnahme</a><a href="#" data-soon>Tickets</a></nav>
+  <nav class="h-nav menue" aria-label="Schnellzugang">
+    <button class="m-knopf" type="button" aria-expanded="false" aria-controls="mListeH">Menü</button>
+    <ul class="m-liste" id="mListeH"><li><a href="#" data-soon>Programm</a></li><li><a href="#" data-soon>Teilnahme</a></li><li><a href="#" data-soon>Tickets</a></li></ul>
+  </nav>
   <footer class="h-fuss"><nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav><p>5.–7. März 2027 · Basel</p></footer>
 </div>
 <div id="veil" aria-hidden="true"></div>
@@ -279,11 +305,15 @@ html.lock,html.lock body{overflow:hidden}
 
 <div id="ankunft" hidden tabindex="-1">
   <header class="kopf">
-    <nav aria-label="Hauptnavigation">
-      <a class="d-only" href="#" data-soon>Programm</a>
-      <a class="d-only" href="#" data-soon>Mitwirkende</a>
-      <a class="d-only" href="#" data-soon>Über den Kongress</a>
-      <a href="#" data-soon>Menü</a>
+    <nav class="menue" aria-label="Hauptnavigation">
+      <button class="m-knopf" type="button" aria-expanded="false" aria-controls="mListeA">Menü</button>
+      <ul class="m-liste" id="mListeA">
+        <li><a href="#" data-soon>Programm</a></li>
+        <li class="m-sub"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mRaeume">Räume</button>
+          <ul class="m-unter" id="mRaeume"><li><a href="#" data-soon>Schauraum</a></li><li><a href="#" data-soon>Denkraum</a></li><li><a href="#" data-soon>Werkraum</a></li></ul></li>
+        <li><a href="#" data-soon>Über den Kongress</a></li>
+        <li class="d-only"><a href="#" data-soon>Menü</a></li>
+      </ul>
     </nav>
     <div class="hero">
       <h1 style="margin:0"><a class="wm" href="#" id="wm" aria-label="Augenblick – im Sehen verweilen. Neu beginnen"><img id="wmImg" src="svg/wortmarke.svg" alt="" width="301" height="96"></a></h1>
@@ -293,10 +323,15 @@ html.lock,html.lock body{overflow:hidden}
       </div>
     </div>
   </header>
-  <div class="band" aria-hidden="true">
-    <div class="cut" id="cut">
+  <div class="band">
+    <div class="cut" id="cut" aria-hidden="true">
       <canvas id="bandImg"></canvas>
+      <svg class="s-d" viewBox="0 0 1440 1236" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g clip-path="url(#sdClip)"><g filter="url(#sdBlur)"><path d="M-71 -35.5131H1669V50.5471C1648.82 53.9258 1592.51 69.1692 1548.17 70.8292C1503.82 72.4893 1487.83 129.723 1439.5 135.992C1391.16 142.261 1320.83 118.434 1272.5 124.147C1224.16 129.869 1163.55 90.1935 1113.17 94.8026C1062.78 99.4216 1013.32 133.658 961 135.992C908.68 138.326 849.39 102.615 799 108.943C748.61 115.28 682.89 149.946 632.5 158.12C582.11 166.293 545.25 150.435 496.92 158.12C448.58 165.805 398.28 179.476 352 184.202C305.72 188.939 268.39 227.677 218 233.028C167.61 238.379 90.83 221.837 42.5 233.028C-5.84 244.209 -48.89 253.222 -71 253.408V-35.5131Z" fill="white"/><path d="M-77.5 891.39C-77.5 891.39 71.2151 905.995 338 914.567C520.917 905.733 815.188 883.602 969.5 891.39C1236.58 904.87 1319.87 957.136 1376 957.136C1527.33 957.136 1662.5 891.39 1662.5 891.39V1336H-77.5V891.39Z" fill="white"/><path d="M-150 -140H1669V65.0678H-150V-140Z" fill="white"/></g></g><defs><filter id="sdBlur" x="-240" y="-230" width="1999" height="1656" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="45"/></filter><clipPath id="sdClip"><rect width="1440" height="1236" fill="white"/></clipPath></defs></svg>
+      <svg class="s-m" viewBox="0 0 393 850" preserveAspectRatio="none" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true"><g clip-path="url(#smClip)"><g filter="url(#smBlur)"><path d="M-171 -46.2874H542V37.4085H458.608C446.377 41.8725 408.851 60.7667 384.945 64.4003C361.04 68.0338 338.663 52.6692 315.452 59.2095C292.241 65.7498 269.17 96.5827 245.959 103.85C222.748 111.117 199.677 95.2331 176.466 102.812C153.255 110.39 130.183 142.988 106.973 149.528C83.762 156.068 60.6902 135.306 37.4795 142.261C14.2688 149.217 -11.1657 180.88 -32.0137 191.054C-52.8616 201.228 -78.2961 201.435 -87.6082 203.512H-171V-46.2874Z" fill="white"/><path d="M-171 712.202H542V930.213H-171V712.202Z" fill="white"/></g></g><defs><filter id="smBlur" x="-215.5" y="-90.7874" width="802" height="1065.5" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB"><feGaussianBlur stdDeviation="22"/></filter><clipPath id="smClip"><rect width="393" height="850" fill="white"/></clipPath></defs></svg>
     </div>
+    <button class="kreis" id="kreis" type="button" aria-haspopup="dialog" aria-label="Dein Augenblick ist Gelb. Dein Bild ansehen">
+      <span class="k-dreh"><span class="k-vorn" id="kreisSatz">Dein<br>Augenblick<br>ist Gelb.</span><span class="k-rueck">Dein Bild<br>ansehen</span></span>
+    </button>
   </div>
   <div class="unten" id="unten">
     <section class="zitat" aria-label="Farbsatz und Zitat">
@@ -315,7 +350,6 @@ html.lock,html.lock body{overflow:hidden}
       </div>
       <div class="raeume">
       <article class="karte gelb">
-        <p class="rubrik">Schauraum · verweilen</p>
         <div class="flaeche" tabindex="0" role="button" aria-expanded="false" aria-label="Schauraum: Karte umdrehen">
           <div class="dreh">
             <div class="vorn"><img src="bild/textur-gelb.jpg" alt="" width="395" height="557"></div>
@@ -325,9 +359,10 @@ html.lock,html.lock body{overflow:hidden}
             </div>
           </div>
         </div>
+        <p class="vielleicht" hidden>Verweilen<br>könnte dein<br>Zugang sein</p>
+        <p class="rubrik">Schauraum · verweilen</p>
       </article>
       <article class="karte blau">
-        <p class="rubrik">Denkraum · ergründen</p>
         <div class="flaeche" tabindex="0" role="button" aria-expanded="false" aria-label="Denkraum: Karte umdrehen">
           <div class="dreh">
             <div class="vorn"><img src="bild/textur-blau.jpg" alt="" width="395" height="557"></div>
@@ -337,9 +372,10 @@ html.lock,html.lock body{overflow:hidden}
             </div>
           </div>
         </div>
+        <p class="vielleicht" hidden>Ergründen<br>könnte dein<br>Zugang sein</p>
+        <p class="rubrik">Denkraum · ergründen</p>
       </article>
       <article class="karte gruen">
-        <p class="rubrik">Werkraum · gestalten</p>
         <div class="flaeche" tabindex="0" role="button" aria-expanded="false" aria-label="Werkraum: Karte umdrehen">
           <div class="dreh">
             <div class="vorn"><img src="bild/textur-gruen.jpg" alt="" width="395" height="557"></div>
@@ -349,18 +385,15 @@ html.lock,html.lock body{overflow:hidden}
             </div>
           </div>
         </div>
+        <p class="vielleicht" hidden>Gestalten<br>könnte dein<br>Zugang sein</p>
+        <p class="rubrik">Werkraum · gestalten</p>
       </article>
       </div>
     </section>
-    <div class="kreis-spur" id="kreisSpur">
-      <button class="kreis" id="kreis" type="button" aria-haspopup="dialog" aria-label="Gelb ist dein Zugang. Bild ansehen">
-        <span class="k-dreh"><span class="k-vorn" id="kreisSatz">Gelb ist<br>dein Zugang</span><span class="k-rueck">Bild<br>ansehen</span></span>
-      </button>
-    </div>
     <div class="cta"><a class="pfeil-link" href="#" data-soon><span>Zum gemeinsamen Programm</span><span class="pfeil" aria-hidden="true">→</span></a></div>
     <footer class="fuss">
-      <nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a><a class="m-only-f" href="#" data-soon>Instagram</a></nav>
-      <a class="d-only-f" href="#" data-soon>Instagram</a>
+      <nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav>
+      <div class="f-rechts"><a href="#" data-soon>Instagram</a><button class="kreis-klein" id="kreisKlein" type="button" aria-haspopup="dialog">Dein Bild</button></div>
     </footer>
   </div>
 </div>
@@ -831,6 +864,17 @@ function drawBand(){
   if (x1 > x0 && y1 > y0){
     const k = bandCv.width/ww;
     b.drawImage(picture, x0*pr, y0*pr, (x1-x0)*pr, (y1-y0)*pr, (x0-wx)*k, (y0-wy)*k, (x1-x0)*k, (y1-y0)*k);
+    // Liegt ein Rand des gemalten Bildes innerhalb des Bands (Bildschirm kürzer als das Band), läuft er weich ins Weiss aus –
+    // sonst entsteht dort eine harte Kante, die der Schleier nicht deckt (22.11.)
+    const L = (x0-wx)*k, T = (y0-wy)*k, R = (x1-wx)*k, B = (y1-wy)*k, F = 260*dpr;
+    const fade = (gx0, gy0, gx1, gy1, rx, ry, rw, rh) => {
+      const g = b.createLinearGradient(gx0, gy0, gx1, gy1);
+      g.addColorStop(0, 'rgba(255,255,255,1)'); g.addColorStop(1, 'rgba(255,255,255,0)');
+      b.fillStyle = g; b.fillRect(rx, ry, rw, rh); };
+    if (T > 1) fade(0, T, 0, T+F, 0, T, bandCv.width, F);
+    if (B < bandCv.height-1) fade(0, B, 0, B-F, 0, B-F, bandCv.width, F);
+    if (L > 1) fade(L, 0, L+F, 0, L, 0, F, bandCv.height);
+    if (R < bandCv.width-1) fade(R, 0, R-F, 0, R-F, 0, F, bandCv.height);
   }
 }
 
@@ -893,9 +937,9 @@ const ANKUNFT = [
     zitat:'<span class="d-br">‹In der Farbe und Form<br>liegt mehr als ich bin›</span><span class="m-br">‹In der Farbe<br>und Form liegt<br>mehr als ich bin›</span>',
     quelle:'Emanuela Assenza' },
   { cls:'farbe-blau', breit:true, name:'Blau', kc:'var(--blau)', kt:'#fff', satz:'Blau weicht zurück und nimmt deinen Blick mit in die Ferne.',
-    zitat:'‹Das Alltagsbewusstsein wird zugunsten eines Bildbewusstseins verlassen.›', quelle:'' },   // Quelle folgt
+    zitat:'‹Das Alltagsbewusstsein wird zugunsten eines Bildbewusstseins verlassen.›', quelle:'Emanuela Assenza' },
   { cls:'farbe-gruen', breit:true, name:'Grün', kc:'var(--gruen)', kt:'#fff', satz:'Grün ist ein Anfang, der sich Zeit lässt.',
-    zitat:'‹Man kann ein Bild nicht wollen.›', quelle:'' }                                          // Quelle folgt
+    zitat:'‹Man kann ein Bild nicht wollen.›', quelle:'Emanuela Assenza' }
 ];
 function ankunftFarbe(c){
   if (!(c >= 0 && c <= 2)) c = 0;
@@ -909,42 +953,20 @@ function ankunftFarbe(c){
   const reihe = document.querySelector('.raeume'); if (reihe) reihe.scrollLeft = 0;
   const k = $('kreis');
   k.style.setProperty('--kc', a.kc); k.style.setProperty('--kt', a.kt);
-  $('kreisSatz').innerHTML = `${a.name} ist<br>dein Zugang`;
-  k.setAttribute('aria-label', `${a.name} ist dein Zugang. Bild ansehen`);
-  k.classList.remove('offen','zeigen','einmal'); kreisGedreht = false;
+  $('kreisSatz').innerHTML = `Dein<br>Augenblick<br>ist ${a.name}.`;
+  k.setAttribute('aria-label', `Dein Augenblick ist ${a.name}. Dein Bild ansehen`);
+  k.classList.remove('offen');
+  karten.forEach((kk, i) => { kk.querySelector('.vielleicht').hidden = (i !== c); });   // Kreis 2 nur auf der eigenen Karte
 }
 
-/* ---------- Kreis: Lage, Erscheinen, einmal drehen, Bild öffnen ---------- */
-let kreisGedreht = false;
-const kreis = $('kreis'), kreisSpur = $('kreisSpur'), zTitel = $('zTitel'), bildFenster = $('bildFenster');
-function kreisLage(){
-  // Desktop: die Spur beginnt auf Höhe des Titels «Drei Zugänge» und reicht bis ans Seitenende (sticky)
-  const u = $('unten');
-  kreisSpur.style.top = (zTitel.getBoundingClientRect().top - u.getBoundingClientRect().top) + 'px';
-}
-function kreisEinmal(){
-  if (kreisGedreht || reduced.matches) return;
-  kreisGedreht = true; kreis.classList.add('einmal');
-  kreis.addEventListener('animationend', () => kreis.classList.remove('einmal'), { once:true });
-}
-function kreisPruefen(){
-  if (phase !== 'ankunft') return;
-  const r = zTitel.getBoundingClientRect();
-  if (isMobile()){
-    const fuss = document.querySelector('.fuss').getBoundingClientRect();
-    const zeigen = r.bottom < innerHeight && fuss.top > innerHeight - 140;   // ab Unterkante des Titels, nicht über dem Footer
-    kreis.classList.toggle('zeigen', zeigen);
-    if (!zeigen) kreis.classList.remove('offen');
-    if (zeigen) later(kreisEinmal, 0.5);
-  } else if (r.top < innerHeight - 80){ later(kreisEinmal, 0.4); }
-}
-addEventListener('scroll', kreisPruefen, { passive:true });
-addEventListener('resize', () => { if (phase === 'ankunft'){ kreisLage(); kreisPruefen(); } });
+/* ---------- Kreis am Bild: Hover/erstes Tippen dreht (bleibt gedreht), Klick/zweites Tippen öffnet das ganze Bild ---------- */
+const kreis = $('kreis'), bildFenster = $('bildFenster');
+kreis.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') kreis.classList.add('offen'); });   // nur Maus, nicht beim Tippen
+kreis.addEventListener('focus', () => { if (kreis.matches(':focus-visible')) kreis.classList.add('offen'); });
 function bildOeffnen(){
   if (!picture) return;
   const url = picture.toDataURL('image/jpeg', 0.92);
   $('bildGanz').src = url; $('bildSichern').href = url;
-  kreis.classList.remove('offen');
   bildFenster.showModal();
 }
 let kreisStart = null;
@@ -954,7 +976,22 @@ kreis.addEventListener('click', e => {
   if (touch && !kreis.classList.contains('offen')){ kreis.classList.add('offen'); return; }   // 1. Tippen dreht
   bildOeffnen();                                                                              // Klick / 2. Tippen öffnet
 });
+$('kreisKlein').addEventListener('click', bildOeffnen);
 $('bildZu').addEventListener('click', () => bildFenster.close());
+
+/* ---------- Menüs ---------- */
+function menueZu(n){ n.classList.remove('offen'); const b = n.querySelector('.m-knopf'); b.setAttribute('aria-expanded','false'); b.textContent = 'Menü';
+  n.querySelectorAll('.m-sub.offen').forEach(s => { s.classList.remove('offen'); s.querySelector('.m-sub-knopf').setAttribute('aria-expanded','false'); }); }
+document.querySelectorAll('.menue').forEach(n => {
+  const b = n.querySelector('.m-knopf');
+  b.addEventListener('click', () => { const o = !n.classList.contains('offen'); if (!o) return menueZu(n);
+    n.classList.add('offen'); b.setAttribute('aria-expanded','true'); b.textContent = 'Schliessen'; });
+  n.querySelectorAll('.m-sub-knopf').forEach(s => s.addEventListener('click', () => {
+    const li = s.parentElement, o = li.classList.toggle('offen'); s.setAttribute('aria-expanded', String(o)); }));
+  ['pointerdown','pointerup','pointermove'].forEach(t => n.addEventListener(t, e => e.stopPropagation()));   // Menü malt nicht
+});
+document.addEventListener('click', e => { document.querySelectorAll('.menue').forEach(n => { if (!n.contains(e.target)) menueZu(n); }); });
+document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.menue').forEach(menueZu); });
 bildFenster.addEventListener('click', e => { if (e.target === bildFenster) bildFenster.close(); });   // Klick daneben
 
 function commit(kind){
@@ -966,7 +1003,7 @@ function commit(kind){
   picture = mk(W,H); picture.getContext('2d').drawImage(canvas, 0, 0);
   seen = visibleWinner(picture); winner = seen.c;     // sichtbare Farbe, nicht die Bewegungen
   ankunftFarbe(winner);
-  homeChrome.classList.add('aus');
+  homeChrome.classList.add('aus'); document.querySelectorAll('.menue').forEach(menueZu);
   // Ankunft schon aufbauen (unsichtbar), damit die Lage des Bild-Bands und der Wortmarke bekannt ist
   window.scrollTo(0, 0); document.documentElement.classList.add('lock');
   ankunft.hidden = false; ankunft.classList.add('pre');
@@ -1037,7 +1074,7 @@ function startZoom(){
 /* Ankunft blendet über dem gezoomten Bild ein; das Bild-Band liegt genau an derselben Stelle */
 function reveal(){
   phase = 'ankunft';
-  drawBand(); kreisLage(); kreisPruefen();
+  drawBand();
   ankunft.classList.remove('pre');
   later(() => {
     home.hidden = true; fly.hidden = true; fly.classList.remove('on'); wordCv.hidden = true;
@@ -1055,7 +1092,7 @@ function restart(){
   fly.hidden = true; fly.classList.remove('on'); fly.style.transform = 'none'; wordCv.hidden = true; veil.style.transition = 'none'; veil.style.opacity = 0;
   spot = null; liveSpot = null; seen = null; picture = null;
   document.querySelectorAll('.karte.offen').forEach(k => { k.classList.remove('offen'); k.querySelector('.flaeche').setAttribute('aria-expanded','false'); }); phase = 'paint'; drawFrame(null);
-  kreis.classList.remove('offen','zeigen','einmal'); kreisGedreht = false; if (bildFenster.open) bildFenster.close();
+  kreis.classList.remove('offen'); if (bildFenster.open) bildFenster.close(); document.querySelectorAll('.menue').forEach(menueZu);
   home.hidden = false; home.removeAttribute('aria-hidden'); frozen = false; homeChrome.classList.remove('aus');
   document.documentElement.classList.remove('lock');
   lastUserMove = lastAuto = performance.now(); lastFrame = performance.now();
