@@ -72,37 +72,32 @@ html.lock,html.lock body{overflow:hidden}
   .h-nav{top:max(24px,env(safe-area-inset-top,0px));right:32px;gap:20px;font-size:16px;line-height:24px}
   .h-fuss{left:32px;right:32px;bottom:max(24px,env(safe-area-inset-bottom,0px));font-size:14px;line-height:20px;gap:16px;flex-wrap:wrap}
   .h-fuss nav{gap:24px}
+  .h-fuss p{display:none}   /* Datum auf dem Handy nur auf der Ankunft (25.11.) */
 }
-/* Kreise (22.11., Nicolas) – 84 px, Bree Serif Light 12/18, Schrift immer Ink
-   1 · Bild-Kreis: im Weiss unter dem Bild-Band rechts, erscheint erst beim Scrollen. Vorn weiss mit Linie «Dein Augenblick ist [Farbe].»,
-       Rückseite in der 70-%-Farbe des Verlaufs «Dein Bild ansehen». Pulsiert, bis man ihn berührt; einmal gedreht bleibt er gedreht.
-   2 · Karten-Kreis: ragt halb über die rechte obere Ecke der eigenen Karte, 10° gedreht, 70-%-Farbe, «Könnte dein Zugang sein».
-       Pulsiert; verschwindet, sobald die Karte geöffnet wird. */
-.kreis{position:absolute;z-index:3;top:-68px;right:calc(max(32px,calc((100% - 1248px)/2)) + 12px);width:84px;height:84px;padding:0;border:0;background:none;
-  cursor:pointer;perspective:600px;font:300 12px/18px var(--text);color:var(--ink);-webkit-tap-highlight-color:transparent;
-  opacity:0;pointer-events:none;transition:opacity .8s ease}
-.kreis.zeigen{opacity:1;pointer-events:auto}
-.kreis:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:50%}
-.k-dreh{position:relative;display:block;width:100%;height:100%;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.45,0,.15,1)}
-.k-vorn,.k-rueck{position:absolute;inset:0;border-radius:50%;display:grid;place-items:center;text-align:center;
-  backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.k-vorn{background:#fff;border:1px solid var(--linie)}
-.k-rueck{background:var(--v70);transform:rotateY(180deg)}
-.kreis.offen .k-dreh{transform:rotateY(180deg)}
-.kreis.zeigen:not(.offen){animation:puls 2.6s ease-in-out infinite}
+/* Kreise (25.11., Nicolas) – 112 / 104 px, Bree Serif Regular 14/18, Ink, pulsieren
+   Ankunft: ein einziger Kreis «Dein Bild ansehen» rechts nach dem Zitatblock, Fläche in der 70-%-Farbe des Verlaufs.
+     Scrollt man wieder nach oben, kommt er mit (bleibt unten im Bild), geht aber nie tiefer als seine Position (sticky).
+   Home: weisser Hinweis-Kreis oben links «Klicke/Tippe, um mehr zu erfahren.» – erscheint beim Stillhalten, Klick hält das Bild fest. */
 @keyframes puls{0%,100%{transform:scale(1)}50%{transform:scale(1.06)}}
+.kreis-spur{position:absolute;top:0;right:max(32px,calc((100% - 1248px)/2));width:112px;z-index:25;display:flex;flex-direction:column;
+  justify-content:flex-end;pointer-events:none}
+.kreis{display:grid;place-items:center;width:112px;height:112px;padding:0;border:0;border-radius:50%;background:var(--kc,#F6CD51);
+  color:var(--ink);font:400 14px/18px var(--text);text-align:center;cursor:pointer;pointer-events:auto;-webkit-tap-highlight-color:transparent;
+  animation:puls 2.6s ease-in-out infinite}
+.kreis:focus-visible{outline:2px solid var(--ink);outline-offset:4px}
+.kreis-spur.mitkommen .kreis{position:sticky;bottom:24px}
+.hinweis{position:absolute;z-index:1;top:120px;left:max(32px,calc((100% - 1248px)/2));width:112px;height:112px;padding:0;border-radius:50%;
+  background:#fff;border:1px solid var(--linie);display:grid;place-items:center;text-align:center;font:400 14px/18px var(--text);color:var(--ink);
+  cursor:pointer;opacity:0;transition:opacity .8s ease}
+#homeChrome .hinweis{pointer-events:none}
+#homeChrome .hinweis.zeigen{opacity:1;pointer-events:auto;animation:puls 2.6s ease-in-out infinite}
 .karte{position:relative}
-.vielleicht{position:absolute;z-index:3;top:-35px;right:-26px;width:84px;height:84px;margin:0;border-radius:50%;background:var(--v70);
-  display:grid;place-items:center;text-align:center;font:300 12px/18px var(--text);color:var(--ink);pointer-events:none;
-  transform:rotate(10deg);animation:pulsDreh 2.6s ease-in-out infinite;transition:opacity .3s ease}
-@keyframes pulsDreh{0%,100%{transform:rotate(10deg) scale(1)}50%{transform:rotate(10deg) scale(1.06)}}
-.karte.offen .vielleicht{opacity:0}
-@media (hover:hover){.karte:hover .vielleicht,.karte:focus-within .vielleicht{opacity:0}}
 @media (max-width:767px){
-  .kreis{top:-34px;right:27px}
+  .kreis-spur{right:32px;width:104px}
+  .kreis{width:104px;height:104px}
+  .hinweis{top:104px;left:32px;width:104px;height:104px}
 }
-@media(prefers-reduced-motion:reduce){.k-dreh{transition:none}.kreis.zeigen:not(.offen){animation:none}.vielleicht{animation:none}
-  .k-rueck{transform:none;opacity:0;transition:opacity .2s}.kreis.offen .k-rueck{opacity:1}}
+@media(prefers-reduced-motion:reduce){.kreis,#homeChrome .hinweis.zeigen{animation:none}}
 /* Fenster mit dem ganzen Bild */
 #bildFenster{border:0;padding:24px;background:#fff;max-width:min(94vw,1400px);max-height:94vh;box-shadow:0 2px 40px #0000001f}
 #bildFenster::backdrop{background:rgba(255,255,255,.92)}
@@ -124,6 +119,9 @@ html.lock,html.lock body{overflow:hidden}
 /* ---------- Ankunft · erster Bildschirm (Figma 426:43 Desktop / 355:41 Mobile) ---------- */
 #ankunft{position:relative;z-index:20;background:var(--white);transition:opacity .9s ease}
 #ankunft.pre{opacity:0;pointer-events:none}
+/* Übergang (25.11.): zuerst erscheint das Bild mit dem Schleier, dann kommt die Schrift dazu */
+#ankunft .kopf nav,#ankunft .benennung,#ankunft .unten,#ankunft .kreis-spur{transition:opacity .9s ease}
+#ankunft.spaet .kopf nav,#ankunft.spaet .benennung,#ankunft.spaet .unten,#ankunft.spaet .kreis-spur{opacity:0}
 #ankunft:focus{outline:none}
 .kopf{position:relative;z-index:2;display:flex;flex-direction:column;gap:48px;
   padding:48px max(32px,calc((100% - 1248px)/2)) 0}
@@ -193,7 +191,10 @@ html.lock,html.lock body{overflow:hidden}
 .unten.farbe-blau{--v06:#F0F6FD;--v18:#D2E2F7;--v35:#A8C8F2;--v70:#5191E4}
 .unten.farbe-gruen{--v06:#F4F9F0;--v18:#E1F0D6;--v35:#BFE0A8;--v70:#7FC150}
 .zitat{padding:152px 0 240px 124px}  /* beginnt 32 px nach dem Ende des Bildes (Schleier läuft 120 px in diesen Abschnitt) */
-.zitat-block{width:528px;max-width:100%;display:flex;flex-direction:column;gap:24px}
+.zitat-block{width:760px;max-width:100%;display:flex;flex-direction:column;gap:24px}
+/* Bezug zum eigenen Bild (25.11.): LT Largetext, Bree Serif Light – Poesie (Farbsatz, Bree Light) öffnet, Klarheit führt */
+.bezug{margin:0;font-weight:300;font-size:26px;line-height:32px;color:var(--ink)}
+br.bm{display:none}
 .zitat-block.breit{width:760px}  /* längere Sätze (Blau, Grün) */
 .d3s{margin:0;font-family:"bree",var(--text);font-weight:300;font-size:45px;line-height:52px;color:var(--ink);text-wrap:balance}  /* D3 Subtle, Desktop 45/52 */
 .zitat figure{margin:0}
@@ -202,7 +203,13 @@ html.lock,html.lock body{overflow:hidden}
 .zugaenge{padding-top:58px;display:flex;flex-direction:column;gap:48px}
 .zugaenge h2{margin:0 0 24px;font-family:"bree",var(--text);font-weight:700;font-size:54px;line-height:60px;hyphens:auto}  /* D2, Desktop 54/60 */
 .zugaenge .leitsatz{margin:0;max-width:589px;font-size:18px;line-height:28px;text-wrap:pretty}
-.raeume{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:32px}
+.raeume{display:flex;align-items:flex-end;gap:32px}
+.raeume .karte{flex:1 1 0;transition:flex-grow .5s cubic-bezier(.45,0,.15,1)}
+.raeume .karte.eigen{flex-grow:1.25}   /* eigene Karte 25 % grösser (Desktop 455 / 364 px) */
+@media (hover:hover){
+  .raeume:has(.karte:not(.eigen):hover) .karte.eigen{flex-grow:1}
+  .raeume .karte:not(.eigen):hover{flex-grow:1.25}
+}
 .karte{display:flex;flex-direction:column;gap:16px;min-width:0}
 .rubrik{margin:0;font-size:15px;line-height:24px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
 .flaeche{position:relative;aspect-ratio:395/557;container-type:inline-size;perspective:1600px;outline-offset:6px;cursor:pointer;-webkit-tap-highlight-color:transparent}
@@ -242,7 +249,8 @@ html.lock,html.lock body{overflow:hidden}
   .raeume{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;overscroll-behavior-x:contain;
     padding-top:40px;margin-top:-40px}
   .raeume::-webkit-scrollbar{display:none}
-  .karte{flex:0 0 300px;scroll-snap-align:start}
+  .raeume .karte{flex:0 0 300px;scroll-snap-align:start}
+  .raeume .karte.eigen{flex-basis:375px}
   .rueck{padding:24px}
   .rueck .frage{font-size:23px;line-height:32px;margin-bottom:12px}
   .rueck .klar{font-size:15px;line-height:24px}
@@ -254,6 +262,9 @@ html.lock,html.lock body{overflow:hidden}
   .zitat{padding:112px 0 160px}  /* 32 px nach dem Ende des Bildes (Schleier läuft 80 px herein) */
   .zitat-block{width:100%}
   .d3s{font-size:40px;line-height:48px}
+  .bezug{font-size:23px;line-height:32px}
+  br.bd{display:none}
+  br.bm{display:inline}
   .zitat figcaption{font-size:16px;line-height:24px}
   .zugaenge{padding-top:64px;gap:40px}
   .zugaenge h2{font-size:48px;line-height:56px}
@@ -262,7 +273,8 @@ html.lock,html.lock body{overflow:hidden}
   .raeume{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;
     overscroll-behavior-x:contain;padding-top:40px;margin-top:-40px}  /* oben Platz für den halben Karten-Kreis */
   .raeume::-webkit-scrollbar{display:none}
-  .karte{flex:0 0 280px;scroll-snap-align:start}
+  .raeume .karte{flex:0 0 280px;scroll-snap-align:start}
+  .raeume .karte.eigen{flex-basis:350px}
   .rubrik{font-size:14px;line-height:20px}
   .rueck{padding:24px}
   .rueck .frage{font-size:23px;line-height:32px;margin-bottom:12px}
@@ -303,6 +315,7 @@ html.lock,html.lock body{overflow:hidden}
 </main>
 <div id="homeChrome">
   <nav class="h-nav" aria-label="Schnellzugang"><a href="#" data-soon>Programm</a><a href="#" data-soon>Über den Kongress</a></nav>
+  <button class="hinweis" id="hinweis" type="button">Klicke, um<br>mehr zu<br>erfahren.</button>
   <footer class="h-fuss"><nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav><p>5.–7. März 2027 · Basel</p></footer>
 </div>
 <div id="veil" aria-hidden="true"></div>
@@ -310,6 +323,7 @@ html.lock,html.lock body{overflow:hidden}
 <canvas id="wordCv" aria-hidden="true" hidden></canvas>
 
 <div id="ankunft" hidden tabindex="-1">
+  <div class="kreis-spur" id="kreisSpur"><button class="kreis" id="kreis" type="button" aria-haspopup="dialog">Dein Bild<br>ansehen</button></div>
   <header class="kopf">
     <nav class="menue" aria-label="Hauptnavigation">
       <button class="m-knopf" type="button" aria-expanded="false" aria-controls="mListeA">Menü</button>
@@ -337,16 +351,10 @@ html.lock,html.lock body{overflow:hidden}
     </div>
   </div>
   <div class="unten" id="unten">
-    <button class="kreis" id="kreis" type="button" aria-haspopup="dialog" aria-label="Dein Augenblick ist Gelb. Dein Bild ansehen">
-      <span class="k-dreh"><span class="k-vorn" id="kreisSatz">Dein<br>Augenblick<br>ist Gelb.</span><span class="k-rueck">Dein Bild<br>ansehen</span></span>
-    </button>
-    <section class="zitat" aria-label="Farbsatz und Zitat">
+    <section class="zitat" aria-label="Farbsatz und dein Bild">
       <div class="zitat-block" id="zitatBlock">
-        <p class="d3s" id="farbsatz">Was sich sammelt,<br>beginnt zu leuchten.</p>
-        <figure>
-          <blockquote class="d3s" id="zitat"><span class="d-br">‹In der Farbe und Form<br>liegt mehr als ich bin›</span><span class="m-br">‹In der Farbe<br>und Form liegt<br>mehr als ich bin›</span></blockquote>
-          <figcaption id="zitatQuelle">Emanuela Assenza</figcaption>
-        </figure>
+        <p class="d3s" id="farbsatz"></p>
+        <p class="bezug" id="bezug"></p>
       </div>
     </section>
     <section class="zugaenge" aria-labelledby="zTitel">
@@ -360,12 +368,11 @@ html.lock,html.lock body{overflow:hidden}
           <div class="dreh">
             <div class="vorn"><img src="bild/textur-gelb.jpg" alt="" width="395" height="557"></div>
             <div class="rueck">
-              <div><p class="frage">Wie lange kannst du bei einer Farbe bleiben?</p><p class="klar">Ausgewählte Gemälde, ungestört und ohne Erklärtafeln. Geführte Runden im langsamen Schauen, mehrmals täglich.</p></div>
+              <div><p class="frage">Wie lange kannst<br>du bei einer Farbe bleiben?</p><p class="klar">Ausgewählte Gemälde, ungestört und ohne Erklärtafeln. Geführte Runden im langsamen Schauen, mehrmals täglich.</p></div>
               <a class="pfeil-link" href="#" data-soon><span>Mehr zum Schauraum</span><span class="pfeil" aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
-        <p class="vielleicht" hidden>Könnte dein<br>Zugang sein</p>
         <p class="rubrik">Schauraum · verweilen</p>
       </article>
       <article class="karte blau">
@@ -373,12 +380,11 @@ html.lock,html.lock body{overflow:hidden}
           <div class="dreh">
             <div class="vorn"><img src="bild/textur-blau.jpg" alt="" width="395" height="557"></div>
             <div class="rueck">
-              <div><p class="frage">Warum fällt es uns so schwer, nichts zu erkennen?</p><p class="klar">Vorträge und Gespräche aus Kunstgeschichte, Philosophie und Wahrnehmungsforschung. Verständlich, auch ohne Vorwissen.</p></div>
+              <div><p class="frage">Warum fällt es<br class="bd"> uns<br class="bm"> so schwer,<br class="bd"> nichts<br class="bm"> zu erkennen?</p><p class="klar">Vorträge und Gespräche aus Kunstgeschichte, Philosophie und Wahrnehmungsforschung. Verständlich, auch ohne Vorwissen.</p></div>
               <a class="pfeil-link" href="#" data-soon><span>Mehr zum Denkraum</span><span class="pfeil" aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
-        <p class="vielleicht" hidden>Könnte dein<br>Zugang sein</p>
         <p class="rubrik">Denkraum · ergründen</p>
       </article>
       <article class="karte gruen">
@@ -386,12 +392,11 @@ html.lock,html.lock body{overflow:hidden}
           <div class="dreh">
             <div class="vorn"><img src="bild/textur-gruen.jpg" alt="" width="395" height="557"></div>
             <div class="rueck">
-              <div><p class="frage">Was verändert sich, wenn du selbst Farbe aufträgst?</p><p class="klar">Workshops mit Künstler:innen: malen, schichten, zurücktreten. Material ist da, Erfahrung brauchst du keine.</p></div>
+              <div><p class="frage">Was verändert sich,<br class="bd"> wenn du selbst<br class="bd"> Farbe aufträgst?</p><p class="klar">Workshops mit Künstler:innen: malen, schichten, zurücktreten. Material ist da, Erfahrung brauchst du keine.</p></div>
               <a class="pfeil-link" href="#" data-soon><span>Mehr zum Werkraum</span><span class="pfeil" aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
-        <p class="vielleicht" hidden>Könnte dein<br>Zugang sein</p>
         <p class="rubrik">Werkraum · gestalten</p>
       </article>
       </div>
@@ -940,53 +945,50 @@ const later = (fn, s) => timers.push(setTimeout(fn, s*1000));
 /* ---------- Ankunft je Farbe (21.11.): Farbsatz, Zitat, Kartenreihenfolge, Verlauf ----------
    Eigener Raum zuerst, dann im Kreis Gelb → Blau → Grün. Schrift bleibt immer Ink. */
 const ANKUNFT = [
-  { cls:'', breit:false, name:'Gelb', raum:'den Schauraum', verb:'verweilen', kc:'var(--gelb)', kt:'var(--ink)', satz:'Was sich sammelt,<br>beginnt zu leuchten.',
-    zitat:'<span class="d-br">‹In der Farbe und Form<br>liegt mehr als ich bin›</span><span class="m-br">‹In der Farbe<br>und Form liegt<br>mehr als ich bin›</span>',
-    quelle:'Emanuela Assenza' },
-  { cls:'farbe-blau', breit:true, name:'Blau', raum:'den Denkraum', verb:'ergründen', kc:'var(--blau)', kt:'#fff', satz:'Blau weicht zurück und nimmt deinen Blick mit in die Ferne.',
-    zitat:'‹Das Alltagsbewusstsein wird zugunsten eines Bildbewusstseins verlassen.›', quelle:'Emanuela Assenza' },
-  { cls:'farbe-gruen', breit:true, name:'Grün', raum:'den Werkraum', verb:'gestalten', kc:'var(--gruen)', kt:'#fff', satz:'Grün ist ein Anfang, der sich Zeit lässt.',
-    zitat:'‹Man kann ein Bild nicht wollen.›', quelle:'Emanuela Assenza' }
+  { cls:'', name:'Gelb', raum:'den Schauraum', verb:'verweilen', v70:'#F6CD51',
+    satz:'Im Gelb<br class="bm"> sammelt sich,<br>was zu leuchten beginnt.',
+    bezug:'In deinem Bild hat das Leuchten am meisten Platz.<br>Es führt dich in den Schauraum.' },
+  { cls:'farbe-blau', name:'Blau', raum:'den Denkraum', verb:'ergründen', v70:'#5191E4',
+    satz:'Im Blau rückt alles<br class="bd"> in die Ferne, und<br class="bd"> dein Blick geht mit.',
+    bezug:'In deinem Bild hat<br class="bm"> die Ferne am meisten Platz.<br>Sie führt dich in den Denkraum.' },
+  { cls:'farbe-gruen', name:'Grün', raum:'den Werkraum', verb:'gestalten', v70:'#7FC150',
+    satz:'Im Grün liegt<br>ein Anfang,<br>der sich Zeit lässt.',
+    bezug:'In deinem Bild hat der Anfang am meisten Platz.<br>Er führt dich in den Werkraum.' }
 ];
 function ankunftFarbe(c){
   if (!(c >= 0 && c <= 2)) c = 0;
   const a = ANKUNFT[c];
-  $('farbsatz').innerHTML = a.satz; $('zitat').innerHTML = a.zitat;
-  const q = $('zitatQuelle'); q.textContent = a.quelle; q.hidden = !a.quelle;
-  $('zitatBlock').classList.toggle('breit', a.breit);
+  $('farbsatz').innerHTML = a.satz; $('bezug').innerHTML = a.bezug;
   const u = $('unten'); u.classList.remove('farbe-blau','farbe-gruen'); if (a.cls) u.classList.add(a.cls);
   const karten = [...document.querySelectorAll('.raeume .karte')];
   karten.forEach((k, i) => { k.style.order = (i - c + 3) % 3; });
   const reihe = document.querySelector('.raeume'); if (reihe) reihe.scrollLeft = 0;
-  const k = $('kreis');
-  k.style.setProperty('--kc', a.kc); k.style.setProperty('--kt', a.kt);
-  $('kreisSatz').innerHTML = `Dein<br>Augenblick<br>ist ${a.name}.`;
-  k.setAttribute('aria-label', `Dein Augenblick ist ${a.name}. Dein Bild ansehen`);
-  k.classList.remove('offen','zeigen');
+  karten.forEach((kk, i) => kk.classList.toggle('eigen', i === c));   // eigene Karte 25 % grösser
+  $('kreis').style.setProperty('--kc', a.v70); $('kreisSpur').classList.remove('mitkommen');
   $('bildText').innerHTML = `<p>Aus deinen Bewegungen ist dieses Bild entstanden.</p>`
     + `<p>Senkrecht wurde Gelb, waagrecht Blau, kreisend Grün – am meisten erscheint darin ${a.name}.</p>`
     + `<p>${a.name} öffnet ${a.raum}: ${a.verb}. Die anderen Räume stehen dir genauso offen.</p>`;
-  karten.forEach((kk, i) => { kk.querySelector('.vielleicht').hidden = (i !== c); });   // Kreis 2 nur auf der eigenen Karte
 }
 
-/* ---------- Kreis am Bild: Hover/erstes Tippen dreht (bleibt gedreht), Klick/zweites Tippen öffnet das ganze Bild ---------- */
-const kreis = $('kreis'), bildFenster = $('bildFenster');
-kreis.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') kreis.classList.add('offen'); });   // nur Maus, nicht beim Tippen
-kreis.addEventListener('focus', () => { if (kreis.matches(':focus-visible')) kreis.classList.add('offen'); });
-addEventListener('scroll', () => { if (phase === 'ankunft' && scrollY > 40) kreis.classList.add('zeigen'); }, { passive:true });
+/* ---------- Kreis «Dein Bild ansehen»: steht nach dem Zitatblock; einmal gesehen, kommt er beim Hochscrollen mit ---------- */
+const kreis = $('kreis'), kreisSpur = $('kreisSpur'), bildFenster = $('bildFenster');
+function kreisLage(){
+  const a = ankunft.getBoundingClientRect(), z = $('zitatBlock').getBoundingClientRect();
+  kreisSpur.style.height = Math.round(z.bottom - a.top + (isMobile() ? 32 : 48) + kreis.offsetHeight) + 'px';
+}
+function kreisPruefen(){
+  if (phase !== 'ankunft' || kreisSpur.classList.contains('mitkommen')) return;
+  if (kreisSpur.getBoundingClientRect().bottom < innerHeight) kreisSpur.classList.add('mitkommen');   // einmal gesehen
+}
+addEventListener('scroll', kreisPruefen, { passive:true });
+addEventListener('resize', () => { if (phase === 'ankunft') kreisLage(); });
 function bildOeffnen(){
   if (!picture) return;
   const url = picture.toDataURL('image/jpeg', 0.92);
   $('bildGanz').src = url; $('bildSichern').href = url;
   bildFenster.showModal();
 }
-let kreisStart = null;
-kreis.addEventListener('pointerdown', e => { kreisStart = e.pointerType; });
-kreis.addEventListener('click', e => {
-  const touch = kreisStart && kreisStart !== 'mouse'; kreisStart = null;
-  if (touch && !kreis.classList.contains('offen')){ kreis.classList.add('offen'); return; }   // 1. Tippen dreht
-  bildOeffnen();                                                                              // Klick / 2. Tippen öffnet
-});
+kreis.addEventListener('click', bildOeffnen);
 $('bildZu').addEventListener('click', () => bildFenster.close());
 
 /* ---------- Menüs ---------- */
@@ -1085,7 +1087,10 @@ function startZoom(){
 function reveal(){
   phase = 'ankunft';
   drawBand();
+  if (!reduced.matches) ankunft.classList.add('spaet');
   ankunft.classList.remove('pre');
+  later(() => { ankunft.classList.remove('spaet'); kreisLage(); }, reduced.matches ? 0 : CFG.revealDur);
+  if (document.fonts) document.fonts.ready.then(() => { if (phase === 'ankunft') kreisLage(); });
   later(() => {
     home.hidden = true; fly.hidden = true; fly.classList.remove('on'); wordCv.hidden = true;
     document.documentElement.classList.remove('lock');
@@ -1102,7 +1107,7 @@ function restart(){
   fly.hidden = true; fly.classList.remove('on'); fly.style.transform = 'none'; wordCv.hidden = true; veil.style.transition = 'none'; veil.style.opacity = 0;
   spot = null; liveSpot = null; seen = null; picture = null;
   document.querySelectorAll('.karte.offen').forEach(k => { k.classList.remove('offen'); k.querySelector('.flaeche').setAttribute('aria-expanded','false'); }); phase = 'paint'; drawFrame(null);
-  kreis.classList.remove('offen'); if (bildFenster.open) bildFenster.close(); document.querySelectorAll('.menue').forEach(menueZu);
+  kreisSpur.classList.remove('mitkommen'); ankunft.classList.remove('spaet'); hinweis.classList.remove('zeigen'); if (bildFenster.open) bildFenster.close(); document.querySelectorAll('.menue').forEach(menueZu);
   home.hidden = false; home.removeAttribute('aria-hidden'); frozen = false; homeChrome.classList.remove('aus');
   document.documentElement.classList.remove('lock');
   lastUserMove = lastAuto = performance.now(); lastFrame = performance.now();
@@ -1178,9 +1183,16 @@ function updateRestHint(now){
   const ok = !frozen && userForms >= (CFG.minForms[lastKind] ?? 1);
   home.classList.toggle('ready', ok && lastKind === 'mouse');
   const show = ok && !!lastPos && (now - lastUserMove > CFG.restAfter*1000) && !touchStart;
-  if (show && !hintOn){ placeHint(); restHint.classList.add('on'); hintOn = true; }
+  if (show && !hintOn){ placeHint(); hintOn = true; zeigeHinweis(); }   // statt Hinweis an der Maus: Kreis oben links (25.11.)
   else if (!show && hintOn){ restHint.classList.remove('on'); hintOn = false; }
 }
+const hinweis = $('hinweis');
+function zeigeHinweis(){
+  if (hinweis.classList.contains('zeigen')) return;
+  hinweis.innerHTML = (lastKind === 'touch' ? 'Tippe' : 'Klicke') + ', um<br>mehr zu<br>erfahren.';
+  hinweis.classList.add('zeigen');                     // bleibt sichtbar, auch wenn man weitermalt
+}
+hinweis.addEventListener('click', () => commit(lastKind === 'touch' ? 'touch' : 'mouse'));
 function placeHint(){
   restHint.textContent = lastKind === 'touch' ? 'Tippe, um mehr zu erfahren.' : 'Klicke, um mehr zu erfahren.';
   const r = home.getBoundingClientRect(), w = restHint.offsetWidth || 280, h = restHint.offsetHeight || 28;
