@@ -100,16 +100,21 @@ html.lock,html.lock body{overflow:hidden}
 @media(prefers-reduced-motion:reduce){.kreis,#homeChrome .hinweis.zeigen{animation:none}}
 /* Fenster mit dem ganzen Bild */
 /* Fenster = Karte (25.11.): das ganze Bild mit runden Ecken und Linie wie die Raumkarten, quer auf Desktop, hoch auf dem Handy.
-   «Bild sichern» links, «Schliessen» rechts – im Bild, auf weissem Grund. Kein Text. */
-#bildFenster{border:0;padding:0;background:none;max-width:none;max-height:none;overflow:visible}
+   Öffnen: der Kreis dreht sich (immer weiter in dieselbe Richtung) und wächst zur Bildkarte; Schliessen: zurück in den Kreis.
+   «Bild sichern» links, «Schliessen» rechts – im Bild, auf weissem Grund. Bildrand leicht beschnitten. */
+#bildFenster{border:0;padding:0;margin:0;background:none;width:100vw;height:100dvh;max-width:none;max-height:none;overflow:hidden}
 #bildFenster::backdrop{background:rgba(255,255,255,.92)}
-#bildFenster .bf-bild{position:relative;margin:0;border-radius:8px;overflow:hidden;border:1px solid var(--linie);background:#fff;line-height:0}
-#bildFenster img{display:block;width:auto;height:auto;max-width:min(92vw,1400px);max-height:88vh}
-#bildFenster .bf-zeile{position:absolute;left:16px;right:16px;bottom:16px;display:flex;justify-content:space-between;gap:16px;line-height:normal}
+#bildFenster .bf-bild{position:fixed;margin:0;perspective:1800px;outline:none}
+.bf-dreh{position:absolute;inset:0;transform-style:preserve-3d}
+.bf-seite,.bf-farbe{position:absolute;inset:0;border-radius:8px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.bf-seite{border:1px solid var(--linie);background:#fff}
+.bf-farbe{background:var(--kc,#F6CD51);transform:rotateY(180deg)}
+#bildFenster img{display:block;width:100%;height:100%;object-fit:cover}
+#bildFenster .bf-zeile{position:absolute;left:16px;right:16px;bottom:16px;display:flex;justify-content:space-between;gap:16px;transition:opacity .25s ease}
+#bildFenster.dreht .bf-zeile{opacity:0}
 #bildFenster a,#bildFenster button{font:300 16px/24px var(--text);color:var(--ink);background:#fff;border:0;border-radius:8px;padding:10px 16px;
   cursor:pointer;text-decoration:none}
 #bildFenster a:hover,#bildFenster button:hover,#bildFenster a:focus-visible,#bildFenster button:focus-visible{text-decoration:underline;text-underline-offset:5px}
-@media (max-width:767px){#bildFenster img{max-width:calc(100vw - 32px);max-height:calc(100dvh - 48px)}}
 #load-error{position:fixed;left:16px;bottom:16px;z-index:70;background:var(--white);padding:16px;margin:0}
 
 /* ---------- Ankunft · erster Bildschirm (Figma 426:43 Desktop / 355:41 Mobile) ---------- */
@@ -207,13 +212,13 @@ br.bm{display:none}
 /* Hover: nur die Fläche wächst (vom unteren Rand aus) – Rubrik und Nachbarkarten bleiben stehen, nichts wackelt */
 .flaeche{transform-origin:50% 100%;transition:transform .5s cubic-bezier(.45,0,.15,1)}
 @media (hover:hover){
-  .raeume .karte:not(.eigen):hover .flaeche{transform:scale(1.1)}
-  .raeume:has(.karte:not(.eigen):hover) .karte.eigen .flaeche{transform:scale(.91)}
+  .raeume .karte:not(.eigen):hover .flaeche{transform:scale(1.06)}
+  .raeume:has(.karte:not(.eigen):hover) .karte.eigen .flaeche{transform:scale(.94)}
 }
 /* Wischreihe (Handy/Tablet): die Karte, die vorne einrastet, wird gross – wie Hover auf dem Desktop (25.11.) */
 @media (max-width:1023px){
-  .raeume .karte.vorne:not(.eigen) .flaeche{transform:scale(1.1)}
-  .raeume:has(.karte.vorne:not(.eigen)) .karte.eigen .flaeche{transform:scale(.91)}
+  .raeume .karte.vorne:not(.eigen) .flaeche{transform:scale(1.06)}
+  .raeume:has(.karte.vorne:not(.eigen)) .karte.eigen .flaeche{transform:scale(.94)}
 }
 .karte{display:flex;flex-direction:column;gap:16px;min-width:0}
 .rubrik{margin:0;font-size:15px;line-height:24px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
@@ -248,7 +253,7 @@ br.bm{display:none}
 .fuss a:hover{text-decoration:underline;text-underline-offset:5px}
 /* Schmale Fenster (Tablet, kleines Browserfenster): Karten als Wischreihe wie auf dem Handy, Text in Mobile-Grössen */
 @media (min-width:768px) and (max-width:1023px){
-  .raeume{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;overscroll-behavior-x:contain;
+  .raeume{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;overscroll-behavior-x:contain;
     padding-top:40px;margin-top:-40px}
   .raeume::-webkit-scrollbar{display:none}
   .raeume .karte{flex:0 0 300px;scroll-snap-align:start}
@@ -272,7 +277,7 @@ br.bm{display:none}
   .zugaenge h2{font-size:48px;line-height:56px}
   .zugaenge .leitsatz{font-size:16px;line-height:24px}
   /* Wischreihe: horizontal, rastet ein, nächste Karte angeschnitten */
-  .raeume{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;
+  .raeume{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;
     overscroll-behavior-x:contain;padding-top:40px;margin-top:-40px}  /* oben Platz für den halben Karten-Kreis */
   .raeume::-webkit-scrollbar{display:none}
   .raeume .karte{flex:0 0 280px;scroll-snap-align:start}
@@ -411,8 +416,10 @@ br.bm{display:none}
 </div>
 
 <dialog id="bildFenster" aria-label="Dein Augenblick, ganzes Bild">
-  <div class="bf-bild" tabindex="-1" autofocus style="outline:none"><img id="bildGanz" alt="Dein Augenblick, das ganze Bild">
-    <div class="bf-zeile"><a id="bildSichern" href="#" download="augenblick.jpg">Bild sichern</a><button id="bildZu" type="button">Schliessen</button></div></div>
+  <div class="bf-bild" id="bfBild" tabindex="-1" autofocus><div class="bf-dreh" id="bfDreh">
+    <div class="bf-farbe" aria-hidden="true"></div>
+    <div class="bf-seite"><img id="bildGanz" alt="Dein Augenblick, das ganze Bild">
+    <div class="bf-zeile"><a id="bildSichern" href="#" download="augenblick.jpg">Bild sichern</a><button id="bildZu" type="button">Schliessen</button></div></div></div></div>
 </dialog>
 <div id="debug" hidden></div>
 <p id="load-error" role="alert" hidden>Die Motive konnten nicht geladen werden. Bitte die Seite neu laden.</p>
@@ -979,14 +986,53 @@ function kreisPruefen(){
 }
 addEventListener('scroll', kreisPruefen, { passive:true });
 addEventListener('resize', () => { if (phase === 'ankunft') kreisLage(); });
-function bildOeffnen(){
-  if (!picture) return;
-  const url = picture.toDataURL('image/jpeg', 0.92);
-  $('bildGanz').src = url; $('bildSichern').href = url;
-  bildFenster.showModal();
+/* Bild für das Fenster: Rand 3 % beschnitten (am Rand der Malfläche überlappen sich sonst Formen sichtbar) */
+let bildRatio = 1.6;
+function bildVorbereiten(){
+  const cx = Math.round(picture.width*0.03), cy = Math.round(picture.height*0.03);
+  const w = picture.width - 2*cx, h = picture.height - 2*cy, c = mk(w, h);
+  c.getContext('2d').drawImage(picture, cx, cy, w, h, 0, 0, w, h);
+  const url = c.toDataURL('image/jpeg', 0.92);
+  $('bildGanz').src = url; $('bildSichern').href = url; bildRatio = w/h;
 }
+function bildZiel(){
+  const mob = isMobile(), mw = mob ? innerWidth - 32 : Math.min(innerWidth*0.92, 1400), mh = mob ? innerHeight - 48 : innerHeight*0.88;
+  let w = mw, h = w/bildRatio; if (h > mh){ h = mh; w = h*bildRatio; }
+  return { x:(innerWidth-w)/2, y:(innerHeight-h)/2, w, h };
+}
+const kreisRect = () => { const r = kreis.getBoundingClientRect(); return { x:r.left, y:r.top, w:r.width, h:r.height }; };
+let bfWinkel = 0, bfAnim = false;
+function bfDrehen(von, nach, fertig){
+  const b = $('bfBild'), d = $('bfDreh'), dur = reduced.matches ? 0 : 650, ease = 'cubic-bezier(.45,0,.15,1)';
+  const box = r => ({ left:r.x+'px', top:r.y+'px', width:r.w+'px', height:r.h+'px' });
+  Object.assign(b.style, box(nach));
+  if (!dur){ d.style.transform = `rotateY(${bfWinkel+180}deg)`; bfWinkel += 180; fertig && fertig(); return; }
+  bfAnim = true; bildFenster.classList.add('dreht');
+  b.animate([ box(von), box(nach) ], { duration:dur, easing:ease });
+  const rund = Math.min(von.w, von.h)/2;
+  d.querySelectorAll('.bf-seite,.bf-farbe').forEach(f => f.animate(
+    von.w < nach.w ? [{ borderRadius:rund+'px' }, { borderRadius:'8px' }] : [{ borderRadius:'8px' }, { borderRadius:Math.min(nach.w,nach.h)/2+'px' }],
+    { duration:dur, easing:ease, fill:'forwards' }));
+  const a = d.animate([{ transform:`rotateY(${bfWinkel}deg)` }, { transform:`rotateY(${bfWinkel+180}deg)` }], { duration:dur, easing:ease });
+  bfWinkel += 180; d.style.transform = `rotateY(${bfWinkel}deg)`;
+  a.onfinish = () => { bfAnim = false; bildFenster.classList.remove('dreht'); fertig && fertig(); };
+}
+function bildOeffnen(){
+  if (!picture || bildFenster.open) return;
+  bildVorbereiten();
+  bildFenster.style.setProperty('--kc', getComputedStyle(kreis).getPropertyValue('--kc') || '#F6CD51');
+  bfWinkel = 180; $('bfDreh').style.transform = 'rotateY(180deg)';   // Startseite: Farbe (der Kreis)
+  bildFenster.showModal();
+  bfDrehen(kreisRect(), bildZiel());
+}
+function bildSchliessen(){
+  if (!bildFenster.open || bfAnim) return;
+  bfDrehen(bildZiel(), kreisRect(), () => bildFenster.close());
+}
+addEventListener('resize', () => { if (bildFenster.open && !bfAnim) Object.assign($('bfBild').style, (r => ({ left:r.x+'px', top:r.y+'px', width:r.w+'px', height:r.h+'px' }))(bildZiel())); });
+bildFenster.addEventListener('cancel', e => { e.preventDefault(); bildSchliessen(); });   // Esc
 kreis.addEventListener('click', bildOeffnen);
-$('bildZu').addEventListener('click', () => bildFenster.close());
+$('bildZu').addEventListener('click', bildSchliessen);
 
 /* ---------- Menüs ---------- */
 function menueZu(n){ n.classList.remove('offen'); const b = n.querySelector('.m-knopf'); b.setAttribute('aria-expanded','false'); b.textContent = 'Menü';
@@ -1001,7 +1047,7 @@ document.querySelectorAll('.menue').forEach(n => {
 });
 document.addEventListener('click', e => { document.querySelectorAll('.menue').forEach(n => { if (!n.contains(e.target)) menueZu(n); }); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.menue').forEach(menueZu); });
-bildFenster.addEventListener('click', e => { if (e.target === bildFenster) bildFenster.close(); });   // Klick daneben
+bildFenster.addEventListener('click', e => { if (e.target === bildFenster) bildSchliessen(); });   // Klick daneben
 
 function commit(kind){
   if (!ready || frozen || phase !== 'paint') return;
@@ -1126,7 +1172,7 @@ window.addEventListener('resize', () => { if (phase === 'ankunft') drawBand(); }
   };
   reihe.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(pruefe); }, { passive:true });
 })();
-/* ---------- Raumkarten: Maus dreht beim Überfahren, Touch beim Tippen ohne Bewegung.
+/* ---------- Raumkarten: Überfahren macht die Karte grösser, Klick/Tippen dreht; Maus raus dreht zurück zur Farbe.
    Die Drehung geht immer weiter in dieselbe Richtung (0 → 180 → 360 …), nie zurück (25.11.) ---------- */
 document.querySelectorAll('.karte').forEach(k => {
   const f = k.querySelector('.flaeche'), d = k.querySelector('.dreh');
@@ -1142,15 +1188,13 @@ document.querySelectorAll('.karte').forEach(k => {
     if (o) document.querySelectorAll('.karte.offen').forEach(x => { if (x !== k) x._setze(false); });   // nur eine Karte offen
     setze(o);
   };
-  f.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') setze(true); });
-  f.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') setze(false); });
-  f.addEventListener('focus', () => { if (f.matches(':focus-visible')) setze(true); });
+  f.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') setze(false); });   // Maus raus → zurück zur Farbe
   k.addEventListener('focusout', e => { if (!k.contains(e.relatedTarget)) setze(false); });
   f.addEventListener('pointerdown', e => { start = { x:e.clientX, y:e.clientY, t:e.pointerType }; });
   f.addEventListener('pointerup', e => {
     if (!start || e.target.closest('a')) { start = null; return; }
     const moved = Math.hypot(e.clientX-start.x, e.clientY-start.y);
-    if (start.t !== 'mouse' && moved < 12) toggle();      // Wischen öffnet nichts
+    if (moved < 12) toggle();      // Klick / Tippen dreht; Wischen öffnet nichts (25.11.: auch Desktop nur noch per Klick)
     start = null;
   });
   f.addEventListener('keydown', e => { if ((e.key === 'Enter' || e.key === ' ') && e.target === f){ e.preventDefault(); toggle(); } });
