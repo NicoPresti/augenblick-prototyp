@@ -206,11 +206,13 @@ br.bm{display:none}
 .zugaenge h2{margin:0 0 24px;font-family:"bree",var(--text);font-weight:700;font-size:54px;line-height:60px;hyphens:auto}  /* D2, Desktop 54/60 */
 .zugaenge .leitsatz{margin:0;max-width:589px;font-size:18px;line-height:28px;text-wrap:pretty}
 .raeume{display:flex;align-items:flex-end;gap:32px}
-.raeume .karte{flex:1 1 0;transition:flex-grow .5s cubic-bezier(.45,0,.15,1)}
-.raeume .karte.eigen{flex-grow:1.25}   /* eigene Karte 25 % grösser (Desktop 455 / 364 px) */
+.raeume .karte{flex:1 1 0}
+.raeume .karte.eigen{flex-grow:1.1}   /* eigene Karte 10 % grösser (25.11., vorher 25 %) */
+/* Hover: nur die Fläche wächst (vom unteren Rand aus) – Rubrik und Nachbarkarten bleiben stehen, nichts wackelt */
+.flaeche{transform-origin:50% 100%;transition:transform .5s cubic-bezier(.45,0,.15,1)}
 @media (hover:hover){
-  .raeume:has(.karte:not(.eigen):hover) .karte.eigen{flex-grow:1}
-  .raeume .karte:not(.eigen):hover{flex-grow:1.25}
+  .raeume .karte:not(.eigen):hover .flaeche{transform:scale(1.1)}
+  .raeume:has(.karte:not(.eigen):hover) .karte.eigen .flaeche{transform:scale(.91)}
 }
 .karte{display:flex;flex-direction:column;gap:16px;min-width:0}
 .rubrik{margin:0;font-size:15px;line-height:24px;text-transform:uppercase;letter-spacing:.08em;white-space:nowrap}
@@ -219,10 +221,7 @@ br.bm{display:none}
 .vorn,.rueck{position:absolute;inset:0;border-radius:8px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
 .vorn img{width:100%;height:100%;object-fit:cover;display:block}
 .rueck{transform:rotateY(180deg);background:#fff;border:1px solid var(--linie);padding:32px;display:flex;flex-direction:column;justify-content:space-between}
-.karte.offen .dreh{transform:rotateY(180deg)}
-@media (hover:hover){.karte:hover .dreh,.karte:focus-within .dreh{transform:rotateY(180deg)}}
-.karte:not(.offen) .rueck{pointer-events:none}
-@media (hover:hover){.karte:hover .rueck,.karte:focus-within .rueck{pointer-events:auto}}
+.karte:not(.offen) .rueck{pointer-events:none}   /* Drehung setzt das Script: immer weiter in dieselbe Richtung (25.11.) */
 .rueck .frage{margin:0 0 16px;font-weight:300;font-size:26px;line-height:32px}  /* LT, Desktop 26/32 */
 .rueck .klar{margin:0;font-size:18px;line-height:28px;text-wrap:pretty}
 /* Desktop: Text in der offenen Karte geht mit der Kartenbreite mit (Figma: 395 px = 100cqw), damit er nie herausläuft,
@@ -252,7 +251,7 @@ br.bm{display:none}
     padding-top:40px;margin-top:-40px}
   .raeume::-webkit-scrollbar{display:none}
   .raeume .karte{flex:0 0 300px;scroll-snap-align:start}
-  .raeume .karte.eigen{flex-basis:375px}
+  .raeume .karte.eigen{flex-basis:330px}
   .rueck{padding:24px}
   .rueck .frage{font-size:23px;line-height:32px;margin-bottom:12px}
   .rueck .klar{font-size:15px;line-height:24px}
@@ -276,7 +275,7 @@ br.bm{display:none}
     overscroll-behavior-x:contain;padding-top:40px;margin-top:-40px}  /* oben Platz für den halben Karten-Kreis */
   .raeume::-webkit-scrollbar{display:none}
   .raeume .karte{flex:0 0 280px;scroll-snap-align:start}
-  .raeume .karte.eigen{flex-basis:350px}
+  .raeume .karte.eigen{flex-basis:308px}
   .rubrik{font-size:14px;line-height:20px}
   .rueck{padding:24px}
   .rueck .frage{font-size:23px;line-height:32px;margin-bottom:12px}
@@ -292,7 +291,6 @@ br.bm{display:none}
   .dreh{transition:none;transform:none!important}
   .rueck{transform:none;opacity:0;transition:opacity .2s}
   .karte.offen .rueck{opacity:1;pointer-events:auto}
-  @media (hover:hover){.karte:hover .rueck,.karte:focus-within .rueck{opacity:1}}
   .karte.offen .vorn{opacity:0}
   .pfeil{transition:none}
 }
@@ -1020,7 +1018,7 @@ function commit(kind){
   homeChrome.classList.add('aus'); document.querySelectorAll('.menue').forEach(menueZu);
   // Ankunft schon aufbauen (unsichtbar), damit die Lage des Bild-Bands und der Wortmarke bekannt ist
   window.scrollTo(0, 0); document.documentElement.classList.add('lock');
-  ankunft.hidden = false; ankunft.classList.add('pre');
+  ankunft.hidden = false; ankunft.classList.add('pre'); if (!reduced.matches) ankunft.classList.add('spaet');   // Schrift erst nach Bild + Schleier
   const r = cutRect();
   spot = findSpot(picture, winner, r.width, r.height);
   drawBand(); drawFrame(spot, false); if (!debugBox.hidden) showDebug();
@@ -1089,7 +1087,6 @@ function startZoom(){
 function reveal(){
   phase = 'ankunft';
   drawBand();
-  if (!reduced.matches) ankunft.classList.add('spaet');
   ankunft.classList.remove('pre');
   later(() => { ankunft.classList.remove('spaet'); kreisLage(); }, reduced.matches ? 0 : CFG.revealDur);
   if (document.fonts) document.fonts.ready.then(() => { if (phase === 'ankunft') kreisLage(); });
@@ -1108,7 +1105,7 @@ function restart(){
   stage.style.transition = 'none'; stage.style.transform = ''; stage.style.transformOrigin = '';
   fly.hidden = true; fly.classList.remove('on'); fly.style.transform = 'none'; wordCv.hidden = true; veil.style.transition = 'none'; veil.style.opacity = 0;
   spot = null; liveSpot = null; seen = null; picture = null;
-  document.querySelectorAll('.karte.offen').forEach(k => { k.classList.remove('offen'); k.querySelector('.flaeche').setAttribute('aria-expanded','false'); }); phase = 'paint'; drawFrame(null);
+  document.querySelectorAll('.karte.offen').forEach(k => k._setze(false)); phase = 'paint'; drawFrame(null);
   kreisSpur.classList.remove('mitkommen'); ankunft.classList.remove('spaet'); hinweis.classList.remove('zeigen'); if (bildFenster.open) bildFenster.close(); document.querySelectorAll('.menue').forEach(menueZu);
   home.hidden = false; home.removeAttribute('aria-hidden'); frozen = false; homeChrome.classList.remove('aus');
   document.documentElement.classList.remove('lock');
@@ -1120,15 +1117,26 @@ $('wm').addEventListener('click', e => { e.preventDefault(); restart(); });
 document.querySelectorAll('#ankunft [data-soon], #homeChrome [data-soon]').forEach(el => el.addEventListener('click', e => e.preventDefault()));
 window.addEventListener('resize', () => { if (phase === 'ankunft') drawBand(); });
 
-/* ---------- Raumkarten: Desktop Hover (CSS), Touch: Tippen ohne Bewegung dreht die Karte ---------- */
+/* ---------- Raumkarten: Maus dreht beim Überfahren, Touch beim Tippen ohne Bewegung.
+   Die Drehung geht immer weiter in dieselbe Richtung (0 → 180 → 360 …), nie zurück (25.11.) ---------- */
 document.querySelectorAll('.karte').forEach(k => {
-  const f = k.querySelector('.flaeche');
-  let start = null;
-  const toggle = () => {
-    // nur eine Karte offen
-    document.querySelectorAll('.karte.offen').forEach(o => { if (o !== k){ o.classList.remove('offen'); o.querySelector('.flaeche').setAttribute('aria-expanded','false'); } });
-    const o = k.classList.toggle('offen'); f.setAttribute('aria-expanded', String(o));
+  const f = k.querySelector('.flaeche'), d = k.querySelector('.dreh');
+  let start = null, winkel = 0;
+  const setze = o => {
+    if (k.classList.contains('offen') === o) return;
+    winkel += 180; d.style.transform = `rotateY(${winkel}deg)`;
+    k.classList.toggle('offen', o); f.setAttribute('aria-expanded', String(o));
   };
+  k._setze = setze;
+  const toggle = () => {
+    const o = !k.classList.contains('offen');
+    if (o) document.querySelectorAll('.karte.offen').forEach(x => { if (x !== k) x._setze(false); });   // nur eine Karte offen
+    setze(o);
+  };
+  f.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') setze(true); });
+  f.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') setze(false); });
+  f.addEventListener('focus', () => { if (f.matches(':focus-visible')) setze(true); });
+  k.addEventListener('focusout', e => { if (!k.contains(e.relatedTarget)) setze(false); });
   f.addEventListener('pointerdown', e => { start = { x:e.clientX, y:e.clientY, t:e.pointerType }; });
   f.addEventListener('pointerup', e => {
     if (!start || e.target.closest('a')) { start = null; return; }
