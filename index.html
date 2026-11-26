@@ -7,7 +7,10 @@
 <!-- Adobe-Fonts-Web-Projekt «Augenblick – GitHub Pages» (Domains: nicopresti.github.io, localhost, 127.0.0.1) -->
 <link rel="stylesheet" href="https://use.typekit.net/png5wew.css">
 <style>
-/* Augenblick · Home → Zoom → Ankunft · Stand 21.11.2026 (Abend: Typo-Pfeile, keine Farbe auf Schrift,
+/* Augenblick · Home → Zoom → Ankunft → Programm · Stand 26.11.2026
+   26.11.: Navigation Räume · Programm · Über den Kongress · Menü (Menü: Neu beginnen, Anmeldung, Impressum · Datenschutz);
+   Programmseite 2000 (Figma «05 Gestaltung», Desktop 719:723 / Mobile 720:459) mit Raum-Feldern und Programm-Zeilen.
+   Frühere Stände: 21.11.2026 (Abend: Typo-Pfeile, keine Farbe auf Schrift,
    Ankunft je Farbe, Schleier an der Bildkante, Desktop-Skala 1.2, Navigation 18 px, Home-Navigation)
    Home: nur die Farbfläche. Malen = jede Bewegung, Festhalten = ruhiger Klick / Tippen.
    Festhalten: Wortmarke erscheint über dem unveränderten Bild, gleitet nach oben links,
@@ -301,6 +304,79 @@ br.bm{display:none}
   .pfeil{transition:none}
 }
 
+
+/* ---------- Menü 26.11.: Räume · Programm · Über den Kongress · Menü ----------
+   «Menü» öffnet wie «Räume» ein kleines Untermenü (rechtsbündig): Neu beginnen · Anmeldung · Impressum · Datenschutz.
+   Mobile: nur «Menü»; darin alles untereinander, die Punkte aus «Menü» stehen direkt in der Liste. */
+.menue .m-unter.rechts{left:auto;right:-24px;align-items:flex-end}
+.menue .m-service{white-space:nowrap}
+.menue [aria-current="page"]{text-decoration:underline;text-underline-offset:6px}
+@media (max-width:767px){
+  .menue .m-mehr>.m-sub-knopf{display:none}
+  .menue .m-sub.m-mehr>.m-unter{display:flex;padding-top:0}
+  .menue .m-unter.rechts{right:auto}
+}
+
+/* ---------- Programm 2000 (Figma «05 Gestaltung» 26.11.) ----------
+   Aufbau wie Wireframe: Kopf · Seitentitel · Raum-Felder · drei Tage · Zur Anmeldung · Fuss. Hintergrund weiss. */
+#programm{position:relative;z-index:20;background:var(--white)}
+#programm:focus{outline:none}
+.p-inhalt{display:flex;flex-direction:column;gap:120px;padding:120px max(32px,calc((100% - 1248px)/2)) 0}
+.p-hero{display:flex;flex-direction:column;gap:24px}
+.p-hero h1{margin:0;max-width:820px;font-family:"bree",var(--text);font-weight:700;font-size:54px;line-height:60px;hyphens:auto;text-wrap:balance}  /* D2 Display */
+.p-leit{margin:0;max-width:589px;font-size:18px;line-height:28px;text-wrap:pretty}
+.p-prog{display:flex;flex-direction:column;gap:80px}
+.p-tag h2{margin:0 0 24px;font-weight:700;font-size:26px;line-height:32px}  /* T3 Title */
+.p-tag ol{list-style:none;margin:0;padding:0}
+/* Programm-Zeile: Zeit 144 · Raum 336 · Titel · Details. Raum = Kreis in der 70-%-Farbe + Raumname (Link → Raumseite) */
+.pz{display:grid;grid-template-columns:144px 336px 1fr auto;align-items:baseline;padding:24px 0;border-top:1px solid var(--linie)}
+.pz-zeit,.pz-raum{font-size:15px;line-height:24px;text-transform:uppercase;letter-spacing:.08em}
+.pz-raum{display:flex;align-items:center;gap:12px;align-self:start}
+.pz-raum i{flex:none;width:16px;height:16px;border-radius:50%;background:var(--rc)}
+.pz a{color:var(--ink);text-decoration:none}
+.pz-raum a:hover,.pz-raum a:focus-visible{text-decoration:underline;text-underline-offset:5px}
+.pz-titel{margin:0;font-weight:700;font-size:22px;line-height:28px;text-wrap:pretty}  /* T4 Title */
+.pz-det{padding-left:32px;font-size:18px;line-height:28px;text-decoration:underline!important;text-underline-offset:5px;text-decoration-thickness:1px}
+.p-inhalt .cta{padding-top:0}
+.p-inhalt .fuss{padding-top:0}
+/* Raum-Felder (statt Filter): Umkehrung der Raumkarten der Ankunft. Ruhe = weisse Fläche mit Raumname.
+   Maus darüber → dreht sich zur Farbstruktur; bleibt die Maus 3 s, geht es in den Raum. Maus vorher weg → dreht zurück.
+   Klick / Enter führt sofort; Tippen dreht und führt weiter. Drehung immer weiter in dieselbe Richtung. */
+.p-raeume{display:flex;gap:16px}
+.rf{position:relative;flex:none;width:256px;height:56px;padding:0;border:0;background:none;color:var(--ink);font:inherit;cursor:pointer;perspective:900px;
+  -webkit-tap-highlight-color:transparent}
+.rf:focus-visible{outline:2px solid var(--ink);outline-offset:4px;border-radius:28px}
+.rf-dreh{position:absolute;inset:0;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.45,0,.15,1)}
+.rf-vorn,.rf-rueck{position:absolute;inset:0;border-radius:28px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.rf-vorn{display:flex;justify-content:center;align-items:center;background:#fff;border:1px solid var(--linie);font-size:18px;line-height:28px;white-space:nowrap}
+.rf-rueck{transform:rotateY(180deg);background:var(--tex) center 45%/cover no-repeat}
+@media (min-width:768px) and (max-width:1023px){
+  .pz{grid-template-columns:96px 200px 1fr auto}
+  .p-raeume{flex-wrap:wrap}
+}
+@media (max-width:767px){
+  .p-inhalt{gap:80px;padding:80px 32px 0}
+  .p-hero h1{font-size:40px;line-height:48px}  /* D3 Display (Mobile: Display nur kurz) */
+  .p-leit{font-size:16px;line-height:24px}
+  .p-prog{gap:64px}
+  .p-tag h2{font-size:23px;line-height:28px;margin-bottom:16px}
+  .pz{grid-template-columns:auto 1fr;column-gap:16px;row-gap:8px;padding:20px 0}
+  .pz-zeit,.pz-raum{font-size:14px;line-height:20px}
+  .pz-raum{gap:8px;align-self:center}
+  .pz-raum i{width:12px;height:12px}
+  .pz-titel{grid-column:1/-1;font-size:19px;line-height:24px}
+  .pz-det{grid-column:1/-1;justify-self:start;padding:4px 0 0;font-size:16px;line-height:24px}
+  .p-raeume{gap:8px}
+  .rf{flex:1 1 0;width:auto;min-width:0}
+  .rf-vorn{font-size:16px;line-height:24px}
+  .rf .zusatz{display:none}   /* Mobile ohne Benennung */
+}
+@media(prefers-reduced-motion:reduce){
+  .rf-dreh{transition:none;transform:none!important}
+  .rf-rueck{transform:none;opacity:0;transition:opacity .2s}
+  .rf.dreht .rf-rueck{opacity:1}
+}
+
 /* ---------- Debug (Taste D) ---------- */
 #debug{position:fixed;left:12px;top:12px;z-index:60;background:#ffffffeb;padding:10px 12px;font-size:12px;line-height:1.35;display:grid;gap:5px;
   width:250px;font-variant-numeric:tabular-nums;pointer-events:none;color:var(--ink);font-family:ui-sans-serif,system-ui,sans-serif;box-shadow:0 1px 0 #0001,0 6px 24px #0000001a}
@@ -320,7 +396,7 @@ br.bm{display:none}
   </div>
 </main>
 <div id="homeChrome">
-  <nav class="h-nav" aria-label="Schnellzugang"><a href="#" data-soon>Programm</a><a href="#" data-soon>Über den Kongress</a></nav>
+  <nav class="h-nav" aria-label="Schnellzugang"><a href="#programm" data-ziel="programm">Programm</a><a href="#" data-soon>Über den Kongress</a></nav>
   <button class="hinweis" id="hinweis" type="button">Klicke, um<br>mehr zu<br>erfahren.</button>
   <footer class="h-fuss"><nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav><p>5.–7. März 2027 · Basel</p></footer>
 </div>
@@ -334,11 +410,13 @@ br.bm{display:none}
     <nav class="menue" aria-label="Hauptnavigation">
       <button class="m-knopf" type="button" aria-expanded="false" aria-controls="mListeA">Menü</button>
       <ul class="m-liste" id="mListeA">
-        <li><a href="#" data-soon>Programm</a></li>
-        <li class="m-sub"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mRaeume">Räume</button>
-          <ul class="m-unter" id="mRaeume"><li><a href="#" data-soon>Schauraum</a></li><li><a href="#" data-soon>Denkraum</a></li><li><a href="#" data-soon>Werkraum</a></li></ul></li>
+        <li class="m-sub"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mRaeumeA">Räume</button>
+          <ul class="m-unter" id="mRaeumeA"><li><a href="#" data-soon>Schauraum</a></li><li><a href="#" data-soon>Denkraum</a></li><li><a href="#" data-soon>Werkraum</a></li></ul></li>
+        <li><a href="#programm" data-ziel="programm">Programm</a></li>
         <li><a href="#" data-soon>Über den Kongress</a></li>
-        <li class="d-only"><a href="#" data-soon>Menü</a></li>
+        <li class="m-sub m-mehr"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mMehrA">Menü</button>
+          <ul class="m-unter rechts" id="mMehrA"><li><a href="#" data-ziel="neu">Neu beginnen</a></li><li><a href="#" data-soon>Anmeldung</a></li>
+            <li class="m-service"><a href="#" data-soon>Impressum</a><span aria-hidden="true"> · </span><a href="#" data-soon>Datenschutz</a></li></ul></li>
       </ul>
     </nav>
     <div class="hero">
@@ -407,7 +485,47 @@ br.bm{display:none}
       </article>
       </div>
     </section>
-    <div class="cta"><a class="pfeil-link" href="#" data-soon><span>Zum gemeinsamen Programm</span><span class="pfeil" aria-hidden="true">→</span></a></div>
+    <div class="cta"><a class="pfeil-link" href="#programm" data-ziel="programm"><span>Zum gemeinsamen Programm</span><span class="pfeil" aria-hidden="true">→</span></a></div>
+    <footer class="fuss">
+      <nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav>
+      <div class="f-rechts"><a href="#" data-soon>Instagram</a></div>
+    </footer>
+  </div>
+</div>
+
+<div id="programm" hidden tabindex="-1">
+  <header class="kopf">
+    <nav class="menue" aria-label="Hauptnavigation">
+      <button class="m-knopf" type="button" aria-expanded="false" aria-controls="mListeP">Menü</button>
+      <ul class="m-liste" id="mListeP">
+        <li class="m-sub"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mRaeumeP">Räume</button>
+          <ul class="m-unter" id="mRaeumeP"><li><a href="#" data-soon>Schauraum</a></li><li><a href="#" data-soon>Denkraum</a></li><li><a href="#" data-soon>Werkraum</a></li></ul></li>
+        <li><a href="#programm" data-ziel="programm" aria-current="page">Programm</a></li>
+        <li><a href="#" data-soon>Über den Kongress</a></li>
+        <li class="m-sub m-mehr"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mMehrP">Menü</button>
+          <ul class="m-unter rechts" id="mMehrP"><li><a href="#" data-ziel="neu">Neu beginnen</a></li><li><a href="#" data-soon>Anmeldung</a></li>
+            <li class="m-service"><a href="#" data-soon>Impressum</a><span aria-hidden="true"> · </span><a href="#" data-soon>Datenschutz</a></li></ul></li>
+      </ul>
+    </nav>
+    <div class="hero">
+      <a class="wm" href="#" id="wmP" aria-label="Augenblick – im Sehen verweilen. Neu beginnen"><img src="svg/wortmarke.svg" alt="" width="301" height="96"></a>
+    </div>
+  </header>
+  <div class="p-inhalt">
+    <section class="p-hero" aria-labelledby="pTitel">
+      <p class="rubrik">Programm</p>
+      <h1 id="pTitel">Drei Tage, in denen der Blick zur Ruhe kommt.</h1>
+      <p class="p-leit">Noch nie gab es so viele Bilder – und so wenig Zeit, sie wirklich zu sehen. Ungegenständliche Kunst stellt sich dieser Eile entgegen: Sie zeigt nichts, was wir schnell erkennen könnten, und gibt dem Blick so seine Zeit zurück. Drei Tage lang verweilst, ergründest und gestaltest du – im Schauraum, im Denkraum und im Werkraum, so wie es dich gerade zieht.</p>
+    </section>
+    <div class="p-prog">
+      <nav class="p-raeume" aria-label="Die drei Räume">
+        <button class="rf" type="button" data-raum="Schauraum" style="--tex:url(bild/textur-gelb.jpg)"><span class="rf-dreh"><span class="rf-vorn">Schauraum<span class="zusatz">&nbsp;· Verweilen</span></span><span class="rf-rueck" aria-hidden="true"></span></span></button>
+        <button class="rf" type="button" data-raum="Denkraum" style="--tex:url(bild/textur-blau.jpg)"><span class="rf-dreh"><span class="rf-vorn">Denkraum<span class="zusatz">&nbsp;· Ergründen</span></span><span class="rf-rueck" aria-hidden="true"></span></span></button>
+        <button class="rf" type="button" data-raum="Werkraum" style="--tex:url(bild/textur-gruen.jpg)"><span class="rf-dreh"><span class="rf-vorn">Werkraum<span class="zusatz">&nbsp;· Gestalten</span></span><span class="rf-rueck" aria-hidden="true"></span></span></button>
+      </nav>
+      <div id="pTage"></div>
+    </div>
+    <div class="cta"><a class="pfeil-link" href="#" data-soon><span>Zur Anmeldung</span><span class="pfeil" aria-hidden="true">→</span></a></div>
     <footer class="fuss">
       <nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav>
       <div class="f-rechts"><a href="#" data-soon>Instagram</a></div>
@@ -1042,12 +1160,70 @@ document.querySelectorAll('.menue').forEach(n => {
   b.addEventListener('click', () => { const o = !n.classList.contains('offen'); if (!o) return menueZu(n);
     n.classList.add('offen'); b.setAttribute('aria-expanded','true'); b.textContent = 'Schliessen'; });
   n.querySelectorAll('.m-sub-knopf').forEach(s => s.addEventListener('click', () => {
-    const li = s.parentElement, o = li.classList.toggle('offen'); s.setAttribute('aria-expanded', String(o)); }));
+    const li = s.parentElement, o = !li.classList.contains('offen');
+    n.querySelectorAll('.m-sub.offen').forEach(x => { x.classList.remove('offen'); x.querySelector('.m-sub-knopf').setAttribute('aria-expanded','false'); });
+    li.classList.toggle('offen', o); s.setAttribute('aria-expanded', String(o)); }));
   ['pointerdown','pointerup','pointermove'].forEach(t => n.addEventListener(t, e => e.stopPropagation()));   // Menü malt nicht
 });
 document.addEventListener('click', e => { document.querySelectorAll('.menue').forEach(n => { if (!n.contains(e.target)) menueZu(n); }); });
 document.addEventListener('keydown', e => { if (e.key === 'Escape') document.querySelectorAll('.menue').forEach(menueZu); });
 bildFenster.addEventListener('click', e => { if (e.target === bildFenster) bildSchliessen(); });   // Klick daneben
+
+/* ---------- Programm 2000 (26.11.) ---------- */
+const programm = $('programm');
+const RAUMFARBE = { Schauraum:'#F6CD51', Denkraum:'#5191E4', Werkraum:'#7FC150' };   // 70-%-Farben wie die Kreise der Ankunft
+const PROGRAMM = [
+  ['Freitag, 5. März 2027', [['09:30','Foyer','Ankommen'],['10:30','Denkraum','Eröffnungsvortrag: Innere Notwendigkeit heute'],['14:00','Schauraum','Langsames Sehen I'],['16:00','Werkraum','Workshop: Farbe hören'],['19:00','Foyer','Apéro']]],
+  ['Samstag, 6. März 2027', [['10:00','Schauraum','Ein Bild, eine Stunde'],['14:00','Denkraum','Gespräch: Bilder ohne Gegenstand in der Bilderflut'],['16:00','Werkraum','Workshop: Punkt, Linie, Fläche']]],
+  ['Sonntag, 7. März 2027', [['10:00','Schauraum','Langsames Sehen II'],['11:30','Denkraum','Vortrag: Konkret, konstruktiv, konzeptuell'],['täglich','Werkraum','Tritt zurück: zehn Minuten mit deinem eigenen Bild'],['14:00','Denkraum','Abschlussgespräch: Was haben wir gesehen?']]]
+];
+$('pTage').outerHTML = PROGRAMM.map(([tag, eintraege]) => `<section class="p-tag"><h2>${tag}</h2><ol>${eintraege.map(([zeit, raum, titel]) => {
+  const r = RAUMFARBE[raum] ? `<i style="--rc:${RAUMFARBE[raum]}" aria-hidden="true"></i><a href="#" data-soon>${raum}</a>` : raum;
+  return `<li class="pz"><span class="pz-zeit">${zeit}</span><span class="pz-raum">${r}</span><p class="pz-titel">${titel}</p><a class="pz-det" href="#" data-soon aria-label="Details: ${titel}">Details</a></li>`;
+}).join('')}</ol></section>`).join('');
+
+function zeigeProgramm(){
+  if (phase === 'mark' || phase === 'zoom') return;          // während des Festhaltens nicht dazwischen
+  document.querySelectorAll('.menue').forEach(menueZu);
+  if (bildFenster.open) bildFenster.close();
+  home.hidden = true; homeChrome.classList.add('aus'); ankunft.hidden = true;
+  document.documentElement.classList.remove('lock');
+  programm.hidden = false; phase = 'programm';
+  window.scrollTo(0, 0); programm.focus({ preventScroll:true });
+}
+/* Wege im Menü und auf den Seiten */
+document.addEventListener('click', e => {
+  const z = e.target.closest('[data-ziel]'); if (!z) return;
+  e.preventDefault();
+  if (z.dataset.ziel === 'programm') zeigeProgramm();
+  else if (z.dataset.ziel === 'neu') restart();
+});
+$('wmP').addEventListener('click', e => { e.preventDefault(); restart(); });
+
+/* Raum-Felder: Maus darüber dreht, nach 3 s geht es in den Raum; Maus vorher weg dreht zurück.
+   Klick / Enter führt sofort, Tippen dreht und führt kurz danach weiter. */
+const RAUM_WARTEN = 3000;
+function geheZuRaum(raum){
+  /* Raumseiten 1100–1300 folgen. Bis dahin dreht das Feld nach dem Ablauf zurück. */
+  document.querySelectorAll('.rf.dreht').forEach(b => b._drehen(false));
+}
+document.querySelectorAll('.rf').forEach(b => {
+  const d = b.querySelector('.rf-dreh'); let winkel = 0, uhr = 0;
+  const drehen = an => {
+    if (b.classList.contains('dreht') === an) return;
+    winkel += 180; d.style.transform = `rotateY(${winkel}deg)`; b.classList.toggle('dreht', an);
+    if (!an) clearTimeout(uhr);
+  };
+  b._drehen = drehen;
+  b.addEventListener('pointerenter', e => { if (e.pointerType !== 'mouse') return;
+    drehen(true); clearTimeout(uhr); uhr = setTimeout(() => geheZuRaum(b.dataset.raum), RAUM_WARTEN); });
+  b.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') drehen(false); });
+  b.addEventListener('click', e => {
+    clearTimeout(uhr);
+    if (e.pointerType === 'touch' || e.pointerType === 'pen'){ drehen(true); uhr = setTimeout(() => geheZuRaum(b.dataset.raum), reduced.matches ? 0 : 700); }
+    else { drehen(true); geheZuRaum(b.dataset.raum); }
+  });
+});
 
 function commit(kind){
   if (!ready || frozen || phase !== 'paint') return;
@@ -1144,7 +1320,8 @@ function restart(){
   gesture.reset(); actives = []; score = [0,0,0]; userForms = 0; travel = 0; liveTime = 0; autoCount = 0;
   paintCtx.globalCompositeOperation = 'source-over'; paintCtx.globalAlpha = 1;
   paintCtx.fillStyle = '#fff'; paintCtx.fillRect(0, 0, W, H);
-  ankunft.hidden = true; ankunft.classList.remove('pre');
+  ankunft.hidden = true; ankunft.classList.remove('pre'); programm.hidden = true;
+  document.querySelectorAll('.rf.dreht').forEach(b => b._drehen(false));
   stage.style.transition = 'none'; stage.style.transform = ''; stage.style.transformOrigin = '';
   fly.hidden = true; fly.classList.remove('on'); fly.style.transform = 'none'; wordCv.hidden = true; veil.style.transition = 'none'; veil.style.opacity = 0;
   spot = null; liveSpot = null; seen = null; picture = null;
@@ -1157,7 +1334,7 @@ function restart(){
   resetLead(); if (!debugBox.hidden) showDebug();
 }
 $('wm').addEventListener('click', e => { e.preventDefault(); restart(); });
-document.querySelectorAll('#ankunft [data-soon], #homeChrome [data-soon]').forEach(el => el.addEventListener('click', e => e.preventDefault()));
+document.querySelectorAll('#ankunft [data-soon], #homeChrome [data-soon], #programm [data-soon]').forEach(el => el.addEventListener('click', e => e.preventDefault()));
 window.addEventListener('resize', () => { if (phase === 'ankunft') drawBand(); });
 
 /* ---------- Wischreihe: vorderste Karte markieren ---------- */
