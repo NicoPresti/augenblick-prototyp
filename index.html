@@ -10,7 +10,7 @@
 /* Augenblick · Home → Zoom → Ankunft → Raum → Programm · Stand 26.11.2026 (Abend)
    26.11. Abend: Raumseiten 1100 Schauraum · 1200 Denkraum · 1300 Werkraum (Figma «05 Gestaltung», Desktop 758:661 / 768:528 / 768:689,
    Mobile 780:593 / 781:625 / 781:843). Wege: Raum-Felder, Menü «Räume», Raumkarten der Ankunft, Raumname im Programm.
-   Galeriebilder liegen in bild/galerie/.
+   Galeriebilder liegen direkt in bild/ (gelb-1-kandinsky.jpg usw.).
    26.11.: Navigation Räume · Programm · Über den Kongress · Menü (Menü: Neu beginnen, Anmeldung, Impressum · Datenschutz);
    Programmseite 2000 (Figma «05 Gestaltung», Desktop 719:723 / Mobile 720:459) mit Raum-Feldern und Programm-Zeilen.
    Frühere Stände: 21.11.2026 (Abend: Typo-Pfeile, keine Farbe auf Schrift,
@@ -1396,7 +1396,7 @@ function zeigeRaum(name){
   }).join('');
   $('rGalTitel').textContent = R.galTitel;
   $('rBilder').innerHTML = R.galerie.map(([datei, wer, w, h]) =>
-    `<figure style="--r:${(w/h).toFixed(4)}"><img src="bild/galerie/${datei}" alt="Werk von ${wer}" width="${w}" height="${h}" decoding="async"><figcaption>${wer}</figcaption></figure>`).join('');
+    `<figure style="--r:${(w/h).toFixed(4)}"><img src="bild/${datei}" alt="Werk von ${wer}" width="${w}" height="${h}" decoding="async"><figcaption>${wer}</figcaption></figure>`).join('');
   $('rBilder').scrollLeft = 0;
   raumSeite.querySelectorAll('.r-raeume .rf').forEach(b => { b.hidden = b.dataset.raum === name; if (b._drehen) b._drehen(false); });
   document.querySelectorAll('.m-unter a[data-ziel="raum"]').forEach(a => {
