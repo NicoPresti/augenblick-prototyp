@@ -7,7 +7,10 @@
 <!-- Adobe-Fonts-Web-Projekt «Augenblick – GitHub Pages» (Domains: nicopresti.github.io, localhost, 127.0.0.1) -->
 <link rel="stylesheet" href="https://use.typekit.net/png5wew.css">
 <style>
-/* Augenblick · Home → Zoom → Ankunft → Programm · Stand 26.11.2026
+/* Augenblick · Home → Zoom → Ankunft → Raum → Programm · Stand 26.11.2026 (Abend)
+   26.11. Abend: Raumseiten 1100 Schauraum · 1200 Denkraum · 1300 Werkraum (Figma «05 Gestaltung», Desktop 758:661 / 768:528 / 768:689,
+   Mobile 780:593 / 781:625 / 781:843). Wege: Raum-Felder, Menü «Räume», Raumkarten der Ankunft, Raumname im Programm.
+   Galeriebilder liegen in bild/galerie/.
    26.11.: Navigation Räume · Programm · Über den Kongress · Menü (Menü: Neu beginnen, Anmeldung, Impressum · Datenschutz);
    Programmseite 2000 (Figma «05 Gestaltung», Desktop 719:723 / Mobile 720:459) mit Raum-Feldern und Programm-Zeilen.
    Frühere Stände: 21.11.2026 (Abend: Typo-Pfeile, keine Farbe auf Schrift,
@@ -386,6 +389,83 @@ br.bm{display:none}
   .kopf.klein .wm,.kopf.klein .wm img{width:150px}
 }
 
+
+/* ---------- Raumseiten 1100 Schauraum · 1200 Denkraum · 1300 Werkraum (Figma «05 Gestaltung» 26.11.) ----------
+   Eine Vorlage, Inhalte je Raum aus RAEUME (Script). Aufbau: Kopf · erster Bildschirm (Verlauf + Textur) · Titel · zwei Absätze ·
+   Für wen · Programm im Raum (aufklappbar) · Zur Anmeldung · Zum gemeinsamen Programm · Galerie · Weitere Räume · Fuss.
+   Verlauf: Raumfarbe 70 % oben → Weiss, reicht bis in den Text. Darüber die Raumtextur (Multiplizieren, 50 %, nach unten ausgeblendet).
+   Wortmarke und Navigation: Gelb dunkel (Ink), Blau und Grün weiss. */
+#raum{position:relative;z-index:20;background:var(--white);--rgb:246,205,81;--tex:url(bild/textur-gelb.jpg)}
+#raum:focus{outline:none}
+#raum.raum-blau{--rgb:81,145,228;--tex:url(bild/textur-blau.jpg)}
+#raum.raum-gruen{--rgb:127,193,80;--tex:url(bild/textur-gruen.jpg)}
+.r-bild{position:absolute;left:0;right:0;top:0;height:1400px;z-index:0;pointer-events:none;isolation:isolate;
+  background:linear-gradient(to bottom,rgba(var(--rgb),1) 0,rgba(var(--rgb),.8) 45%,rgba(var(--rgb),.3) 72%,rgba(var(--rgb),0) 100%)}
+.r-tex{position:absolute;left:0;right:0;top:0;height:1000px;background:var(--tex) center 30%/cover no-repeat;mix-blend-mode:multiply;opacity:.5;
+  -webkit-mask-image:linear-gradient(to bottom,#000 0,rgba(0,0,0,.8) 35%,transparent 75%);mask-image:linear-gradient(to bottom,#000 0,rgba(0,0,0,.8) 35%,transparent 75%)}
+/* Kopf weiss auf Blau und Grün */
+#raum.hell .kopf .wm img{filter:brightness(0) invert(1)}
+#raum.hell .m-liste>li>a,#raum.hell .m-liste>li>.m-sub-knopf,#raum.hell .m-knopf{color:#fff}
+#raum.hell :focus-visible{outline-color:currentColor}
+.r-inhalt{position:relative;z-index:1;display:flex;flex-direction:column;gap:120px;padding:760px max(32px,calc((100% - 1248px)/2)) 0}  /* 120 + Bild 520 + 120 */
+.r-hero{display:flex;flex-direction:column;gap:64px}
+.r-titelblock{display:flex;flex-direction:column;gap:24px}
+.r-hero h1{margin:0;max-width:820px;font-family:"bree",var(--text);font-weight:700;font-size:54px;line-height:60px;hyphens:manual;text-wrap:balance}  /* D2 */
+.r-text{display:flex;flex-direction:column;gap:24px}
+.r-a1{margin:0;max-width:760px;font-weight:300;font-size:26px;line-height:32px;text-wrap:pretty}  /* LT Largetext */
+.r-a2,.r-fuerwen p:last-child{margin:0;max-width:589px;font-size:18px;line-height:28px;text-wrap:pretty}  /* BT */
+.r-fuerwen{display:flex;flex-direction:column;gap:8px}
+/* Programm im Raum: Programm-Zeilen wie 2000, Spalte «Raum» zeigt die Person, «Mehr» klappt auf */
+.r-prog h2,.r-galerie h2{margin:0 0 24px;font-weight:700;font-size:26px;line-height:32px}  /* T3 */
+.r-prog ol{list-style:none;margin:0;padding:0}
+.r-prog .pz-raum{text-transform:uppercase}
+button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:18px;line-height:28px;cursor:pointer;padding:0 0 0 32px;
+  text-decoration:underline;text-underline-offset:5px;text-decoration-thickness:1px}
+.pz-mehr{grid-column:3/-1;display:flex;flex-direction:column;gap:24px;padding:16px 0 16px}
+.pz-mehr[hidden]{display:none}
+.pz-mehr p{margin:0;max-width:589px;font-size:18px;line-height:28px;text-wrap:pretty}
+.pz-person{display:flex;flex-direction:column;gap:4px}
+.pz-person b{font-weight:700}
+.r-cta{display:flex;flex-direction:column;align-items:flex-start;gap:24px}
+.r-cta .r-zweit{font-weight:400;font-size:18px;line-height:28px;gap:8px}
+/* Galerie: alle Bilder gleich hoch, Breite nach Seitenverhältnis (--r), die Reihe füllt die Inhaltsbreite */
+.r-galerie .rubrik{margin-bottom:8px}
+.r-bilder{display:flex;gap:16px}
+.r-bilder figure{margin:0;flex:var(--r) 1 0;min-width:0;display:flex;flex-direction:column;gap:12px}
+.r-bilder img{display:block;width:100%;height:auto;aspect-ratio:var(--r);object-fit:cover;background:#eef0ea}
+.r-bilder figcaption{font-size:15px;line-height:24px}
+.r-weitere{display:flex;flex-direction:column;gap:24px}
+.r-weitere .rubrik{margin:0}
+#raum .cta{padding-top:0}
+#raum .fuss{padding-top:0}
+@media (min-width:768px) and (max-width:1023px){
+  .r-inhalt{padding-top:600px}
+}
+@media (max-width:767px){
+  .r-bild{height:1000px}
+  .r-tex{height:700px}
+  /* Mobile-Menü liegt auf Weiss: dort wieder Ink */
+  #raum.hell .m-liste>li>a,#raum.hell .m-liste>li>.m-sub-knopf{color:var(--ink)}
+  .r-inhalt{gap:80px;padding:440px 32px 0}  /* 80 + Bild 280 + 80 */
+  .r-hero{gap:48px}
+  .r-titelblock{gap:16px}
+  .r-hero h1{font-size:40px;line-height:48px}  /* D3 */
+  .r-a1{font-size:23px;line-height:32px}
+  .r-a2,.r-fuerwen p:last-child{font-size:16px;line-height:24px}
+  .r-prog h2,.r-galerie h2{font-size:23px;line-height:28px;margin-bottom:16px}
+  button.pz-det{grid-column:1/-1;justify-self:start;padding:4px 0 0;font-size:16px;line-height:24px}
+  .pz-mehr{grid-column:1/-1;gap:16px;padding:12px 0 12px}
+  .pz-mehr p{font-size:16px;line-height:24px}
+  .r-cta{gap:16px}
+  .r-cta .r-zweit{font-size:16px;line-height:24px}
+  /* Galerie seitlich wischen, 240 px hoch */
+  .r-bilder{gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;overscroll-behavior-x:contain}
+  .r-bilder::-webkit-scrollbar{display:none}
+  .r-bilder figure{flex:none;width:calc(240px * var(--r));gap:8px;scroll-snap-align:start}
+  .r-bilder figcaption{font-size:14px;line-height:20px}
+  .r-weitere{gap:16px}
+}
+
 /* ---------- Debug (Taste D) ---------- */
 #debug{position:fixed;left:12px;top:12px;z-index:60;background:#ffffffeb;padding:10px 12px;font-size:12px;line-height:1.35;display:grid;gap:5px;
   width:250px;font-variant-numeric:tabular-nums;pointer-events:none;color:var(--ink);font-family:ui-sans-serif,system-ui,sans-serif;box-shadow:0 1px 0 #0001,0 6px 24px #0000001a}
@@ -420,7 +500,7 @@ br.bm{display:none}
       <button class="m-knopf" type="button" aria-expanded="false" aria-controls="mListeA">Menü</button>
       <ul class="m-liste" id="mListeA">
         <li class="m-sub"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mRaeumeA">Räume</button>
-          <ul class="m-unter" id="mRaeumeA"><li><a href="#" data-soon>Schauraum</a></li><li><a href="#" data-soon>Denkraum</a></li><li><a href="#" data-soon>Werkraum</a></li></ul></li>
+          <ul class="m-unter" id="mRaeumeA"><li><a href="#" data-ziel="raum" data-raum="Schauraum">Schauraum</a></li><li><a href="#" data-ziel="raum" data-raum="Denkraum">Denkraum</a></li><li><a href="#" data-ziel="raum" data-raum="Werkraum">Werkraum</a></li></ul></li>
         <li><a href="#programm" data-ziel="programm">Programm</a></li>
         <li><a href="#" data-soon>Über den Kongress</a></li>
         <li class="m-sub m-mehr"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mMehrA">Menü</button>
@@ -462,7 +542,7 @@ br.bm{display:none}
             <div class="vorn"><img src="bild/textur-gelb.jpg" alt="" width="395" height="557"></div>
             <div class="rueck">
               <div><p class="frage">Wie lange kannst<br>du bei einer Farbe bleiben?</p><p class="klar">Ausgewählte Gemälde, ungestört und ohne Erklärtafeln. Geführte Runden im langsamen Schauen, mehrmals täglich.</p></div>
-              <a class="pfeil-link" href="#" data-soon><span>Mehr zum Schauraum</span><span class="pfeil" aria-hidden="true">→</span></a>
+              <a class="pfeil-link" href="#" data-ziel="raum" data-raum="Schauraum"><span>Mehr zum Schauraum</span><span class="pfeil" aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
@@ -474,7 +554,7 @@ br.bm{display:none}
             <div class="vorn"><img src="bild/textur-blau.jpg" alt="" width="395" height="557"></div>
             <div class="rueck">
               <div><p class="frage">Warum fällt es<br class="bd"> uns<br class="bm"> so schwer,<br class="bd"> nichts<br class="bm"> zu erkennen?</p><p class="klar">Vorträge und Gespräche aus Kunstgeschichte, Philosophie und Wahrnehmungsforschung. Verständlich, auch ohne Vorwissen.</p></div>
-              <a class="pfeil-link" href="#" data-soon><span>Mehr zum Denkraum</span><span class="pfeil" aria-hidden="true">→</span></a>
+              <a class="pfeil-link" href="#" data-ziel="raum" data-raum="Denkraum"><span>Mehr zum Denkraum</span><span class="pfeil" aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
@@ -486,7 +566,7 @@ br.bm{display:none}
             <div class="vorn"><img src="bild/textur-gruen.jpg" alt="" width="395" height="557"></div>
             <div class="rueck">
               <div><p class="frage">Was verändert sich,<br class="bd"> wenn du selbst<br class="bd"> Farbe aufträgst?</p><p class="klar">Workshops mit Künstler:innen: malen, schichten, zurücktreten. Material ist da, Erfahrung brauchst du keine.</p></div>
-              <a class="pfeil-link" href="#" data-soon><span>Mehr zum Werkraum</span><span class="pfeil" aria-hidden="true">→</span></a>
+              <a class="pfeil-link" href="#" data-ziel="raum" data-raum="Werkraum"><span>Mehr zum Werkraum</span><span class="pfeil" aria-hidden="true">→</span></a>
             </div>
           </div>
         </div>
@@ -508,7 +588,7 @@ br.bm{display:none}
       <button class="m-knopf" type="button" aria-expanded="false" aria-controls="mListeP">Menü</button>
       <ul class="m-liste" id="mListeP">
         <li class="m-sub"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mRaeumeP">Räume</button>
-          <ul class="m-unter" id="mRaeumeP"><li><a href="#" data-soon>Schauraum</a></li><li><a href="#" data-soon>Denkraum</a></li><li><a href="#" data-soon>Werkraum</a></li></ul></li>
+          <ul class="m-unter" id="mRaeumeP"><li><a href="#" data-ziel="raum" data-raum="Schauraum">Schauraum</a></li><li><a href="#" data-ziel="raum" data-raum="Denkraum">Denkraum</a></li><li><a href="#" data-ziel="raum" data-raum="Werkraum">Werkraum</a></li></ul></li>
         <li><a href="#programm" data-ziel="programm" aria-current="page">Programm</a></li>
         <li><a href="#" data-soon>Über den Kongress</a></li>
         <li class="m-sub m-mehr"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mMehrP">Menü</button>
@@ -535,6 +615,65 @@ br.bm{display:none}
       <div id="pTage"></div>
     </div>
     <div class="cta"><a class="pfeil-link" href="#" data-soon><span>Zur Anmeldung</span><span class="pfeil" aria-hidden="true">→</span></a></div>
+    <footer class="fuss">
+      <nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav>
+      <div class="f-rechts"><a href="#" data-soon>Instagram</a></div>
+    </footer>
+  </div>
+</div>
+
+<div id="raum" hidden tabindex="-1">
+  <div class="r-bild" aria-hidden="true"><span class="r-tex"></span></div>
+  <header class="kopf klein">
+    <nav class="menue" aria-label="Hauptnavigation">
+      <button class="m-knopf" type="button" aria-expanded="false" aria-controls="mListeR">Menü</button>
+      <ul class="m-liste" id="mListeR">
+        <li class="m-sub"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mRaeumeR" aria-current="page">Räume</button>
+          <ul class="m-unter" id="mRaeumeR"><li><a href="#" data-ziel="raum" data-raum="Schauraum">Schauraum</a></li><li><a href="#" data-ziel="raum" data-raum="Denkraum">Denkraum</a></li><li><a href="#" data-ziel="raum" data-raum="Werkraum">Werkraum</a></li></ul></li>
+        <li><a href="#programm" data-ziel="programm">Programm</a></li>
+        <li><a href="#" data-soon>Über den Kongress</a></li>
+        <li class="m-sub m-mehr"><button class="m-sub-knopf" type="button" aria-expanded="false" aria-controls="mMehrR">Menü</button>
+          <ul class="m-unter rechts" id="mMehrR"><li><a href="#" data-ziel="neu">Neu beginnen</a></li><li><a href="#" data-soon>Anmeldung</a></li>
+            <li class="m-service"><a href="#" data-soon>Impressum</a><span aria-hidden="true"> · </span><a href="#" data-soon>Datenschutz</a></li></ul></li>
+      </ul>
+    </nav>
+    <div class="hero">
+      <a class="wm" href="#" id="wmR" aria-label="Augenblick – im Sehen verweilen. Neu beginnen"><img src="svg/wortmarke.svg" alt="" width="301" height="96"></a>
+    </div>
+  </header>
+  <div class="r-inhalt">
+    <section class="r-hero" aria-labelledby="rTitel">
+      <div class="r-titelblock">
+        <p class="rubrik" id="rRubrik"></p>
+        <h1 id="rTitel"></h1>
+      </div>
+      <div class="r-text">
+        <p class="r-a1" id="rA1"></p>
+        <p class="r-a2" id="rA2"></p>
+      </div>
+      <div class="r-fuerwen"><p class="rubrik">Für wen</p><p id="rFw"></p></div>
+    </section>
+    <section class="r-prog" aria-labelledby="rProgTitel">
+      <h2 id="rProgTitel"></h2>
+      <ol id="rListe"></ol>
+    </section>
+    <div class="cta r-cta">
+      <a class="pfeil-link" href="#" data-soon><span>Zur Anmeldung</span><span class="pfeil" aria-hidden="true">→</span></a>
+      <a class="pfeil-link r-zweit" href="#programm" data-ziel="programm"><span>Zum gemeinsamen Programm</span><span class="pfeil" aria-hidden="true">→</span></a>
+    </div>
+    <section class="r-galerie" aria-labelledby="rGalTitel">
+      <p class="rubrik">Galerie</p>
+      <h2 id="rGalTitel"></h2>
+      <div class="r-bilder" id="rBilder"></div>
+    </section>
+    <section class="r-weitere" aria-label="Weitere Räume">
+      <p class="rubrik">Weitere Räume</p>
+      <nav class="p-raeume r-raeume" aria-label="Weitere Räume">
+        <button class="rf" type="button" data-raum="Schauraum" style="--tex:url(bild/textur-gelb.jpg)"><span class="rf-dreh"><span class="rf-vorn">Schauraum<span class="zusatz">&nbsp;· Verweilen</span></span><span class="rf-rueck" aria-hidden="true"></span></span></button>
+        <button class="rf" type="button" data-raum="Denkraum" style="--tex:url(bild/textur-blau.jpg)"><span class="rf-dreh"><span class="rf-vorn">Denkraum<span class="zusatz">&nbsp;· Ergründen</span></span><span class="rf-rueck" aria-hidden="true"></span></span></button>
+        <button class="rf" type="button" data-raum="Werkraum" style="--tex:url(bild/textur-gruen.jpg)"><span class="rf-dreh"><span class="rf-vorn">Werkraum<span class="zusatz">&nbsp;· Gestalten</span></span><span class="rf-rueck" aria-hidden="true"></span></span></button>
+      </nav>
+    </section>
     <footer class="fuss">
       <nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav>
       <div class="f-rechts"><a href="#" data-soon>Instagram</a></div>
@@ -1187,15 +1326,101 @@ const PROGRAMM = [
   ['Sonntag, 7. März 2027', [['10:00','Schauraum','Langsames Sehen II'],['11:30','Denkraum','Vortrag: Konkret, konstruktiv, konzeptuell'],['täglich','Werkraum','Tritt zurück: zehn Minuten mit deinem eigenen Bild'],['14:00','Denkraum','Abschlussgespräch: Was haben wir gesehen?']]]
 ];
 $('pTage').outerHTML = PROGRAMM.map(([tag, eintraege]) => `<section class="p-tag"><h2>${tag}</h2><ol>${eintraege.map(([zeit, raum, titel]) => {
-  const r = RAUMFARBE[raum] ? `<i style="--rc:${RAUMFARBE[raum]}" aria-hidden="true"></i><a href="#" data-soon>${raum}</a>` : raum;
+  const r = RAUMFARBE[raum] ? `<i style="--rc:${RAUMFARBE[raum]}" aria-hidden="true"></i><a href="#" data-ziel="raum" data-raum="${raum}">${raum}</a>` : raum;
   return `<li class="pz"><span class="pz-zeit">${zeit}</span><span class="pz-raum">${r}</span><p class="pz-titel">${titel}</p><a class="pz-det" href="#" data-soon aria-label="Details: ${titel}">Details</a></li>`;
 }).join('')}</ol></section>`).join('');
+
+/* ---------- Raumseiten 1100–1300 (26.11.) ----------
+   Eine Vorlage (#raum), Inhalte aus RAEUME. Personen und Programmtexte sind erfunden (Prototyp).
+   Programm-Zeile: [Zeit, Titel, mit …, Text zur Runde, Person, Kurzbio] – «Mehr» klappt Text und Person auf. */
+const raumSeite = $('raum');
+const PERSON = {
+  'Mira Hollenstein':'Kunstvermittlerin. Begleitet seit vielen Jahren Gruppen im langsamen Schauen, am liebsten vor Bildern, die auf den ersten Blick nichts zeigen.',
+  'Jonas Arbenz':'Maler. Malt seit dreissig Jahren Bilder ohne Gegenstand und zeigt, wie er selbst vor einem Bild steht: lange, still, mit wechselndem Abstand.',
+  'Lea Brunner':'Kunsthistorikerin. Forscht zur Geschichte der Abstraktion und erzählt so, dass man auch ohne Vorwissen folgen kann.',
+  'Samuel Graf':'Wahrnehmungsforscher. Untersucht, wie das Auge Formen und Farben ordnet, und erzählt davon ohne Fachsprache.',
+  'Noemi Studer':'Malerin. Arbeitet mit Schichten aus Farbe und lädt dazu ein, das Urteil beim Malen eine Weile warten zu lassen.'
+};
+const RAEUME = {
+  Schauraum: { cls:'raum-gelb', hell:false, kreis:'#F6CD51', rubrik:'Schauraum · Verweilen',
+    titel:'Zuerst erkennst du.<br>Dann beginnst du zu sehen.',
+    a1:'Meist wissen wir schnell, was ein Bild zeigt. Mit dem Urteil endet oft auch das Schauen. Ein Bild ohne Gegenstand nimmt dir diese Abkürzung. Es gibt nichts zu benennen. Also bleibt der Blick. Nach einigen Minuten beginnt sich etwas zu bewegen: Flächen treten vor, Farben weichen zurück, Spannung wird zu Ruhe. Wie lange kannst du bei einer Farbe bleiben?',
+    a2:'Im Schauraum betrachtest du ausgewählte Gemälde gemeinsam mit anderen, ohne Erklärtafeln und ohne Eile. In geführten Runden schaut ihr, sagt, was ihr seht, und entdeckt, wie verschieden ein Bild erlebt werden kann.',
+    fw:'Für alle, die ohne Vorwissen sehen möchten. Hier zählt dein Blick, nicht das Fachwissen.',
+    prog:[
+      ['Fr 14:00','Langsames Sehen I','Mira Hollenstein','Eine Stunde, zwei Gemälde. Zuerst schaut ihr schweigend, dann sprecht ihr darüber: Was siehst du? Was verändert sich, wenn du länger hinschaust? Es gibt keine Erklärung vorab und kein Richtig oder Falsch.'],
+      ['Sa 10:00','Ein Bild, eine Stunde','Jonas Arbenz','Ihr bleibt eine ganze Stunde vor einem einzigen Gemälde. Zwischendurch erzählt Jonas Arbenz, was er als Maler sieht: wie eine Fläche entsteht, warum eine Farbe kippt. Dann wird es wieder still.'],
+      ['So 10:00','Langsames Sehen II','Mira Hollenstein','Die zweite Runde, mit anderen Bildern. Wer am Freitag dabei war, merkt vielleicht, dass das Schauen leichter fällt. Neue Gäste sind genauso willkommen.']],
+    galTitel:'Wo Gelb zu leuchten beginnt.',
+    galerie:[['gelb-1-kandinsky.jpg','Wassily Kandinsky',380,526],['gelb-2-rothko.jpg','Mark Rothko',358,453],['gelb-3-graubner.jpg','Gotthard Graubner',461,640],['gelb-4-scully.jpg','Sean Scully',300,640],['gelb-5-giacometti.jpg','Augusto Giacometti',643,640]] },
+  Denkraum: { cls:'raum-blau', hell:true, kreis:'#5191E4', rubrik:'Denkraum · Ergründen',
+    titel:'Haben wir das abstrakte Sehen verlernt?',
+    a1:'Ungegenständliche Kunst gilt als kühl und schwer zugänglich. Doch das Auge ist keine Kamera. Es greift nach Formen, Richtungen und Farben, lange bevor wir etwas benennen. Schon Kinder erkennen ein Gesicht in drei Strichen. Vielleicht zeigt abstrakte Kunst also nichts Fremdes, sondern die erste Schicht unseres eigenen Sehens. Warum fällt es uns dann so schwer, nichts zu erkennen?',
+    a2:'Im Denkraum gehst du dieser Frage nach. In Vorträgen und Gesprächen kommen Kunstgeschichte, Philosophie und Wahrnehmungsforschung zusammen: von Kandinskys Punkt und Linie bis zur Frage, was ungegenständliche Kunst für unsere Gegenwart bedeutet. Verständlich, auch ohne Vorwissen.',
+    fw:'Für alle, die verstehen möchten, warum ein Bild ohne Gegenstand so stark wirken kann, und die gern mitdenken und nachfragen.',
+    prog:[
+      ['Fr 10:30','Eröffnungsvortrag: Innere Notwendigkeit heute','Lea Brunner','Warum malte Kandinsky Bilder ohne Gegenstand? Der Vortrag folgt seiner Idee der inneren Notwendigkeit und fragt, was sie uns heute sagt, in einer Zeit, in der wir täglich Tausende Bilder sehen.'],
+      ['Sa 14:00','Gespräch: Bilder ohne Gegenstand in der Bilderflut','Samuel Graf','Täglich sehen wir Bilder, die alle etwas zeigen wollen. Was geschieht mit unserem Blick, wenn ein Bild nichts zeigt? Ein Gespräch mit Fragen aus dem Publikum.'],
+      ['So 11:30','Vortrag: Konkret, konstruktiv, konzeptuell','Lea Brunner','Drei Wörter, die oft verwechselt werden. Der Vortrag zeigt an Beispielen, was sie unterscheidet und warum das beim Schauen hilft.'],
+      ['So 14:00','Abschlussgespräch: Was haben wir gesehen?',null,'Zum Schluss kommen die drei Räume zusammen. Was hast du gesehen, was hat sich verändert? Mitwirkende und Gäste erzählen, offen und ohne fertiges Ergebnis.','mit allen Mitwirkenden']],
+    galTitel:'Wie weit reicht ein Blau?',
+    galerie:[['blau-1-kandinsky.jpg','Wassily Kandinsky',627,640],['blau-2-miro.jpg','Joan Miró',800,614],['blau-3-klein.jpg','Yves Klein',349,425],['blau-4-scully.jpg','Sean Scully',567,640],['blau-5-assenza.jpg','Emanuela Assenza',944,640]] },
+  Werkraum: { cls:'raum-gruen', hell:true, kreis:'#7FC150', rubrik:'Werkraum · Gestalten',
+    titel:'Wer malt, sieht anders.',
+    a1:'Sobald du malst, meldet sich eine zweite Stimme. Sie fragt, ob das gut ist. Lass sie warten. Trag Farbe auf, setz eine Linie, nimm etwas weg. Tritt zurück und schau, was entstanden ist. So lernst du das Sehen von innen kennen, als etwas, das du selbst tust. Was verändert sich, wenn du selbst Farbe aufträgst?',
+    a2:'In Wahrnehmungsübungen und Workshops mit Künstler:innen erkundest du Farbe, Linie und Fläche und beobachtest, wie sich dein Sehen dabei verändert. Material liegt bereit.',
+    fw:'Für alle, die lieber mit den Händen denken. Neugier reicht, Malerfahrung brauchst du keine.',
+    prog:[
+      ['Fr 16:00','Workshop: Farbe hören','Noemi Studer','Du malst zu Musik, ohne vorher zu planen. Zwischendurch trittst du zurück und schaust, was entstanden ist. Am Ende hängen alle Bilder nebeneinander, und ihr sprecht darüber.'],
+      ['Sa 16:00','Workshop: Punkt, Linie, Fläche','Jonas Arbenz','Ein Bild aus drei Elementen bauen: Setz einen Punkt, zieh eine Linie, leg eine Fläche. Dabei merkst du, wie jede Entscheidung alles andere verändert.'],
+      ['Täglich','Tritt zurück: zehn Minuten mit deinem eigenen Bild',null,'Während des ganzen Kongresses steht dein Platz im Werkraum offen. Nimm dir zehn Minuten, mal ohne Anleitung und schau dann aus ein paar Schritten Abstand auf dein Bild.','offen, ohne Anleitung']],
+    galTitel:'Schau, wie andere Grün auftragen.',
+    galerie:[['gruen-1-af-klint.jpg','Hilma af Klint',457,640],['gruen-2-mitchell.jpg','Joan Mitchell',1200,630],['gruen-3-kandinsky.jpg','Wassily Kandinsky',478,640],['gruen-4-rothko.jpg','Mark Rothko',396,562],['gruen-5-scully.jpg','Sean Scully',421,475]] }
+};
+let raumAktuell = null;
+function zeigeRaum(name){
+  const R = RAEUME[name]; if (!R) return;
+  if (phase === 'mark' || phase === 'zoom') return;          // während des Festhaltens nicht dazwischen
+  raumAktuell = name;
+  raumSeite.classList.remove('raum-gelb','raum-blau','raum-gruen'); raumSeite.classList.add(R.cls);
+  raumSeite.classList.toggle('hell', R.hell);
+  $('rRubrik').textContent = R.rubrik; $('rTitel').innerHTML = R.titel;
+  $('rA1').textContent = R.a1; $('rA2').textContent = R.a2; $('rFw').textContent = R.fw;
+  $('rProgTitel').textContent = 'Programm im ' + name;
+  $('rListe').innerHTML = R.prog.map(([zeit, titel, person, text, mitText], i) => {
+    const mit = person ? 'mit ' + person : mitText;
+    const wer = person ? `<div class="pz-person"><p><b>${person}</b></p><p>${PERSON[person] || ''}</p></div>` : '';
+    return `<li class="pz"><span class="pz-zeit">${zeit}</span><span class="pz-raum"><i style="--rc:${R.kreis}" aria-hidden="true"></i>${mit}</span>`
+      + `<p class="pz-titel">${titel}</p><button class="pz-det" type="button" aria-expanded="false" aria-controls="rMehr${i}">Mehr</button>`
+      + `<div class="pz-mehr" id="rMehr${i}" hidden><p>${text}</p>${wer}</div></li>`;
+  }).join('');
+  $('rGalTitel').textContent = R.galTitel;
+  $('rBilder').innerHTML = R.galerie.map(([datei, wer, w, h]) =>
+    `<figure style="--r:${(w/h).toFixed(4)}"><img src="bild/galerie/${datei}" alt="Werk von ${wer}" width="${w}" height="${h}" decoding="async"><figcaption>${wer}</figcaption></figure>`).join('');
+  $('rBilder').scrollLeft = 0;
+  raumSeite.querySelectorAll('.r-raeume .rf').forEach(b => { b.hidden = b.dataset.raum === name; if (b._drehen) b._drehen(false); });
+  document.querySelectorAll('.m-unter a[data-ziel="raum"]').forEach(a => {
+    if (a.dataset.raum === name && a.closest('#raum')) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
+  document.querySelectorAll('.menue').forEach(menueZu);
+  if (bildFenster.open) bildFenster.close();
+  home.hidden = true; homeChrome.classList.add('aus'); ankunft.hidden = true; programm.hidden = true;
+  document.documentElement.classList.remove('lock');
+  raumSeite.hidden = false; phase = 'raum';
+  window.scrollTo(0, 0); raumSeite.focus({ preventScroll:true });
+}
+/* «Mehr» / «Weniger»: Text zur Runde und Person aufklappen */
+$('rListe').addEventListener('click', e => {
+  const b = e.target.closest('.pz-det'); if (!b) return;
+  const p = $(b.getAttribute('aria-controls')), auf = b.getAttribute('aria-expanded') !== 'true';
+  p.hidden = !auf; b.setAttribute('aria-expanded', String(auf)); b.textContent = auf ? 'Weniger' : 'Mehr';
+});
+$('wmR').addEventListener('click', e => { e.preventDefault(); restart(); });
 
 function zeigeProgramm(){
   if (phase === 'mark' || phase === 'zoom') return;          // während des Festhaltens nicht dazwischen
   document.querySelectorAll('.menue').forEach(menueZu);
   if (bildFenster.open) bildFenster.close();
-  home.hidden = true; homeChrome.classList.add('aus'); ankunft.hidden = true;
+  home.hidden = true; homeChrome.classList.add('aus'); ankunft.hidden = true; $('raum').hidden = true;
   document.documentElement.classList.remove('lock');
   programm.hidden = false; phase = 'programm';
   window.scrollTo(0, 0); programm.focus({ preventScroll:true });
@@ -1206,6 +1431,7 @@ document.addEventListener('click', e => {
   e.preventDefault();
   if (z.dataset.ziel === 'programm') zeigeProgramm();
   else if (z.dataset.ziel === 'neu') restart();
+  else if (z.dataset.ziel === 'raum') zeigeRaum(z.dataset.raum);
 });
 $('wmP').addEventListener('click', e => { e.preventDefault(); restart(); });
 
@@ -1213,7 +1439,8 @@ $('wmP').addEventListener('click', e => { e.preventDefault(); restart(); });
    Klick / Enter führt sofort, Tippen dreht und führt kurz danach weiter. */
 const RAUM_WARTEN = 3000;
 function geheZuRaum(raum){
-  /* Raumseiten 1100–1300 folgen. Bis dahin dreht das Feld nach dem Ablauf zurück. */
+  /* 26.11.: führt auf die Raumseite (1100–1300); das Feld dreht danach unsichtbar zurück in die Ruhe */
+  zeigeRaum(raum);
   document.querySelectorAll('.rf.dreht').forEach(b => b._drehen(false));
 }
 document.querySelectorAll('.rf').forEach(b => {
@@ -1329,7 +1556,7 @@ function restart(){
   gesture.reset(); actives = []; score = [0,0,0]; userForms = 0; travel = 0; liveTime = 0; autoCount = 0;
   paintCtx.globalCompositeOperation = 'source-over'; paintCtx.globalAlpha = 1;
   paintCtx.fillStyle = '#fff'; paintCtx.fillRect(0, 0, W, H);
-  ankunft.hidden = true; ankunft.classList.remove('pre'); programm.hidden = true;
+  ankunft.hidden = true; ankunft.classList.remove('pre'); programm.hidden = true; raumSeite.hidden = true;
   document.querySelectorAll('.rf.dreht').forEach(b => b._drehen(false));
   stage.style.transition = 'none'; stage.style.transform = ''; stage.style.transformOrigin = '';
   fly.hidden = true; fly.classList.remove('on'); fly.style.transform = 'none'; wordCv.hidden = true; veil.style.transition = 'none'; veil.style.opacity = 0;
@@ -1343,7 +1570,7 @@ function restart(){
   resetLead(); if (!debugBox.hidden) showDebug();
 }
 $('wm').addEventListener('click', e => { e.preventDefault(); restart(); });
-document.querySelectorAll('#ankunft [data-soon], #homeChrome [data-soon], #programm [data-soon]').forEach(el => el.addEventListener('click', e => e.preventDefault()));
+document.querySelectorAll('#ankunft [data-soon], #homeChrome [data-soon], #programm [data-soon], #raum [data-soon]').forEach(el => el.addEventListener('click', e => e.preventDefault()));
 window.addEventListener('resize', () => { if (phase === 'ankunft') drawBand(); });
 
 /* ---------- Wischreihe: vorderste Karte markieren ---------- */
