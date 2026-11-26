@@ -168,8 +168,8 @@ html.lock,html.lock body{overflow:hidden}
   .kopf nav{font-size:16px;line-height:24px}  /* «M Navigation» Light 16/24 */
   .m-knopf{display:block;margin-left:auto}
   .menue{position:relative;display:flex;flex-direction:column;align-items:flex-end}
-  .menue .m-liste{display:none;position:absolute;top:100%;right:0;z-index:30;flex-direction:column;align-items:flex-end;gap:16px;
-    padding:20px 0 24px 32px;  /* Figma «Navigation / Menü Mobile» */background:#fff;box-shadow:-16px 16px 24px -8px #fff}  /* liegt über der Seite, schiebt nichts */
+  .menue .m-liste{display:none;position:absolute;top:calc(100% + 12px);right:-16px;z-index:30;flex-direction:column;align-items:flex-end;gap:16px;
+    padding:20px 24px;background:#fff;border:1px solid var(--linie);border-radius:8px;min-width:200px}  /* 26.11.: wie das Untermenü auf dem Desktop (Rahmen, runde Ecken, mehr Umraum); liegt über der Seite */
   .menue.offen .m-liste{display:flex}
   .m-liste .d-only{display:none}
   .menue .m-unter{position:static;display:none;align-items:flex-end;padding:16px 0 0;border:0;background:none;gap:12px}
@@ -395,18 +395,19 @@ br.bm{display:none}
    Für wen · Programm im Raum (aufklappbar) · Zur Anmeldung · Zum gemeinsamen Programm · Galerie · Weitere Räume · Fuss.
    Verlauf: Raumfarbe 70 % oben → Weiss, reicht bis in den Text. Darüber die Raumtextur (Multiplizieren, 50 %, nach unten ausgeblendet).
    Wortmarke und Navigation: Gelb dunkel (Ink), Blau und Grün weiss. */
-#raum{position:relative;z-index:20;background:var(--white);--rgb:246,205,81;--tex:url(bild/textur-gelb.jpg)}
+#raum{position:relative;z-index:20;background:var(--white)}
 #raum:focus{outline:none}
-#raum.raum-blau{--rgb:81,145,228;--tex:url(bild/textur-blau.jpg)}
-#raum.raum-gruen{--rgb:127,193,80;--tex:url(bild/textur-gruen.jpg)}
+.raum-gelb{--rgb:246,205,81;--tex:url(bild/textur-gelb.jpg)}
+.raum-blau{--rgb:81,145,228;--tex:url(bild/textur-blau.jpg)}
+.raum-gruen{--rgb:127,193,80;--tex:url(bild/textur-gruen.jpg)}
 .r-bild{position:absolute;left:0;right:0;top:0;height:1400px;z-index:0;pointer-events:none;isolation:isolate;
   background:linear-gradient(to bottom,rgba(var(--rgb),1) 0,rgba(var(--rgb),.8) 45%,rgba(var(--rgb),.3) 72%,rgba(var(--rgb),0) 100%)}
 .r-tex{position:absolute;left:0;right:0;top:0;height:1000px;background:var(--tex) center 30%/cover no-repeat;mix-blend-mode:multiply;opacity:.5;
   -webkit-mask-image:linear-gradient(to bottom,#000 0,rgba(0,0,0,.8) 35%,transparent 75%);mask-image:linear-gradient(to bottom,#000 0,rgba(0,0,0,.8) 35%,transparent 75%)}
 /* Kopf weiss auf Blau und Grün */
-#raum.hell .kopf .wm img{filter:brightness(0) invert(1)}
-#raum.hell .m-liste>li>a,#raum.hell .m-liste>li>.m-sub-knopf,#raum.hell .m-knopf{color:#fff}
-#raum.hell :focus-visible{outline-color:currentColor}
+/* 26.11. Abend: Wortmarke und Menü bleiben Ink; oben ein weisser Verlauf trennt den Kopf von Farbe und Textur (wie auf Home) */
+.r-bild::after{content:"";position:absolute;left:0;right:0;top:0;height:220px;z-index:2;
+  background:linear-gradient(to bottom,#fff 0%,#fff 38%,rgba(255,255,255,.7) 62%,rgba(255,255,255,0) 100%)}
 .r-inhalt{position:relative;z-index:1;display:flex;flex-direction:column;gap:120px;padding:760px max(32px,calc((100% - 1248px)/2)) 0}  /* 120 + Bild 520 + 120 */
 .r-hero{display:flex;flex-direction:column;gap:64px}
 .r-titelblock{display:flex;flex-direction:column;gap:24px}
@@ -430,10 +431,24 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
 .r-cta .r-zweit{font-weight:400;font-size:18px;line-height:28px;gap:8px}
 /* Galerie: alle Bilder gleich hoch, Breite nach Seitenverhältnis (--r), die Reihe füllt die Inhaltsbreite */
 .r-galerie .rubrik{margin-bottom:8px}
-.r-bilder{display:flex;gap:16px}
-.r-bilder figure{margin:0;flex:var(--r) 1 0;min-width:0;display:flex;flex-direction:column;gap:12px}
-.r-bilder img{display:block;width:100%;height:auto;aspect-ratio:var(--r);object-fit:cover;background:#eef0ea}
-.r-bilder figcaption{font-size:15px;line-height:24px}
+/* 26.11. Abend: Galerie als Wischreihe wie die Raumkarten – das vorderste Bild ist gross, die nächsten etwas kleiner.
+   Weiter mit Wischen, Ziehen (Maus), Trackpad oder den Pfeilen. Die Reihe läuft rechts bis an den Fensterrand. */
+.r-galkopf{display:flex;justify-content:space-between;align-items:flex-end;gap:24px;margin-bottom:24px}
+.r-galkopf h2{margin:0!important}
+.r-galnav{display:flex;gap:8px}
+.r-galnav button{width:44px;height:44px;padding:0;border:0;background:none;color:var(--ink);font:400 22px/28px var(--text);cursor:pointer;transition:opacity .2s}
+.r-galnav button:hover:not(:disabled) span{display:inline-block;transform:translateX(var(--dx,0))}
+.r-galnav button:disabled{opacity:.25;cursor:default}
+.r-bilder{--h:440px;display:flex;align-items:flex-end;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;
+  margin-right:calc(-1 * max(32px,(100vw - 1248px)/2));cursor:grab;-webkit-user-select:none;user-select:none}
+.r-bilder::-webkit-scrollbar{display:none}
+.r-bilder.zieht{cursor:grabbing;scroll-snap-type:none}
+.r-bilder figure{margin:0;flex:none;width:calc(var(--h) * var(--r));display:flex;flex-direction:column;gap:12px;scroll-snap-align:start}
+.r-bilder img{display:block;width:100%;height:var(--h);object-fit:cover;background:#eef0ea;-webkit-user-drag:none;
+  transform-origin:50% 100%;transition:transform .5s cubic-bezier(.45,0,.15,1)}
+.r-bilder figure:not(.vorne) img{transform:scale(.86)}
+.r-bilder figcaption{font-size:15px;line-height:24px;transition:opacity .5s}
+.r-bilder figure:not(.vorne) figcaption{opacity:.55}
 .r-weitere{display:flex;flex-direction:column;gap:24px}
 .r-weitere .rubrik{margin:0}
 #raum .cta{padding-top:0}
@@ -445,7 +460,7 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
   .r-bild{height:1000px}
   .r-tex{height:700px}
   /* Mobile-Menü liegt auf Weiss: dort wieder Ink */
-  #raum.hell .m-liste>li>a,#raum.hell .m-liste>li>.m-sub-knopf{color:var(--ink)}
+  .r-bild::after{height:150px}
   .r-inhalt{gap:80px;padding:440px 32px 0}  /* 80 + Bild 280 + 80 */
   .r-hero{gap:48px}
   .r-titelblock{gap:16px}
@@ -459,12 +474,22 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
   .r-cta{gap:16px}
   .r-cta .r-zweit{font-size:16px;line-height:24px}
   /* Galerie seitlich wischen, 240 px hoch */
-  .r-bilder{gap:12px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;overscroll-behavior-x:contain}
-  .r-bilder::-webkit-scrollbar{display:none}
-  .r-bilder figure{flex:none;width:calc(240px * var(--r));gap:8px;scroll-snap-align:start}
+  .r-bilder{--h:260px;gap:12px;margin-right:-32px}
+  .r-bilder figure{gap:8px}
   .r-bilder figcaption{font-size:14px;line-height:20px}
+  .r-galnav{display:none}
   .r-weitere{gap:16px}
 }
+
+/* Raum-Tor (26.11., Experiment): «Mehr zum …» auf der offenen Raumkarte – die Karte dreht sich wie der Kreis «Dein Bild ansehen»
+   und wächst dabei bildschirmfüllend. Auf der Rückseite liegt schon der Kopf des Raums (Verlauf + Textur), dann blendet die Raumseite ein. */
+#raumTor{position:fixed;z-index:80;perspective:2000px;pointer-events:none}
+.rt-dreh{position:absolute;inset:0;transform-style:preserve-3d}
+.rt-vorn,.rt-rueck{position:absolute;inset:0;border-radius:8px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
+.rt-vorn{background:#fff;border:1px solid var(--linie)}
+.rt-vorn .rueck{transform:none;position:absolute;inset:0;border:0}
+.rt-rueck{transform:rotateY(180deg);background:#fff}
+.rt-rueck .r-bild{position:absolute}
 
 /* ---------- Debug (Taste D) ---------- */
 #debug{position:fixed;left:12px;top:12px;z-index:60;background:#ffffffeb;padding:10px 12px;font-size:12px;line-height:1.35;display:grid;gap:5px;
@@ -663,7 +688,8 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
     </div>
     <section class="r-galerie" aria-labelledby="rGalTitel">
       <p class="rubrik">Galerie</p>
-      <h2 id="rGalTitel"></h2>
+      <div class="r-galkopf"><h2 id="rGalTitel"></h2>
+        <div class="r-galnav"><button type="button" id="rGalZurueck" aria-label="Vorheriges Bild" style="--dx:-6px"><span aria-hidden="true">←</span></button><button type="button" id="rGalWeiter" aria-label="Nächstes Bild" style="--dx:6px"><span aria-hidden="true">→</span></button></div></div>
       <div class="r-bilder" id="rBilder"></div>
     </section>
     <section class="r-weitere" aria-label="Weitere Räume">
@@ -681,6 +707,7 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
   </div>
 </div>
 
+<div id="raumTor" hidden aria-hidden="true"><div class="rt-dreh"><div class="rt-vorn"></div><div class="rt-rueck"><div class="r-bild"><span class="r-tex"></span></div></div></div></div>
 <dialog id="bildFenster" aria-label="Dein Augenblick, ganzes Bild">
   <div class="bf-bild" id="bfBild" tabindex="-1" autofocus><div class="bf-dreh" id="bfDreh">
     <div class="bf-farbe" aria-hidden="true"></div>
@@ -1383,21 +1410,21 @@ function zeigeRaum(name){
   if (phase === 'mark' || phase === 'zoom') return;          // während des Festhaltens nicht dazwischen
   raumAktuell = name;
   raumSeite.classList.remove('raum-gelb','raum-blau','raum-gruen'); raumSeite.classList.add(R.cls);
-  raumSeite.classList.toggle('hell', R.hell);
   $('rRubrik').textContent = R.rubrik; $('rTitel').innerHTML = R.titel;
   $('rA1').textContent = R.a1; $('rA2').textContent = R.a2; $('rFw').textContent = R.fw;
   $('rProgTitel').textContent = 'Programm im ' + name;
   $('rListe').innerHTML = R.prog.map(([zeit, titel, person, text, mitText], i) => {
     const mit = person ? 'mit ' + person : mitText;
     const wer = person ? `<div class="pz-person"><p><b>${person}</b></p><p>${PERSON[person] || ''}</p></div>` : '';
-    return `<li class="pz"><span class="pz-zeit">${zeit}</span><span class="pz-raum"><i style="--rc:${R.kreis}" aria-hidden="true"></i>${mit}</span>`
+    return `<li class="pz"><span class="pz-zeit">${zeit}</span><span class="pz-raum">${mit}</span>`
       + `<p class="pz-titel">${titel}</p><button class="pz-det" type="button" aria-expanded="false" aria-controls="rMehr${i}">Mehr</button>`
       + `<div class="pz-mehr" id="rMehr${i}" hidden><p>${text}</p>${wer}</div></li>`;
   }).join('');
   $('rGalTitel').textContent = R.galTitel;
   $('rBilder').innerHTML = R.galerie.map(([datei, wer, w, h]) =>
-    `<figure style="--r:${(w/h).toFixed(4)}"><img src="bild/${datei}" alt="Werk von ${wer}" width="${w}" height="${h}" decoding="async"><figcaption>${wer}</figcaption></figure>`).join('');
+    `<figure style="--r:${(w/h).toFixed(4)}"><img src="bild/${datei}" alt="Werk von ${wer}" draggable="false" width="${w}" height="${h}" decoding="async"><figcaption>${wer}</figcaption></figure>`).join('');
   $('rBilder').scrollLeft = 0;
+  requestAnimationFrame(galPlatz);
   raumSeite.querySelectorAll('.r-raeume .rf').forEach(b => { b.hidden = b.dataset.raum === name; if (b._drehen) b._drehen(false); });
   document.querySelectorAll('.m-unter a[data-ziel="raum"]').forEach(a => {
     if (a.dataset.raum === name && a.closest('#raum')) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
@@ -1416,6 +1443,59 @@ $('rListe').addEventListener('click', e => {
 });
 $('wmR').addEventListener('click', e => { e.preventDefault(); restart(); });
 
+/* Galerie: vorderstes Bild markieren, Platz rechts, damit auch das letzte vorne einrasten kann; Ziehen mit der Maus; Pfeile */
+const galerie = $('rBilder');
+function galVorne(){
+  const figs = [...galerie.children]; if (!figs.length) return;
+  const l = galerie.getBoundingClientRect().left; let best = figs[0], d = 1e9;
+  figs.forEach(f => { const x = Math.abs(f.getBoundingClientRect().left - l); if (x < d){ d = x; best = f; } });
+  figs.forEach(f => f.classList.toggle('vorne', f === best));
+  $('rGalZurueck').disabled = best === figs[0]; $('rGalWeiter').disabled = best === figs[figs.length-1];
+}
+function galPlatz(){
+  const letzte = galerie.lastElementChild; if (!letzte) return;
+  galerie.style.paddingRight = Math.max(0, galerie.clientWidth - letzte.offsetWidth) + 'px';
+  galVorne();
+}
+let galRaf = 0;
+galerie.addEventListener('scroll', () => { if (!galRaf) galRaf = requestAnimationFrame(() => { galRaf = 0; galVorne(); }); }, { passive:true });
+addEventListener('resize', () => { if (phase === 'raum') galPlatz(); });
+function galSchritt(r){
+  const figs = [...galerie.children], i = figs.findIndex(f => f.classList.contains('vorne'));
+  const z = figs[Math.max(0, Math.min(figs.length-1, i + r))]; if (!z) return;
+  galerie.scrollTo({ left: z.offsetLeft - galerie.firstElementChild.offsetLeft, behavior: reduced.matches ? 'auto' : 'smooth' });
+}
+$('rGalZurueck').addEventListener('click', () => galSchritt(-1));
+$('rGalWeiter').addEventListener('click', () => galSchritt(1));
+let zug = null;
+galerie.addEventListener('pointerdown', e => { if (e.pointerType !== 'mouse' || e.button !== 0) return;
+  zug = { x:e.clientX, l:galerie.scrollLeft, weg:0 }; galerie.classList.add('zieht'); galerie.setPointerCapture(e.pointerId); });
+galerie.addEventListener('pointermove', e => { if (!zug) return; const dx = e.clientX - zug.x; zug.weg = Math.max(zug.weg, Math.abs(dx)); galerie.scrollLeft = zug.l - dx; });
+const zugEnde = () => { if (!zug) return; zug = null; const l = galerie.scrollLeft; galerie.classList.remove('zieht');
+  galerie.scrollLeft = l; galSchritt(0); };   // nach dem Loslassen am nächsten Bild einrasten
+galerie.addEventListener('pointerup', zugEnde); galerie.addEventListener('pointercancel', zugEnde);
+
+/* Raum-Tor (Experiment): Karte → Raum */
+function raumTor(name, karte){
+  const R = RAEUME[name], t = $('raumTor');
+  if (!R || !karte || reduced.matches || phase === 'mark' || phase === 'zoom') return zeigeRaum(name);
+  const d = t.querySelector('.rt-dreh'), vorn = t.querySelector('.rt-vorn'), rueck = karte.querySelector('.rueck');
+  vorn.innerHTML = rueck ? rueck.outerHTML : '';
+  t.className = R.cls; t.hidden = false;
+  const r = karte.getBoundingClientRect(), dur = 950, ease = 'cubic-bezier(.45,0,.15,1)';
+  const box = q => ({ left:q.x+'px', top:q.y+'px', width:q.w+'px', height:q.h+'px' });
+  const von = box({ x:r.left, y:r.top, w:r.width, h:r.height }), nach = box({ x:0, y:0, w:innerWidth, h:innerHeight });
+  Object.assign(t.style, nach); t.style.opacity = 1;
+  t.animate([von, nach], { duration:dur, easing:ease });
+  t.querySelectorAll('.rt-vorn,.rt-rueck').forEach(f => f.animate([{ borderRadius:'8px' }, { borderRadius:'0px' }], { duration:dur, easing:ease, fill:'forwards' }));
+  const a = d.animate([{ transform:'rotateY(0deg)' }, { transform:'rotateY(180deg)' }], { duration:dur, easing:ease, fill:'forwards' });
+  a.onfinish = () => {
+    zeigeRaum(name);
+    const aus = t.animate([{ opacity:1 }, { opacity:0 }], { duration:500, easing:'ease', fill:'forwards' });
+    aus.onfinish = () => { t.hidden = true; t.getAnimations({ subtree:true }).forEach(x => x.cancel()); vorn.innerHTML = ''; };
+  };
+}
+
 function zeigeProgramm(){
   if (phase === 'mark' || phase === 'zoom') return;          // während des Festhaltens nicht dazwischen
   document.querySelectorAll('.menue').forEach(menueZu);
@@ -1431,7 +1511,7 @@ document.addEventListener('click', e => {
   e.preventDefault();
   if (z.dataset.ziel === 'programm') zeigeProgramm();
   else if (z.dataset.ziel === 'neu') restart();
-  else if (z.dataset.ziel === 'raum') zeigeRaum(z.dataset.raum);
+  else if (z.dataset.ziel === 'raum'){ const k = z.closest('.karte'); if (k) raumTor(z.dataset.raum, k.querySelector('.flaeche')); else zeigeRaum(z.dataset.raum); }
 });
 $('wmP').addEventListener('click', e => { e.preventDefault(); restart(); });
 
@@ -1556,7 +1636,7 @@ function restart(){
   gesture.reset(); actives = []; score = [0,0,0]; userForms = 0; travel = 0; liveTime = 0; autoCount = 0;
   paintCtx.globalCompositeOperation = 'source-over'; paintCtx.globalAlpha = 1;
   paintCtx.fillStyle = '#fff'; paintCtx.fillRect(0, 0, W, H);
-  ankunft.hidden = true; ankunft.classList.remove('pre'); programm.hidden = true; raumSeite.hidden = true;
+  ankunft.hidden = true; ankunft.classList.remove('pre'); programm.hidden = true; raumSeite.hidden = true; $('raumTor').hidden = true;
   document.querySelectorAll('.rf.dreht').forEach(b => b._drehen(false));
   stage.style.transition = 'none'; stage.style.transform = ''; stage.style.transformOrigin = '';
   fly.hidden = true; fly.classList.remove('on'); fly.style.transform = 'none'; wordCv.hidden = true; veil.style.transition = 'none'; veil.style.opacity = 0;
