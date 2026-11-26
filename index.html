@@ -377,6 +377,15 @@ br.bm{display:none}
   .rf.dreht .rf-rueck{opacity:1}
 }
 
+/* Wortmarke klein (26.11., Regel): 100 % nur auf der Ankunft (Desktop 301 / Mobile 200), wo sie aus dem eigenen Bild entsteht.
+   Alle anderen Seiten (Räume, Programm, Über den Kongress, Anmeldung): 75 % = Desktop 226 / Mobile 150, in einer Zeile mit der Navigation. */
+.kopf.klein{flex-direction:row-reverse;justify-content:space-between;align-items:flex-start;gap:32px}
+.kopf.klein .wm,.kopf.klein .wm img{width:226px;padding:0}
+@media (max-width:767px){
+  .kopf.klein{gap:16px}
+  .kopf.klein .wm,.kopf.klein .wm img{width:150px}
+}
+
 /* ---------- Debug (Taste D) ---------- */
 #debug{position:fixed;left:12px;top:12px;z-index:60;background:#ffffffeb;padding:10px 12px;font-size:12px;line-height:1.35;display:grid;gap:5px;
   width:250px;font-variant-numeric:tabular-nums;pointer-events:none;color:var(--ink);font-family:ui-sans-serif,system-ui,sans-serif;box-shadow:0 1px 0 #0001,0 6px 24px #0000001a}
@@ -494,7 +503,7 @@ br.bm{display:none}
 </div>
 
 <div id="programm" hidden tabindex="-1">
-  <header class="kopf">
+  <header class="kopf klein">
     <nav class="menue" aria-label="Hauptnavigation">
       <button class="m-knopf" type="button" aria-expanded="false" aria-controls="mListeP">Menü</button>
       <ul class="m-liste" id="mListeP">
