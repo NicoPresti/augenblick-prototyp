@@ -113,7 +113,8 @@ html.lock,html.lock body{overflow:hidden}
    oder sobald genug gemalt ist. Beim Darüberfahren dreht es sich in die Farbe, die im Bild vorherrscht (= der Raum, in den man eintritt). */
 #homeChrome .weiter{position:absolute;z-index:1;left:50%;bottom:80px;width:256px;margin-left:-128px;opacity:0;pointer-events:none;transition:opacity .8s ease}
 #homeChrome .weiter.zeigen{opacity:1;pointer-events:auto}
-#homeChrome .weiter .rf-rueck{background:var(--fc,#F6CD51)}   /* 27.11.: Rückseite in voller Farbe 70 % statt Textur */
+#homeChrome .weiter .rf-rueck{background:var(--fc,#F6CD51)}
+#homeChrome .weiter .rf-vorn{border:2px solid var(--lc,var(--linie));transition:border-color .8s ease}   /* 27.11.: Linie zeigt live die Farbe, die im Bild vorherrscht */   /* 27.11.: Rückseite in voller Farbe 70 % statt Textur */
 @media (max-width:767px){#homeChrome .weiter{flex:none;width:220px;margin-left:-110px;bottom:calc(max(24px,env(safe-area-inset-bottom,0px)) + 52px)}}
 /* Fenster mit dem ganzen Bild */
 /* Fenster = Karte (25.11.): das ganze Bild mit runden Ecken und Linie wie die Raumkarten, quer auf Desktop, hoch auf dem Handy.
@@ -248,7 +249,7 @@ br.bm{display:none}
 .vorn img{width:100%;height:100%;object-fit:cover;display:block}
 .rueck{transform:rotateY(180deg);background:#fff;border:1px solid var(--linie);padding:32px;display:flex;flex-direction:column;justify-content:space-between}
 .karte:not(.offen) .rueck{pointer-events:none}   /* Drehung setzt das Script: immer weiter in dieselbe Richtung (25.11.) */
-.rueck .frage{margin:0 0 16px;font-weight:300;font-size:26px;line-height:32px}  /* LT, Desktop 26/32 */
+.rueck .frage{margin:0 0 16px;font-family:"bree",var(--text);font-weight:300;font-size:26px;line-height:32px}  /* 27.11.: Bree Light (vorher Bree Serif Light), Desktop 26/32 */
 .rueck .klar{margin:0;font-size:18px;line-height:28px;text-wrap:pretty}
 /* Desktop: Text in der offenen Karte geht mit der Kartenbreite mit (Figma: 395 px = 100cqw), damit er nie herausläuft,
    wird aber nie grösser als die Skala (Lauftext 18, Frage 26) – auch nicht bei breiten Fenstern */
@@ -428,8 +429,8 @@ br.bm{display:none}
 .r-titelblock{display:flex;flex-direction:column;gap:24px}
 .r-hero h1{margin:0;max-width:820px;font-family:"bree",var(--text);font-weight:700;font-size:54px;line-height:60px;hyphens:manual;text-wrap:balance}  /* D2 */
 .r-text{display:flex;flex-direction:column;gap:24px}
-.r-a1{margin:0;max-width:760px;font-weight:300;font-size:26px;line-height:32px;text-wrap:pretty}  /* LT Largetext */
-.r-a2,.r-fuerwen p:last-child{margin:0;max-width:589px;font-size:18px;line-height:28px;text-wrap:pretty}  /* BT */
+.r-a1,.r-a2{margin:0;max-width:760px;font-weight:300;font-size:26px;line-height:32px;text-wrap:pretty}  /* LT Largetext – 27.11.: beide Absätze (Figma 758:740) */
+.r-fuerwen p:last-child{margin:0;max-width:589px;font-size:18px;line-height:28px;text-wrap:pretty}  /* BT */
 .r-fuerwen{display:flex;flex-direction:column;gap:8px}
 /* Programm im Raum: Programm-Zeilen wie 2000, Spalte «Raum» zeigt die Person, «Mehr» klappt auf */
 .r-prog h2,.r-galerie h2{margin:0 0 24px;font-weight:700;font-size:26px;line-height:32px}  /* T3 */
@@ -468,6 +469,16 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
 .r-bilder figure:not(.vorne) figcaption{opacity:0}
 .r-weitere{display:flex;flex-direction:column;gap:24px}
 .r-weitere .rubrik{margin:0}
+/* 27.11.: Weitere Räume = die Raumkarten der Ankunft, kleiner (280 px = Mobile-Grösse der Ankunft). Karte = einen Raum betreten,
+   Feld = filtern. Text in der Karte in den Mobile-Grössen, Zeilenumbrüche der Fragen wie Mobile. */
+.r-karten{display:flex;gap:32px;align-items:flex-end;padding-top:8px}
+.r-karten .karte{flex:none;width:280px}
+.r-karten .rueck{padding:24px}
+.r-karten .rueck .frage{font-size:23px;line-height:32px;margin-bottom:12px}
+.r-karten .rueck .klar{font-size:14px;line-height:20px}
+.r-karten .rueck .pfeil-link{font-size:16px;line-height:24px}
+.r-karten br.bd{display:none}.r-karten br.bm{display:inline}
+@media (hover:hover){.r-karten .karte:hover .flaeche{transform:scale(1.06)}}
 #raum .cta{padding-top:0}
 #raum .fuss{padding-top:0}
 @media (min-width:768px) and (max-width:1023px){
@@ -482,8 +493,8 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
   .r-hero{gap:48px}
   .r-titelblock{gap:16px}
   .r-hero h1{font-size:40px;line-height:48px}  /* D3 */
-  .r-a1{font-size:23px;line-height:32px}
-  .r-a2,.r-fuerwen p:last-child{font-size:16px;line-height:24px}
+  .r-a1,.r-a2{font-size:23px;line-height:32px}
+  .r-fuerwen p:last-child{font-size:16px;line-height:24px}
   .r-prog h2,.r-galerie h2{font-size:23px;line-height:28px;margin-bottom:16px}
   button.pz-det{grid-column:1/-1;justify-self:start;padding:4px 0 0;font-size:16px;line-height:24px}
   .pz-mehr{grid-column:1/-1;gap:16px;padding:12px 0 12px}
@@ -496,6 +507,12 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
   .r-bilder figcaption{font-size:14px;line-height:20px}
   .r-galnav{display:none}
   .r-weitere{gap:16px}
+  /* Mobile: Wischreihe, vordere Karte mittig (240 px), Nachbar angeschnitten */
+  .r-karten{gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;margin:0 -32px;padding:8px calc(50vw - 120px) 0;scrollbar-width:none;overscroll-behavior-x:contain}
+  .r-karten::-webkit-scrollbar{display:none}
+  .r-karten .karte{width:240px;scroll-snap-align:center}
+  .r-karten .rueck{padding:20px}
+  .r-karten .rueck .frage{font-size:19px;line-height:24px}
 }
 
 /* Programm-Filter (27.11.): «Alle» + drei Räume. Aktiv: Raumfeld gedreht (Farbtextur), «Alle» weiss mit Ink-Linie. */
@@ -503,6 +520,9 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
 .rf-alle .rf-vorn{transition:border-color .2s}
 .rf-alle.aktiv .rf-vorn{border-color:var(--ink)}
 .p-filter .rf:not(.aktiv):hover .rf-vorn{border-color:#b9beb2}
+/* 27.11.: Filter der Räume mit Randlinie in der vollen Raumfarbe, 2 px (Gelb ist auf Weiss sonst kaum zu sehen) */
+.p-filter .rf[data-raum="Schauraum"]{--lc:#F2B807}.p-filter .rf[data-raum="Denkraum"]{--lc:#0762D9}.p-filter .rf[data-raum="Werkraum"]{--lc:#48A605}
+.p-filter .rf[data-raum]:not(.rf-alle) .rf-vorn,.p-filter .rf[data-raum]:not(.rf-alle):hover .rf-vorn{border:2px solid var(--lc,var(--linie))}
 .pz-mehr .pfeil-link{align-self:flex-start;font-size:18px;line-height:28px}
 @media (max-width:767px){
   .p-filter{flex-wrap:wrap}
@@ -580,7 +600,7 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
     <section class="zitat" aria-label="Farbsatz und dein Bild">
       <div class="zitat-block" id="zitatBlock">
         <p class="d3s" id="farbsatz"></p>
-        <p class="bezug" id="bezug"></p>
+        <figure class="zitat-ass"><blockquote class="d3s" id="zitatAss"></blockquote><figcaption>Emanuela Assenza</figcaption></figure>
       </div>
     </section>
     <section class="zugaenge" aria-labelledby="zTitel">
@@ -723,11 +743,44 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
     </section>
     <section class="r-weitere" aria-label="Weitere Räume">
       <p class="rubrik">Weitere Räume</p>
-      <nav class="p-raeume r-raeume" aria-label="Weitere Räume">
-        <button class="rf" type="button" data-raum="Schauraum" style="--tex:url(bild/textur-gelb.jpg)"><span class="rf-dreh"><span class="rf-vorn">Schauraum<span class="zusatz">&nbsp;· Verweilen</span></span><span class="rf-rueck" aria-hidden="true"></span></span></button>
-        <button class="rf" type="button" data-raum="Denkraum" style="--tex:url(bild/textur-blau.jpg)"><span class="rf-dreh"><span class="rf-vorn">Denkraum<span class="zusatz">&nbsp;· Ergründen</span></span><span class="rf-rueck" aria-hidden="true"></span></span></button>
-        <button class="rf" type="button" data-raum="Werkraum" style="--tex:url(bild/textur-gruen.jpg)"><span class="rf-dreh"><span class="rf-vorn">Werkraum<span class="zusatz">&nbsp;· Gestalten</span></span><span class="rf-rueck" aria-hidden="true"></span></span></button>
-      </nav>
+      <div class="r-karten">
+      <article class="karte gelb">
+        <div class="flaeche" tabindex="0" role="button" aria-expanded="false" aria-label="Schauraum: Karte umdrehen">
+          <div class="dreh">
+            <div class="vorn"><img src="bild/textur-gelb.jpg" alt="" width="395" height="557"></div>
+            <div class="rueck">
+              <div><p class="frage">Wie lange kannst<br>du bei einer Farbe bleiben?</p><p class="klar">Ausgewählte Gemälde, ungestört und ohne Erklärtafeln. Geführte Runden im langsamen Schauen, mehrmals täglich.</p></div>
+              <a class="pfeil-link" href="#" data-ziel="raum" data-raum="Schauraum"><span>Mehr zum Schauraum</span><span class="pfeil" aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+        <p class="rubrik">Schauraum · verweilen</p>
+      </article>
+      <article class="karte blau">
+        <div class="flaeche" tabindex="0" role="button" aria-expanded="false" aria-label="Denkraum: Karte umdrehen">
+          <div class="dreh">
+            <div class="vorn"><img src="bild/textur-blau.jpg" alt="" width="395" height="557"></div>
+            <div class="rueck">
+              <div><p class="frage">Warum fällt es<br class="bd"> uns<br class="bm"> so schwer,<br class="bd"> nichts<br class="bm"> zu erkennen?</p><p class="klar">Vorträge und Gespräche aus Kunstgeschichte, Philosophie und Wahrnehmungsforschung. Verständlich, auch ohne Vorwissen.</p></div>
+              <a class="pfeil-link" href="#" data-ziel="raum" data-raum="Denkraum"><span>Mehr zum Denkraum</span><span class="pfeil" aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+        <p class="rubrik">Denkraum · ergründen</p>
+      </article>
+      <article class="karte gruen">
+        <div class="flaeche" tabindex="0" role="button" aria-expanded="false" aria-label="Werkraum: Karte umdrehen">
+          <div class="dreh">
+            <div class="vorn"><img src="bild/textur-gruen.jpg" alt="" width="395" height="557"></div>
+            <div class="rueck">
+              <div><p class="frage">Was verändert sich,<br class="bd"> wenn du selbst<br class="bd"> Farbe aufträgst?</p><p class="klar">Workshops mit Künstler:innen: malen, schichten, zurücktreten. Material ist da, Erfahrung brauchst du keine.</p></div>
+              <a class="pfeil-link" href="#" data-ziel="raum" data-raum="Werkraum"><span>Mehr zum Werkraum</span><span class="pfeil" aria-hidden="true">→</span></a>
+            </div>
+          </div>
+        </div>
+        <p class="rubrik">Werkraum · gestalten</p>
+      </article>
+      </div>
     </section>
     <footer class="fuss">
       <nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav>
@@ -1294,18 +1347,18 @@ const later = (fn, s) => timers.push(setTimeout(fn, s*1000));
 const ANKUNFT = [
   { cls:'', name:'Gelb', raum:'den Schauraum', verb:'verweilen', v70:'#F6CD51',
     satz:'Im Gelb<br class="bm"> sammelt sich,<br>was zu leuchten beginnt.',
-    bezug:'In deinem Bild hat das Leuchten am meisten Platz.<br>Es führt dich in den Schauraum.' },
+    zitat:'‹In der Farbe und Form liegt mehr als ich bin›' },
   { cls:'farbe-blau', name:'Blau', raum:'den Denkraum', verb:'ergründen', v70:'#5191E4',
     satz:'Im Blau rückt alles<br class="bd"> in die Ferne, und<br class="bd"> dein Blick geht mit.',
-    bezug:'In deinem Bild hat<br class="bm"> die Ferne am meisten Platz.<br>Sie führt dich in den Denkraum.' },
+    zitat:'‹Das Alltagsbewusstsein wird zugunsten eines Bildbewusstseins verlassen.›' },
   { cls:'farbe-gruen', name:'Grün', raum:'den Werkraum', verb:'gestalten', v70:'#7FC150',
     satz:'Im Grün liegt<br>ein Anfang,<br>der sich Zeit lässt.',
-    bezug:'In deinem Bild hat der Anfang am meisten Platz.<br>Er führt dich in den Werkraum.' }
+    zitat:'‹Man kann ein Bild nicht wollen.›' }
 ];
 function ankunftFarbe(c){
   if (!(c >= 0 && c <= 2)) c = 0;
   const a = ANKUNFT[c];
-  $('farbsatz').innerHTML = a.satz; $('bezug').innerHTML = a.bezug;
+  $('farbsatz').innerHTML = a.satz; $('zitatAss').textContent = a.zitat;   // 27.11.: Assenza statt Bezugszeile
   const u = $('unten'); u.classList.remove('farbe-blau','farbe-gruen'); if (a.cls) u.classList.add(a.cls);
   const karten = [...document.querySelectorAll('.raeume .karte')];
   karten.forEach((k, i) => { k.style.order = (i - c + 3) % 3; k.dataset.pos = k.style.order; });
@@ -1325,7 +1378,7 @@ function kreisPruefen(){
   if (kreisSpur.getBoundingClientRect().bottom < innerHeight) kreisSpur.classList.add('mitkommen');   // einmal gesehen
 }
 addEventListener('scroll', kreisPruefen, { passive:true });
-/* 27.11.: Lesezeit zählt, solange Farbsatz und Bezug grösstenteils sichtbar sind (ca. 0,25 s pro Wort + 1 s), dann erscheint der Kreis */
+/* 27.11.: Der Kreis erscheint 3 s, nachdem der Zitatblock grösstenteils sichtbar ist (früher kam er zu spät: wer weiterscrollte, sah ihn nie) */
 let kreisUhr = 0;
 function kreisZeigen(){ clearTimeout(kreisUhr); kreisUhr = 0; kreisSpur.classList.add('da'); kreisPruefen(); }
 function kreisVerstecken(){ clearTimeout(kreisUhr); kreisUhr = 0; kreisSpur.classList.remove('da'); }
@@ -1333,7 +1386,7 @@ function kreisLesen(){   // läuft beim Scrollen und nach dem Einblenden der Ank
   if (phase !== 'ankunft' || kreisSpur.classList.contains('da')) return;
   const r = $('zitatBlock').getBoundingClientRect(), sichtbar = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0);
   if (sichtbar >= r.height*0.6){
-    if (!kreisUhr){ const woerter = $('zitatBlock').innerText.trim().split(/\s+/).length; kreisUhr = setTimeout(kreisZeigen, 1000 + woerter*250); }
+    if (!kreisUhr){ kreisUhr = setTimeout(kreisZeigen, 3000); }
   } else { clearTimeout(kreisUhr); kreisUhr = 0; }
 }
 addEventListener('scroll', kreisLesen, { passive:true });
@@ -1489,7 +1542,7 @@ function zeigeRaum(name, ausVerlauf){
   $('rListe').innerHTML = R.prog.map(([zeit, titel, person, text, mitText], i) => {
     const mit = person ? 'mit ' + person : mitText;
     const wer = person ? `<div class="pz-person"><p><b>${person}</b></p><p>${PERSON[person] || ''}</p></div>` : '';
-    return `<li class="pz"><span class="pz-zeit">${zeit}</span><span class="pz-raum">${mit}</span>`
+    return `<li class="pz"><span class="pz-zeit">${zeit}</span><span class="pz-raum"><i style="--rc:${R.kreis}" aria-hidden="true"></i>${mit}</span>`
       + `<p class="pz-titel">${titel}</p><button class="pz-det" type="button" aria-expanded="false" aria-controls="rMehr${i}">Mehr</button>`
       + `<div class="pz-mehr" id="rMehr${i}" hidden><p>${text}</p>${wer}</div></li>`;
   }).join('');
@@ -1498,7 +1551,7 @@ function zeigeRaum(name, ausVerlauf){
     `<figure style="--r:${(w/h).toFixed(4)}"><img src="bild/${datei}" alt="Werk von ${wer}" draggable="false" width="${w}" height="${h}" decoding="async"><figcaption>${wer}</figcaption></figure>`).join('');
   $('rBilder').scrollLeft = 0;
   requestAnimationFrame(() => galPlatz(true));
-  raumSeite.querySelectorAll('.r-raeume .rf').forEach(b => { b.hidden = b.dataset.raum === name; if (b._drehen) b._drehen(false); });
+  raumSeite.querySelectorAll('.r-karten .karte').forEach(k => { k.hidden = k.querySelector('[data-raum]').dataset.raum === name; if (k._setze) k._setze(false); });   // 27.11.: Karten statt Raum-Felder
   document.querySelectorAll('.m-unter a[data-ziel="raum"]').forEach(a => {
     if (a.dataset.raum === name && a.closest('#raum')) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
   document.querySelectorAll('.menue').forEach(menueZu);
@@ -1744,7 +1797,7 @@ function restart(ausVerlauf){
   fly.hidden = true; fly.classList.remove('on'); fly.style.transform = 'none'; wordCv.hidden = true; veil.style.transition = 'none'; veil.style.opacity = 0;
   spot = null; liveSpot = null; seen = null; picture = null;
   document.querySelectorAll('.karte.offen').forEach(k => k._setze(false)); phase = 'paint'; drawFrame(null);
-  kreisSpur.classList.remove('mitkommen'); kreisVerstecken(); ankunft.classList.remove('spaet'); hinweis.classList.remove('zeigen'); hinweis._drehen(false); if (bildFenster.open) bildFenster.close(); document.querySelectorAll('.menue').forEach(menueZu);
+  kreisSpur.classList.remove('mitkommen'); kreisVerstecken(); ankunft.classList.remove('spaet'); hinweis.classList.remove('zeigen'); hinweis._drehen(false); hinweis.style.removeProperty('--lc'); if (bildFenster.open) bildFenster.close(); document.querySelectorAll('.menue').forEach(menueZu);
   home.hidden = false; home.removeAttribute('aria-hidden'); frozen = false; homeChrome.classList.remove('aus');
   document.documentElement.classList.remove('lock');
   lastUserMove = lastAuto = performance.now(); lastFrame = performance.now();
@@ -1850,7 +1903,8 @@ function updateRestHint(now){
   const ok = !frozen && userForms >= (CFG.minForms[lastKind] ?? 1);
   home.classList.toggle('ready', ok && lastKind === 'mouse');
   const show = ok && !!lastPos && (now - lastUserMove > CFG.restAfter*1000) && !touchStart;
-  if (ok && W && Math.PI*score.reduce((a,b)=>a+b,0)/(W*H) >= CFG.weiterAb) zeigeHinweis();   // 27.11.: auch ohne Anhalten
+  if (ok && W && Math.PI*score.reduce((a,b)=>a+b,0)/(W*H) >= CFG.weiterAb) zeigeHinweis();
+  weiterLinie(now);   // 27.11.: auch ohne Anhalten
   if (show && !hintOn){ placeHint(); hintOn = true; zeigeHinweis(); }   // statt Hinweis an der Maus: Kreis oben links (25.11.)
   else if (!show && hintOn){ restHint.classList.remove('on'); hintOn = false; }
 }
@@ -1861,6 +1915,13 @@ function zeigeHinweis(){
 }
 /* 27.11.: Feld dreht sich in die Farbe, die im Bild vorherrscht (gleiche Zählung wie beim Festhalten) */
 const WEITER_FARBE = ['#F6CD51', '#5191E4', '#7FC150'];   // 70 % der vollen Farbe (wie Kreis und Raumkarten)
+const WEITER_LINIE = ['#F2B807', '#0762D9', '#48A605'];   // volle Farbe für die Randlinie
+let linieAt = 0;
+function weiterLinie(now){   // höchstens alle 0,6 s: welche Farbe sieht man im Bild am meisten?
+  if (!ready || frozen || !userForms || now - linieAt < 600) return;
+  linieAt = now; const v = visibleWinner(paint);
+  if (v.shares[v.c] > 0) hinweis.style.setProperty('--lc', WEITER_LINIE[v.c]);
+}
 {
   const d = hinweis.querySelector('.rf-dreh'); let winkel = 0, uhr = 0;
   hinweis._drehen = an => {
