@@ -106,10 +106,14 @@ html.lock,html.lock body{overflow:hidden}
   .hinweis{top:104px;left:32px;width:104px;height:104px}
 }
 @media(prefers-reduced-motion:reduce){.kreis,#homeChrome .hinweis.zeigen{animation:none}}
+/* 27.11.: Der Kreis kommt erst, wenn man Zeit hatte, Farbsatz und Bezug zu lesen – leise eingeblendet */
+.kreis-spur .kreis{opacity:0;pointer-events:none;transition:opacity 1.8s ease}
+.kreis-spur.da .kreis{opacity:1;pointer-events:auto}
 /* 27.11.: Home «Hier verweilen →» – Feld wie die Programm-Filter, unten in der Mitte. Erscheint beim Anhalten
    oder sobald genug gemalt ist. Beim Darüberfahren dreht es sich in die Farbe, die im Bild vorherrscht (= der Raum, in den man eintritt). */
 #homeChrome .weiter{position:absolute;z-index:1;left:50%;bottom:80px;width:256px;margin-left:-128px;opacity:0;pointer-events:none;transition:opacity .8s ease}
 #homeChrome .weiter.zeigen{opacity:1;pointer-events:auto}
+#homeChrome .weiter .rf-rueck{background:var(--fc,#F6CD51)}   /* 27.11.: Rückseite in voller Farbe 70 % statt Textur */
 @media (max-width:767px){#homeChrome .weiter{flex:none;width:220px;margin-left:-110px;bottom:calc(max(24px,env(safe-area-inset-bottom,0px)) + 52px)}}
 /* Fenster mit dem ganzen Bild */
 /* Fenster = Karte (25.11.): das ganze Bild mit runden Ecken und Linie wie die Raumkarten, quer auf Desktop, hoch auf dem Handy.
@@ -228,6 +232,9 @@ br.bm{display:none}
   .raeume .karte:not(.eigen):hover .flaeche{transform:scale(1.06)}
   .raeume:has(.karte:not(.eigen):hover) .karte.eigen .flaeche{transform:scale(.94)}
 }
+/* 27.11.: Die eigene Karte (links) schrumpft beim Überfahren einer anderen und öffnet links einen grösseren Abstand.
+   Die mittlere Karte wächst darum zu 77,5 % nach links – so bleiben beide Abstände gleich (1,1 × 3 % = 3,3 % ↔ 6 %). */
+.raeume .karte[data-pos="1"]:not(.eigen) .flaeche{transform-origin:77.5% 100%}   /* Desktop beim Überfahren, Handy wenn sie vorne steht */
 /* Wischreihe (Handy/Tablet): die Karte, die vorne einrastet, wird gross – wie Hover auf dem Desktop (25.11.) */
 @media (max-width:1023px){
   .raeume .karte.vorne:not(.eigen) .flaeche{transform:scale(1.06)}
@@ -266,10 +273,10 @@ br.bm{display:none}
 .fuss a:hover{text-decoration:underline;text-underline-offset:5px}
 /* Schmale Fenster (Tablet, kleines Browserfenster): Karten als Wischreihe wie auf dem Handy, Text in Mobile-Grössen */
 @media (min-width:768px) and (max-width:1023px){
-  .raeume{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;overscroll-behavior-x:contain;
-    padding-top:40px;margin-top:-40px}
+  .raeume{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;margin-left:-32px;margin-right:-32px;scrollbar-width:none;overscroll-behavior-x:contain;
+    padding-top:40px;margin-top:-40px}   /* 27.11.: über die ganze Breite, Innenabstand links/rechts setzt das Script (vordere Karte mittig) */
   .raeume::-webkit-scrollbar{display:none}
-  .raeume .karte{flex:0 0 300px;scroll-snap-align:start}
+  .raeume .karte{flex:0 0 300px;scroll-snap-align:center}
   .raeume .karte.eigen{flex-basis:330px}
   .rueck{padding:24px}
   .rueck .frage{font-size:23px;line-height:32px;margin-bottom:12px}
@@ -290,10 +297,10 @@ br.bm{display:none}
   .zugaenge h2{font-size:48px;line-height:56px}
   .zugaenge .leitsatz{font-size:16px;line-height:24px}
   /* Wischreihe: horizontal, rastet ein, nächste Karte angeschnitten */
-  .raeume{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;margin-right:-32px;padding-right:32px;scrollbar-width:none;
-    overscroll-behavior-x:contain;padding-top:40px;margin-top:-40px}  /* oben Platz für den halben Karten-Kreis */
+  .raeume{display:flex;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;margin-left:-32px;margin-right:-32px;scrollbar-width:none;
+    overscroll-behavior-x:contain;padding-top:40px;margin-top:-40px}  /* oben Platz für den halben Karten-Kreis. 27.11.: ganze Breite, vordere Karte mittig */
   .raeume::-webkit-scrollbar{display:none}
-  .raeume .karte{flex:0 0 280px;scroll-snap-align:start}
+  .raeume .karte{flex:0 0 280px;scroll-snap-align:center}
   .raeume .karte.eigen{flex-basis:308px}
   .rubrik{font-size:14px;line-height:20px}
   .rueck{padding:24px}
@@ -1301,7 +1308,7 @@ function ankunftFarbe(c){
   $('farbsatz').innerHTML = a.satz; $('bezug').innerHTML = a.bezug;
   const u = $('unten'); u.classList.remove('farbe-blau','farbe-gruen'); if (a.cls) u.classList.add(a.cls);
   const karten = [...document.querySelectorAll('.raeume .karte')];
-  karten.forEach((k, i) => { k.style.order = (i - c + 3) % 3; });
+  karten.forEach((k, i) => { k.style.order = (i - c + 3) % 3; k.dataset.pos = k.style.order; });
   const reihe = document.querySelector('.raeume'); if (reihe) reihe.scrollLeft = 0;
   karten.forEach((kk, i) => kk.classList.toggle('eigen', i === c));   // eigene Karte 25 % grösser
   $('kreis').style.setProperty('--kc', a.v70); $('kreisSpur').classList.remove('mitkommen');
@@ -1314,10 +1321,22 @@ function kreisLage(){
   kreisSpur.style.height = Math.round(z.bottom - a.top + (isMobile() ? 32 : 48) + kreis.offsetHeight) + 'px';
 }
 function kreisPruefen(){
-  if (phase !== 'ankunft' || kreisSpur.classList.contains('mitkommen')) return;
+  if (phase !== 'ankunft' || !kreisSpur.classList.contains('da') || kreisSpur.classList.contains('mitkommen')) return;
   if (kreisSpur.getBoundingClientRect().bottom < innerHeight) kreisSpur.classList.add('mitkommen');   // einmal gesehen
 }
 addEventListener('scroll', kreisPruefen, { passive:true });
+/* 27.11.: Lesezeit zählt, solange Farbsatz und Bezug grösstenteils sichtbar sind (ca. 0,25 s pro Wort + 1 s), dann erscheint der Kreis */
+let kreisUhr = 0;
+function kreisZeigen(){ clearTimeout(kreisUhr); kreisUhr = 0; kreisSpur.classList.add('da'); kreisPruefen(); }
+function kreisVerstecken(){ clearTimeout(kreisUhr); kreisUhr = 0; kreisSpur.classList.remove('da'); }
+function kreisLesen(){   // läuft beim Scrollen und nach dem Einblenden der Ankunft
+  if (phase !== 'ankunft' || kreisSpur.classList.contains('da')) return;
+  const r = $('zitatBlock').getBoundingClientRect(), sichtbar = Math.min(r.bottom, innerHeight) - Math.max(r.top, 0);
+  if (sichtbar >= r.height*0.6){
+    if (!kreisUhr){ const woerter = $('zitatBlock').innerText.trim().split(/\s+/).length; kreisUhr = setTimeout(kreisZeigen, 1000 + woerter*250); }
+  } else { clearTimeout(kreisUhr); kreisUhr = 0; }
+}
+addEventListener('scroll', kreisLesen, { passive:true });
 addEventListener('resize', () => { if (phase === 'ankunft') kreisLage(); });
 /* Bild für das Fenster: Rand 3 % beschnitten (am Rand der Malfläche überlappen sich sonst Formen sichtbar) */
 let bildRatio = 1.6;
@@ -1705,7 +1724,7 @@ function reveal(){
   history.pushState({ seite:'ankunft' }, '', '#ankunft');
   drawBand();
   ankunft.classList.remove('pre');
-  later(() => { ankunft.classList.remove('spaet'); kreisLage(); }, reduced.matches ? 0 : CFG.revealDur);
+  later(() => { ankunft.classList.remove('spaet'); kreisLage(); raeumePlatz(); kreisLesen(); }, reduced.matches ? 0 : CFG.revealDur);
   if (document.fonts) document.fonts.ready.then(() => { if (phase === 'ankunft') kreisLage(); });
   later(() => {
     home.hidden = true; fly.hidden = true; fly.classList.remove('on'); wordCv.hidden = true;
@@ -1725,7 +1744,7 @@ function restart(ausVerlauf){
   fly.hidden = true; fly.classList.remove('on'); fly.style.transform = 'none'; wordCv.hidden = true; veil.style.transition = 'none'; veil.style.opacity = 0;
   spot = null; liveSpot = null; seen = null; picture = null;
   document.querySelectorAll('.karte.offen').forEach(k => k._setze(false)); phase = 'paint'; drawFrame(null);
-  kreisSpur.classList.remove('mitkommen'); ankunft.classList.remove('spaet'); hinweis.classList.remove('zeigen'); hinweis._drehen(false); if (bildFenster.open) bildFenster.close(); document.querySelectorAll('.menue').forEach(menueZu);
+  kreisSpur.classList.remove('mitkommen'); kreisVerstecken(); ankunft.classList.remove('spaet'); hinweis.classList.remove('zeigen'); hinweis._drehen(false); if (bildFenster.open) bildFenster.close(); document.querySelectorAll('.menue').forEach(menueZu);
   home.hidden = false; home.removeAttribute('aria-hidden'); frozen = false; homeChrome.classList.remove('aus');
   document.documentElement.classList.remove('lock');
   lastUserMove = lastAuto = performance.now(); lastFrame = performance.now();
@@ -1741,12 +1760,21 @@ window.addEventListener('resize', () => { if (phase === 'ankunft') drawBand(); }
   const reihe = document.querySelector('.raeume'); if (!reihe) return;
   let raf = 0;
   const pruefe = () => { raf = 0;
-    const l = reihe.getBoundingClientRect().left;
+    const m = mitte(reihe);   // 27.11.: vorne = die Karte in der Mitte (wie die Galerie)
     let best = null, d = 1e9;
-    reihe.querySelectorAll('.karte').forEach(k => { const x = Math.abs(k.getBoundingClientRect().left - l); if (x < d){ d = x; best = k; } });
-    reihe.querySelectorAll('.karte').forEach(k => k.classList.toggle('vorne', k === best && reihe.scrollLeft > 4));
+    reihe.querySelectorAll('.karte').forEach(k => { const x = Math.abs(mitte(k) - m); if (x < d){ d = x; best = k; } });
+    reihe.querySelectorAll('.karte').forEach(k => k.classList.toggle('vorne', k === best));
   };
   reihe.addEventListener('scroll', () => { if (!raf) raf = requestAnimationFrame(pruefe); }, { passive:true });
+  /* Innenabstand links/rechts: so viel, dass auch die erste und die letzte Karte in der Mitte einrasten (nur Wischreihe < 1024 px) */
+  window.raeumePlatz = () => {
+    if (innerWidth >= 1024 || !reihe.clientWidth){ reihe.style.paddingLeft = reihe.style.paddingRight = ''; return; }
+    const ks = [...reihe.querySelectorAll('.karte')].sort((a, b) => (+a.style.order || 0) - (+b.style.order || 0));
+    reihe.style.paddingLeft = Math.max(0, (reihe.clientWidth - ks[0].offsetWidth)/2) + 'px';
+    reihe.style.paddingRight = Math.max(0, (reihe.clientWidth - ks[ks.length-1].offsetWidth)/2) + 'px';
+    reihe.scrollLeft = 0; pruefe();
+  };
+  addEventListener('resize', () => { if (phase === 'ankunft') raeumePlatz(); });
 })();
 /* ---------- Raumkarten: Überfahren macht die Karte grösser, Klick/Tippen dreht; Maus raus dreht zurück zur Farbe.
    Die Drehung geht immer weiter in dieselbe Richtung (0 → 180 → 360 …), nie zurück (25.11.) ---------- */
@@ -1832,12 +1860,12 @@ function zeigeHinweis(){
   hinweis.classList.add('zeigen');                     // bleibt sichtbar, auch wenn man weitermalt
 }
 /* 27.11.: Feld dreht sich in die Farbe, die im Bild vorherrscht (gleiche Zählung wie beim Festhalten) */
-const WEITER_TEX = ['bild/textur-gelb.jpg', 'bild/textur-blau.jpg', 'bild/textur-gruen.jpg'];
+const WEITER_FARBE = ['#F6CD51', '#5191E4', '#7FC150'];   // 70 % der vollen Farbe (wie Kreis und Raumkarten)
 {
   const d = hinweis.querySelector('.rf-dreh'); let winkel = 0, uhr = 0;
   hinweis._drehen = an => {
     if (hinweis.classList.contains('dreht') === an) return;
-    if (an && ready){ const v = visibleWinner(paint); hinweis.style.setProperty('--tex', `url(${WEITER_TEX[v.c]})`); }
+    if (an && ready){ const v = visibleWinner(paint); hinweis.style.setProperty('--fc', WEITER_FARBE[v.c]); }
     winkel += 180; d.style.transform = `rotateY(${winkel}deg)`; hinweis.classList.toggle('dreht', an);
     if (!an) clearTimeout(uhr);
   };
@@ -1877,7 +1905,7 @@ function zeigeAnkunft(){
   programm.hidden = true; raumSeite.hidden = true; home.hidden = true; homeChrome.classList.add('aus');
   document.documentElement.classList.remove('lock');
   ankunft.hidden = false; ankunft.classList.remove('pre','spaet'); phase = 'ankunft';
-  window.scrollTo(0, 0); drawBand(); kreisLage(); ankunft.focus({ preventScroll:true });
+  window.scrollTo(0, 0); drawBand(); kreisLage(); raeumePlatz(); kreisZeigen(); ankunft.focus({ preventScroll:true });
 }
 addEventListener('popstate', e => {
   if (phase === 'mark' || phase === 'zoom') return;
