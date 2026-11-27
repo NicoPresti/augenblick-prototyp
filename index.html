@@ -7,7 +7,8 @@
 <!-- Adobe-Fonts-Web-Projekt «Augenblick – GitHub Pages» (Domains: nicopresti.github.io, localhost, 127.0.0.1) -->
 <link rel="stylesheet" href="https://use.typekit.net/png5wew.css">
 <style>
-/* Augenblick · Home → Zoom → Ankunft → Raum → Programm · Stand 26.11.2026 (Abend)
+/* Augenblick · Home → Zoom → Ankunft → Raum → Programm · Stand 27.11.2026
+   27.11.: Home – Leitsatz als Text («Dein Blick malt. Halt an, wann du willst.»), Feld «Hier verweilen →», Farbausgleich, Streifen rechts behoben.
    26.11. Abend: Raumseiten 1100 Schauraum · 1200 Denkraum · 1300 Werkraum (Figma «05 Gestaltung», Desktop 758:661 / 768:528 / 768:689,
    Mobile 780:593 / 781:625 / 781:843). Wege: Raum-Felder, Menü «Räume», Raumkarten der Ankunft, Raumname im Programm.
    Galeriebilder liegen direkt in bild/ (gelb-1-kandinsky.jpg usw.).
@@ -47,7 +48,8 @@ html.lock,html.lock body{overflow:hidden}
   opacity:0;animation:introIn 1.6s ease .3s forwards;transition:opacity 1.2s ease,filter 1.2s ease;
   filter:drop-shadow(0 0 6px #fff) drop-shadow(0 0 2px #fff)}
 #leadTop.out{opacity:0!important;filter:blur(10px)}
-#leadSatz{width:min(82vw,560px);height:auto;display:block}
+/* 27.11.: Leitsatz als Text statt SVG (Figma 797:2550, «Farbsatz · D3 Subtle», Bree Light 70/90 bei 1440 px) */
+#leadSatz{margin:0;font-family:"bree",var(--text);font-weight:300;font-size:clamp(30px,4.86vw,70px);line-height:1.286;color:var(--ink);text-align:center}
 #leadAct{margin:0;font-size:clamp(16px,1.6vw,19px);line-height:1.4;color:var(--muted)}
 @keyframes introIn{to{opacity:1}}
 /* Wortmarke beim Festhalten: erscheint über dem Bild, gleitet dann an ihren Platz in der Ankunft */
@@ -104,6 +106,11 @@ html.lock,html.lock body{overflow:hidden}
   .hinweis{top:104px;left:32px;width:104px;height:104px}
 }
 @media(prefers-reduced-motion:reduce){.kreis,#homeChrome .hinweis.zeigen{animation:none}}
+/* 27.11.: Home «Hier verweilen →» – Feld wie die Programm-Filter, unten in der Mitte. Erscheint beim Anhalten
+   oder sobald genug gemalt ist. Beim Darüberfahren dreht es sich in die Farbe, die im Bild vorherrscht (= der Raum, in den man eintritt). */
+#homeChrome .weiter{position:absolute;z-index:1;left:50%;bottom:80px;width:256px;margin-left:-128px;opacity:0;pointer-events:none;transition:opacity .8s ease}
+#homeChrome .weiter.zeigen{opacity:1;pointer-events:auto}
+@media (max-width:767px){#homeChrome .weiter{flex:none;width:220px;margin-left:-110px;bottom:calc(max(24px,env(safe-area-inset-bottom,0px)) + 52px)}}
 /* Fenster mit dem ganzen Bild */
 /* Fenster = Karte (25.11.): das ganze Bild mit runden Ecken und Linie wie die Raumkarten, quer auf Desktop, hoch auf dem Handy.
    Öffnen: der Kreis dreht sich (immer weiter in dieselbe Richtung) und wächst zur Bildkarte; Schliessen: zurück in den Kreis.
@@ -515,17 +522,17 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
 </style>
 </head>
 <body>
-<main id="home" tabindex="0" aria-label="Augenblick – im Sehen verweilen. Bewege die Maus oder den Finger über die Fläche, und Farbformen erscheinen. Klicken oder Eingabe hält das Bild fest.">
+<main id="home" tabindex="0" aria-label="Augenblick – im Sehen verweilen. Dein Blick malt. Halt an, wann du willst. Bewege die Maus oder den Finger über die Fläche, und Farbformen erscheinen. Klicken oder Eingabe hält das Bild fest.">
   <div id="stage"><canvas id="art" aria-hidden="true"></canvas><canvas id="frame" aria-hidden="true" hidden></canvas></div>
   <p id="rest" aria-live="polite"></p>
   <div id="leadTop" aria-hidden="true">
-    <img id="leadSatz" src="svg/wie-du-schaust.svg" alt="" width="1039" height="215">
+    <p id="leadSatz">Dein Blick malt.<br>Halt an, wann du willst.</p>
     <p id="leadAct">Fahr langsam mit der Maus über die Fläche.</p>
   </div>
 </main>
 <div id="homeChrome">
   <nav class="h-nav" aria-label="Schnellzugang"><a href="#programm" data-ziel="programm">Programm</a><a href="#" data-soon>Über den Kongress</a></nav>
-  <button class="hinweis" id="hinweis" type="button">Klicke, um<br>mehr zu<br>erfahren.</button>
+  <button class="rf weiter" id="hinweis" type="button"><span class="rf-dreh"><span class="rf-vorn">Hier verweilen<span class="pfeil" aria-hidden="true">&nbsp;→</span></span><span class="rf-rueck" aria-hidden="true"></span></span></button>
   <footer class="h-fuss"><nav aria-label="Service"><a href="#" data-soon>Impressum</a><a href="#" data-soon>Datenschutz</a></nav><p>5.–7. März 2027 · Basel</p></footer>
 </div>
 <div id="veil" aria-hidden="true"></div>
@@ -802,7 +809,7 @@ const WM = {"word": ["M235.553 3.26957C235.553 1.13789 234.481 0 232.122 0C228.4
 
 const CFG = {
   ghost: 0.13,              // Sichtbarkeit des verschwommenen Grundes
-  ghostZoom: [1.04, 0.06],  // Grund-Zoom und Schwankung (langsames Atmen)
+  ghostZoom: [1.1, 0.04],   // Grund-Zoom und Schwankung (langsames Atmen). 27.11.: nie unter 106 %, sonst heller Streifen am Rand (vorher 1.04 / 0.06)
   ghostPeriod: 90,          // Sekunden für einen Zoom-Zyklus
   spacing: [60, 130],       // Weg in px zwischen zwei Erscheinungen
   threshold: 0.56,          // wie eindeutig eine Bewegung sein muss
@@ -811,12 +818,18 @@ const CFG = {
   idleEvery: 9,
   idleMax: 0,               // nichts erscheint von selbst, erst mit der ersten Bewegung (wie Sammel-Fassung)
   restAfter: 1.8,           // Sekunden Stillhalten, bis der Hinweis erscheint
+  // 27.11. Gleichgewicht der drei Farben (Mondrian: «Gestaltung von Gleichgewichtsbeziehungen»)
+  mobileScale: 0.62,        // Handy: Formen kleiner, damit eine Bewegung nicht die ganze Breite füllt
+  curveTouch: 0.8, curveMouse: 0.9,  // Kurven etwas strenger lesen: ein leichter Bogen gilt noch als gerade
+  balanceBand: 0.15,        // liegen zwei Richtungen so nah beieinander, ist die Bewegung unklar …
+  balanceMin: 0.4,          // … (und ab diesem Wert erscheint überhaupt eine Form) → die Farbe, die im Bild am wenigsten vorkommt
+  weiterAb: 0.45,           // «Hier verweilen» erscheint auch ohne Anhalten, sobald so viel Fläche gemalt ist (Summe der Formen / Fläche)
   minForms: { mouse: 1, touch: 4 },  // so viele Formen braucht es, bevor ein Klick/Tippen abschliesst
   markIn: 1.0, markHold: 3.6, markOut: 1.2,  // Wortmarke: einblenden, stehen bis, auflösen (Sekunden)
   colors: [
     // Gelb (senkrecht): viele schmale Striche, die sich nacheinander verdichten
     { mode:'strokes', radius:[60,150], shape:[0.95,1.3], rot:[0,0], zoom:[0.9,1.4], sharp:[1,1],
-      strokes:[38,85], strokeLen:[30,95], strokeWidth:[2.45,6.4],  /* 13.11. mit Regler festgelegt (ursprünglich 1.6–4.2) */ duration:[2.4,3.8], spacingFactor:0.6 },
+      strokes:[46,100], strokeLen:[30,95], strokeWidth:[2.8,7.2],  /* 27.11. Versuch: dichter (13.11.: strokes 38–85, Breite 2.45–6.4) */ duration:[2.4,3.8], spacingFactor:0.6 },
     // Blau (waagrecht): weite Fläche aus der Unschärfe, leichtes Heranzoomen
     { mode:'fade', radius:[49.5,126], /* 13.11. mit Regler (vorher 55–140) */ shape:[1.9,0.7], rot:[-0.12,0.12], zoom:[0.6,1.9], sharp:[0.35,1], duration:[1.4,2.6], spacingFactor:1,
       grow:[0.84,0.91] },  /* 13.11.: wächst beim Erscheinen von innen nach aussen, mit Regler festgelegt (vorher von 106–122 % herein) */
@@ -855,6 +868,7 @@ const mk = (w,h) => { const c = document.createElement('canvas'); c.width = Math
 
 let tex = [], ready = false, frozen = false, ratio = 1, W = 0, H = 0;
 let ghosts = [], paint = null, paintCtx = null, actives = [];
+let anteil = [0,0,0], anteilAt = 0;   // 27.11.: sichtbare Anteile Gelb/Blau/Grün für den Ausgleich
 let score = [0,0,0], userForms = 0, lastPoint = null, travel = 0, nextSpacing = 90;
 let touchStart = null, pointerTravel = 0, clickStart = null, liveTime = 0, lastFrame = performance.now(), lastPaint = 0;
 let lastUserMove = performance.now(), lastAuto = 0, autoCount = 0, picture = null, winner = null, markT0 = 0;
@@ -906,7 +920,7 @@ function buildGhosts(){
 /* ---------- Eine Farbform erscheint ---------- */
 function spawn(c, x, y, byUser){
   const P = CFG.colors[c], img = tex[c];
-  const R = rr(P.radius) * ratio;
+  const R = rr(P.radius) * ratio * (isMobile() ? CFG.mobileScale : 1);   // 27.11.: Handy kleiner
   const a = {
     c, mode: P.mode, x: x + rand(-.3,.3)*R, y: y + rand(-.3,.3)*R,
     rx: R*P.shape[0]*rand(.85,1.15), ry: R*P.shape[1]*rand(.85,1.15),
@@ -1074,9 +1088,20 @@ function moveThrough(x, y, time){
   if (travel < nextSpacing) return;
   travel = 0; nextSpacing = rr(CFG.spacing);
   if (gesture.history.length < 3) return;
-  const w = gesture.localWeights, m = Math.max(...w);
-  if (m < CFG.threshold) return;
-  const c = w.indexOf(m);
+  // 27.11.: Kurve etwas strenger lesen (Daumen und Maus fahren selten ganz gerade)
+  const w = gesture.localWeights.slice(), vh = w[0] + w[1];
+  w[2] *= lastKind === 'touch' ? CFG.curveTouch : CFG.curveMouse;
+  if (vh > 0){ const f = (1 - w[2]) / vh; w[0] *= f; w[1] *= f; }
+  const m = Math.max(...w);
+  if (m < CFG.balanceMin) return;
+  // Gleichgewicht: eine klare Bewegung gibt ihre Farbe. Ist sie unklar, erscheint die Farbe, die im Bild am wenigsten vorkommt.
+  let c = w.indexOf(m);
+  const nah = [0,1,2].filter(i => w[i] >= m - CFG.balanceBand);
+  if (m < CFG.threshold || nah.length > 1){
+    const jetzt = performance.now();   // sichtbare Anteile im Bild (wie beim Festhalten gezählt), höchstens alle 0,6 s neu
+    if (jetzt - anteilAt > 600){ anteil = visibleWinner(paint).shares; anteilAt = jetzt; }
+    c = nah.reduce((a, b) => anteil[b] < anteil[a] ? b : a);
+  }
   nextSpacing *= CFG.colors[c].spacingFactor;
   spawn(c, x*ratio, y*ratio, true);
 }
@@ -1700,7 +1725,7 @@ function restart(ausVerlauf){
   fly.hidden = true; fly.classList.remove('on'); fly.style.transform = 'none'; wordCv.hidden = true; veil.style.transition = 'none'; veil.style.opacity = 0;
   spot = null; liveSpot = null; seen = null; picture = null;
   document.querySelectorAll('.karte.offen').forEach(k => k._setze(false)); phase = 'paint'; drawFrame(null);
-  kreisSpur.classList.remove('mitkommen'); ankunft.classList.remove('spaet'); hinweis.classList.remove('zeigen'); if (bildFenster.open) bildFenster.close(); document.querySelectorAll('.menue').forEach(menueZu);
+  kreisSpur.classList.remove('mitkommen'); ankunft.classList.remove('spaet'); hinweis.classList.remove('zeigen'); hinweis._drehen(false); if (bildFenster.open) bildFenster.close(); document.querySelectorAll('.menue').forEach(menueZu);
   home.hidden = false; home.removeAttribute('aria-hidden'); frozen = false; homeChrome.classList.remove('aus');
   document.documentElement.classList.remove('lock');
   lastUserMove = lastAuto = performance.now(); lastFrame = performance.now();
@@ -1797,16 +1822,34 @@ function updateRestHint(now){
   const ok = !frozen && userForms >= (CFG.minForms[lastKind] ?? 1);
   home.classList.toggle('ready', ok && lastKind === 'mouse');
   const show = ok && !!lastPos && (now - lastUserMove > CFG.restAfter*1000) && !touchStart;
+  if (ok && W && Math.PI*score.reduce((a,b)=>a+b,0)/(W*H) >= CFG.weiterAb) zeigeHinweis();   // 27.11.: auch ohne Anhalten
   if (show && !hintOn){ placeHint(); hintOn = true; zeigeHinweis(); }   // statt Hinweis an der Maus: Kreis oben links (25.11.)
   else if (!show && hintOn){ restHint.classList.remove('on'); hintOn = false; }
 }
 const hinweis = $('hinweis');
 function zeigeHinweis(){
   if (hinweis.classList.contains('zeigen')) return;
-  hinweis.innerHTML = (lastKind === 'touch' ? 'Tippe' : 'Klicke') + ', um<br>mehr zu<br>erfahren.';
   hinweis.classList.add('zeigen');                     // bleibt sichtbar, auch wenn man weitermalt
 }
-hinweis.addEventListener('click', () => commit(lastKind === 'touch' ? 'touch' : 'mouse'));
+/* 27.11.: Feld dreht sich in die Farbe, die im Bild vorherrscht (gleiche Zählung wie beim Festhalten) */
+const WEITER_TEX = ['bild/textur-gelb.jpg', 'bild/textur-blau.jpg', 'bild/textur-gruen.jpg'];
+{
+  const d = hinweis.querySelector('.rf-dreh'); let winkel = 0, uhr = 0;
+  hinweis._drehen = an => {
+    if (hinweis.classList.contains('dreht') === an) return;
+    if (an && ready){ const v = visibleWinner(paint); hinweis.style.setProperty('--tex', `url(${WEITER_TEX[v.c]})`); }
+    winkel += 180; d.style.transform = `rotateY(${winkel}deg)`; hinweis.classList.toggle('dreht', an);
+    if (!an) clearTimeout(uhr);
+  };
+  hinweis.addEventListener('pointerenter', e => { if (e.pointerType === 'mouse') hinweis._drehen(true); });
+  hinweis.addEventListener('pointerleave', e => { if (e.pointerType === 'mouse') hinweis._drehen(false); });
+  hinweis.addEventListener('click', e => {
+    clearTimeout(uhr);
+    const kind = e.pointerType === 'touch' || e.pointerType === 'pen' ? 'touch' : 'mouse';
+    if (kind === 'touch' && !hinweis.classList.contains('dreht')){ hinweis._drehen(true); uhr = setTimeout(() => commit(kind), reduced.matches ? 0 : 700); }
+    else commit(kind);
+  });
+}
 function placeHint(){
   restHint.textContent = lastKind === 'touch' ? 'Tippe, um mehr zu erfahren.' : 'Klicke, um mehr zu erfahren.';
   const r = home.getBoundingClientRect(), w = restHint.offsetWidth || 280, h = restHint.offsetHeight || 28;
