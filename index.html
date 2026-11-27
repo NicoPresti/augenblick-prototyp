@@ -439,16 +439,18 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
 .r-galnav button{width:44px;height:44px;padding:0;border:0;background:none;color:var(--ink);font:400 22px/28px var(--text);cursor:pointer;transition:opacity .2s}
 .r-galnav button:hover:not(:disabled) span{display:inline-block;transform:translateX(var(--dx,0))}
 .r-galnav button:disabled{opacity:.25;cursor:default}
-.r-bilder{--h:440px;display:flex;align-items:flex-end;gap:24px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;overscroll-behavior-x:contain;
-  margin-right:calc(-1 * max(32px,(100vw - 1248px)/2));cursor:grab;-webkit-user-select:none;user-select:none}
+/* 27.11.: das vordere Bild steht in der Mitte des Bildschirms, links und rechts sind die Nachbarn angeschnitten.
+   Die Reihe geht über die ganze Fensterbreite; Innenabstand links/rechts setzt das Script, damit auch das erste und letzte Bild mittig einrasten. */
+.r-bilder{--h:540px;--rand:max(32px,(100vw - 1248px)/2);display:flex;align-items:flex-end;gap:32px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;
+  overscroll-behavior-x:contain;margin-left:calc(-1 * var(--rand));margin-right:calc(-1 * var(--rand));cursor:grab;-webkit-user-select:none;user-select:none}
 .r-bilder::-webkit-scrollbar{display:none}
 .r-bilder.zieht{cursor:grabbing;scroll-snap-type:none}
-.r-bilder figure{margin:0;flex:none;width:calc(var(--h) * var(--r));display:flex;flex-direction:column;gap:12px;scroll-snap-align:start}
-.r-bilder img{display:block;width:100%;height:var(--h);object-fit:cover;background:#eef0ea;-webkit-user-drag:none;
+.r-bilder figure{margin:0;flex:none;width:min(calc(var(--h) * var(--r)), var(--maxb,56vw));display:flex;flex-direction:column;gap:12px;scroll-snap-align:center}
+.r-bilder img{display:block;width:100%;height:auto;aspect-ratio:var(--r);object-fit:cover;background:#eef0ea;-webkit-user-drag:none;
   transform-origin:50% 100%;transition:transform .5s cubic-bezier(.45,0,.15,1)}
-.r-bilder figure:not(.vorne) img{transform:scale(.86)}
-.r-bilder figcaption{font-size:15px;line-height:24px;transition:opacity .5s}
-.r-bilder figure:not(.vorne) figcaption{opacity:.55}
+.r-bilder figure:not(.vorne) img{transform:scale(.8)}
+.r-bilder figcaption{font-size:15px;line-height:24px;text-align:center;transition:opacity .5s}
+.r-bilder figure:not(.vorne) figcaption{opacity:0}
 .r-weitere{display:flex;flex-direction:column;gap:24px}
 .r-weitere .rubrik{margin:0}
 #raum .cta{padding-top:0}
@@ -474,7 +476,7 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
   .r-cta{gap:16px}
   .r-cta .r-zweit{font-size:16px;line-height:24px}
   /* Galerie seitlich wischen, 240 px hoch */
-  .r-bilder{--h:260px;gap:12px;margin-right:-32px}
+  .r-bilder{--h:300px;--rand:32px;--maxb:74vw;gap:16px}   /* breite Bilder werden niedriger, damit die Nachbarn sichtbar bleiben */
   .r-bilder figure{gap:8px}
   .r-bilder figcaption{font-size:14px;line-height:20px}
   .r-galnav{display:none}
@@ -486,10 +488,9 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
 #raumTor{position:fixed;z-index:80;perspective:2000px;pointer-events:none}
 .rt-dreh{position:absolute;inset:0;transform-style:preserve-3d}
 .rt-vorn,.rt-rueck{position:absolute;inset:0;border-radius:8px;overflow:hidden;backface-visibility:hidden;-webkit-backface-visibility:hidden}
-.rt-vorn{background:#fff;border:1px solid var(--linie)}
-.rt-vorn .rueck{transform:none;position:absolute;inset:0;border:0}
-.rt-rueck{transform:rotateY(180deg);background:#fff}
-.rt-rueck .r-bild{position:absolute}
+.rt-dreh{will-change:transform}
+.rt-vorn{background:#fff;border:1px solid var(--linie)}   /* 27.11.: ohne Schrift – die Fläche färbt sich beim Drehen von Weiss in die Raumfarbe */
+.rt-rueck{transform:rotateY(180deg);background:rgb(var(--rgb))}
 
 /* ---------- Debug (Taste D) ---------- */
 #debug{position:fixed;left:12px;top:12px;z-index:60;background:#ffffffeb;padding:10px 12px;font-size:12px;line-height:1.35;display:grid;gap:5px;
@@ -707,7 +708,7 @@ button.pz-det{border:0;background:none;color:var(--ink);font:inherit;font-size:1
   </div>
 </div>
 
-<div id="raumTor" hidden aria-hidden="true"><div class="rt-dreh"><div class="rt-vorn"></div><div class="rt-rueck"><div class="r-bild"><span class="r-tex"></span></div></div></div></div>
+<div id="raumTor" hidden aria-hidden="true"><div class="rt-dreh"><div class="rt-vorn"></div><div class="rt-rueck"></div></div></div>
 <dialog id="bildFenster" aria-label="Dein Augenblick, ganzes Bild">
   <div class="bf-bild" id="bfBild" tabindex="-1" autofocus><div class="bf-dreh" id="bfDreh">
     <div class="bf-farbe" aria-hidden="true"></div>
@@ -1424,7 +1425,7 @@ function zeigeRaum(name){
   $('rBilder').innerHTML = R.galerie.map(([datei, wer, w, h]) =>
     `<figure style="--r:${(w/h).toFixed(4)}"><img src="bild/${datei}" alt="Werk von ${wer}" draggable="false" width="${w}" height="${h}" decoding="async"><figcaption>${wer}</figcaption></figure>`).join('');
   $('rBilder').scrollLeft = 0;
-  requestAnimationFrame(galPlatz);
+  requestAnimationFrame(() => galPlatz(true));
   raumSeite.querySelectorAll('.r-raeume .rf').forEach(b => { b.hidden = b.dataset.raum === name; if (b._drehen) b._drehen(false); });
   document.querySelectorAll('.m-unter a[data-ziel="raum"]').forEach(a => {
     if (a.dataset.raum === name && a.closest('#raum')) a.setAttribute('aria-current','page'); else a.removeAttribute('aria-current'); });
@@ -1445,17 +1446,19 @@ $('wmR').addEventListener('click', e => { e.preventDefault(); restart(); });
 
 /* Galerie: vorderstes Bild markieren, Platz rechts, damit auch das letzte vorne einrasten kann; Ziehen mit der Maus; Pfeile */
 const galerie = $('rBilder');
+const mitte = el => { const r = el.getBoundingClientRect(); return r.left + r.width/2; };
 function galVorne(){
   const figs = [...galerie.children]; if (!figs.length) return;
-  const l = galerie.getBoundingClientRect().left; let best = figs[0], d = 1e9;
-  figs.forEach(f => { const x = Math.abs(f.getBoundingClientRect().left - l); if (x < d){ d = x; best = f; } });
+  const m = mitte(galerie); let best = figs[0], d = 1e9;
+  figs.forEach(f => { const x = Math.abs(mitte(f) - m); if (x < d){ d = x; best = f; } });
   figs.forEach(f => f.classList.toggle('vorne', f === best));
   $('rGalZurueck').disabled = best === figs[0]; $('rGalWeiter').disabled = best === figs[figs.length-1];
 }
-function galPlatz(){
-  const letzte = galerie.lastElementChild; if (!letzte) return;
-  galerie.style.paddingRight = Math.max(0, galerie.clientWidth - letzte.offsetWidth) + 'px';
-  galVorne();
+function galPlatz(neu){
+  const erste = galerie.firstElementChild, letzte = galerie.lastElementChild; if (!erste) return;
+  galerie.style.paddingLeft = Math.max(0, (galerie.clientWidth - erste.offsetWidth)/2) + 'px';
+  galerie.style.paddingRight = Math.max(0, (galerie.clientWidth - letzte.offsetWidth)/2) + 'px';
+  if (neu) galerie.scrollLeft = 0; galVorne();
 }
 let galRaf = 0;
 galerie.addEventListener('scroll', () => { if (!galRaf) galRaf = requestAnimationFrame(() => { galRaf = 0; galVorne(); }); }, { passive:true });
@@ -1463,7 +1466,7 @@ addEventListener('resize', () => { if (phase === 'raum') galPlatz(); });
 function galSchritt(r){
   const figs = [...galerie.children], i = figs.findIndex(f => f.classList.contains('vorne'));
   const z = figs[Math.max(0, Math.min(figs.length-1, i + r))]; if (!z) return;
-  galerie.scrollTo({ left: z.offsetLeft - galerie.firstElementChild.offsetLeft, behavior: reduced.matches ? 'auto' : 'smooth' });
+  galerie.scrollBy({ left: mitte(z) - mitte(galerie), behavior: reduced.matches ? 'auto' : 'smooth' });
 }
 $('rGalZurueck').addEventListener('click', () => galSchritt(-1));
 $('rGalWeiter').addEventListener('click', () => galSchritt(1));
@@ -1479,20 +1482,22 @@ galerie.addEventListener('pointerup', zugEnde); galerie.addEventListener('pointe
 function raumTor(name, karte){
   const R = RAEUME[name], t = $('raumTor');
   if (!R || !karte || reduced.matches || phase === 'mark' || phase === 'zoom') return zeigeRaum(name);
-  const d = t.querySelector('.rt-dreh'), vorn = t.querySelector('.rt-vorn'), rueck = karte.querySelector('.rueck');
-  vorn.innerHTML = rueck ? rueck.outerHTML : '';
+  const d = t.querySelector('.rt-dreh'), vorn = t.querySelector('.rt-vorn');
   t.className = R.cls; t.hidden = false;
+  const farbe = `rgb(${getComputedStyle(t).getPropertyValue('--rgb').trim()})`;
   const r = karte.getBoundingClientRect(), dur = 950, ease = 'cubic-bezier(.45,0,.15,1)';
   const box = q => ({ left:q.x+'px', top:q.y+'px', width:q.w+'px', height:q.h+'px' });
   const von = box({ x:r.left, y:r.top, w:r.width, h:r.height }), nach = box({ x:0, y:0, w:innerWidth, h:innerHeight });
   Object.assign(t.style, nach); t.style.opacity = 1;
+  karte.style.visibility = 'hidden';   // Originalkarte weg, sonst blitzt ihre Schrift auf, wenn das Tor quer steht
   t.animate([von, nach], { duration:dur, easing:ease });
   t.querySelectorAll('.rt-vorn,.rt-rueck').forEach(f => f.animate([{ borderRadius:'8px' }, { borderRadius:'0px' }], { duration:dur, easing:ease, fill:'forwards' }));
+  vorn.animate([{ backgroundColor:'#fff', borderColor:'#d9ddd2' }, { backgroundColor:farbe, borderColor:farbe }], { duration:dur*0.5, easing:'ease-in', fill:'forwards' });   // Weiss → Raumfarbe bis zur Kante
   const a = d.animate([{ transform:'rotateY(0deg)' }, { transform:'rotateY(180deg)' }], { duration:dur, easing:ease, fill:'forwards' });
   a.onfinish = () => {
     zeigeRaum(name);
-    const aus = t.animate([{ opacity:1 }, { opacity:0 }], { duration:500, easing:'ease', fill:'forwards' });
-    aus.onfinish = () => { t.hidden = true; t.getAnimations({ subtree:true }).forEach(x => x.cancel()); vorn.innerHTML = ''; };
+    const aus = t.animate([{ opacity:1 }, { opacity:0 }], { duration:700, easing:'ease', fill:'forwards' });   // Farbe → Kopf der Raumseite (Verlauf + Textur)
+    aus.onfinish = () => { t.hidden = true; t.getAnimations({ subtree:true }).forEach(x => x.cancel()); karte.style.visibility = ''; };
   };
 }
 
