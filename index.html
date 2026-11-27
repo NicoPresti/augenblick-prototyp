@@ -1406,7 +1406,7 @@ const RAEUME = {
     galerie:[['gruen-1-af-klint.jpg','Hilma af Klint',457,640],['gruen-2-mitchell.jpg','Joan Mitchell',1200,630],['gruen-3-kandinsky.jpg','Wassily Kandinsky',478,640],['gruen-4-rothko.jpg','Mark Rothko',396,562],['gruen-5-scully.jpg','Sean Scully',421,475]] }
 };
 let raumAktuell = null;
-function zeigeRaum(name){
+function zeigeRaum(name, ausVerlauf){
   const R = RAEUME[name]; if (!R) return;
   if (phase === 'mark' || phase === 'zoom') return;          // während des Festhaltens nicht dazwischen
   raumAktuell = name;
@@ -1434,6 +1434,7 @@ function zeigeRaum(name){
   home.hidden = true; homeChrome.classList.add('aus'); ankunft.hidden = true; programm.hidden = true;
   document.documentElement.classList.remove('lock');
   raumSeite.hidden = false; phase = 'raum';
+  if (!ausVerlauf) history.pushState({ seite:'raum', raum:name }, '', '#' + name.toLowerCase());
   window.scrollTo(0, 0); raumSeite.focus({ preventScroll:true });
 }
 /* «Mehr» / «Weniger»: Text zur Runde und Person aufklappen */
@@ -1501,13 +1502,14 @@ function raumTor(name, karte){
   };
 }
 
-function zeigeProgramm(){
+function zeigeProgramm(ausVerlauf){
   if (phase === 'mark' || phase === 'zoom') return;          // während des Festhaltens nicht dazwischen
   document.querySelectorAll('.menue').forEach(menueZu);
   if (bildFenster.open) bildFenster.close();
   home.hidden = true; homeChrome.classList.add('aus'); ankunft.hidden = true; $('raum').hidden = true;
   document.documentElement.classList.remove('lock');
   programm.hidden = false; phase = 'programm';
+  if (!ausVerlauf) history.pushState({ seite:'programm' }, '', '#programm');
   window.scrollTo(0, 0); programm.focus({ preventScroll:true });
 }
 /* Wege im Menü und auf den Seiten */
@@ -1626,6 +1628,7 @@ function startZoom(){
 /* Ankunft blendet über dem gezoomten Bild ein; das Bild-Band liegt genau an derselben Stelle */
 function reveal(){
   phase = 'ankunft';
+  history.pushState({ seite:'ankunft' }, '', '#ankunft');
   drawBand();
   ankunft.classList.remove('pre');
   later(() => { ankunft.classList.remove('spaet'); kreisLage(); }, reduced.matches ? 0 : CFG.revealDur);
@@ -1636,7 +1639,8 @@ function reveal(){
     ankunft.focus({ preventScroll:true });
   }, reduced.matches ? 0.05 : CFG.revealDur + 0.05);
 }
-function restart(){
+function restart(ausVerlauf){
+  if (!ausVerlauf && history.state && history.state.seite !== 'home') history.pushState({ seite:'home' }, '', location.pathname + location.search);
   timers.forEach(clearTimeout); timers = [];
   gesture.reset(); actives = []; score = [0,0,0]; userForms = 0; travel = 0; liveTime = 0; autoCount = 0;
   paintCtx.globalCompositeOperation = 'source-over'; paintCtx.globalAlpha = 1;
@@ -1769,6 +1773,36 @@ Promise.all([...document.querySelectorAll('#textures img')].map(img => img.decod
   tex = [...document.querySelectorAll('#textures img')]; buildDensity(); ready = true; buildGhosts();
 }).catch(() => { $('load-error').hidden = false; });
 requestAnimationFrame(render);
+
+/* ---------- Zurück / Vorwärts im Browser (27.11.) ----------
+   Die Website ist eine einzige Seite: jeder Wechsel (Ankunft, Programm, Raum, Neu beginnen) bekommt einen Eintrag im Verlauf,
+   damit der Zurück-Knopf zur vorigen Ansicht führt statt die Website zu verlassen. Adressen: #ankunft, #programm, #schauraum … */
+if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+function zeigeAnkunft(){
+  if (!picture || !spot) return restart(true);               // ohne eigenes Bild gibt es keine Ankunft → Home
+  document.querySelectorAll('.menue').forEach(menueZu);
+  if (bildFenster.open) bildFenster.close();
+  programm.hidden = true; raumSeite.hidden = true; home.hidden = true; homeChrome.classList.add('aus');
+  document.documentElement.classList.remove('lock');
+  ankunft.hidden = false; ankunft.classList.remove('pre','spaet'); phase = 'ankunft';
+  window.scrollTo(0, 0); drawBand(); kreisLage(); ankunft.focus({ preventScroll:true });
+}
+addEventListener('popstate', e => {
+  if (phase === 'mark' || phase === 'zoom') return;
+  const st = e.state || { seite:'home' };
+  if (st.seite === 'raum') zeigeRaum(st.raum, true);
+  else if (st.seite === 'programm') zeigeProgramm(true);
+  else if (st.seite === 'ankunft') zeigeAnkunft();
+  else restart(true);
+});
+/* Direkt aufgerufene Adresse (z. B. nach dem Neuladen auf einer Raumseite) */
+(() => {
+  const h = decodeURIComponent(location.hash.slice(1)).toLowerCase();
+  const raum = Object.keys(RAEUME).find(r => r.toLowerCase() === h);
+  if (raum){ history.replaceState({ seite:'raum', raum }, '', '#' + h); zeigeRaum(raum, true); }
+  else if (h === 'programm'){ history.replaceState({ seite:'programm' }, '', '#programm'); zeigeProgramm(true); }
+  else history.replaceState({ seite:'home' }, '', location.pathname + location.search);
+})();
 </script>
 <!-- ---------- Regler zum Ausprobieren (13.11.) · Taste R ---------- -->
 <style>
