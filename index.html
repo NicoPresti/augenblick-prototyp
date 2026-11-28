@@ -1701,7 +1701,7 @@ function commit(kind){
   frozen = true; phase = 'mark'; lift(); dismissTop();
   restHint.classList.remove('on'); hintOn = false; home.classList.remove('ready');
   picture = mk(W,H); picture.getContext('2d').drawImage(canvas, 0, 0);
-  seen = visibleWinner(picture); winner = seen.c;     // sichtbare Farbe, nicht die Bewegungen
+  seen = visibleWinner(paint); winner = seen.c;       // sichtbare Farbe, nicht die Bewegungen. 28.11.: nur die gemalten Formen zählen, nicht der verschwommene Grund
   ankunftFarbe(winner);
   homeChrome.classList.add('aus'); document.querySelectorAll('.menue').forEach(menueZu);
   // Ankunft schon aufbauen (unsichtbar), damit die Lage des Bild-Bands und der Wortmarke bekannt ist
